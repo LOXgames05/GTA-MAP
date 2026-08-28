@@ -2,485 +2,1479 @@
 <html lang="fr">
 
 <head>
-  <meta charset="UTF-8">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+<meta charset="UTF-8">
 
-  <title>GTA MAP</title>
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+>
 
-  <!-- Leaflet -->
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  >
+<title>GTA MAP</title>
 
-  <!-- Leaflet Geoman -->
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css"
-  >
 
-  <style>
+<!-- Leaflet -->
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+>
 
-    * {
-      box-sizing: border-box;
-    }
+<!-- Leaflet Geoman -->
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css"
+>
 
-    html,
-    body {
-      margin: 0;
-      width: 100%;
-      height: 100%;
 
-      overflow: hidden;
+<style>
 
-      background: #0d1117;
-      color: white;
+/* =========================================================
+   RESET
+========================================================= */
 
-      font-family: Arial, sans-serif;
-    }
+* {
+  box-sizing: border-box;
+}
 
+:root {
 
-    /* =============================
-       MAP
-    ============================= */
+  --bg:
+    #090d12;
 
-    #map {
-      position: absolute;
+  --panel:
+    rgba(17, 22, 29, .96);
 
-      inset: 0;
+  --panel-soft:
+    rgba(22, 28, 36, .92);
 
-      background: #111;
-    }
+  --border:
+    rgba(255,255,255,.10);
 
-    .leaflet-container {
-      background: #111;
-    }
+  --border-strong:
+    rgba(255,255,255,.18);
 
+  --text:
+    #f4f7fb;
 
-    /* =============================
-       TOP BAR
-    ============================= */
+  --muted:
+    #8f9baa;
 
-    #topbar {
-      position: absolute;
+  --purple:
+    #8b5cf6;
 
-      top: 12px;
-      left: 55px;
-      right: 12px;
+  --purple-hover:
+    #9f7aea;
 
-      z-index: 1200;
+  --green:
+    #238636;
 
-      min-height: 48px;
+  --green-hover:
+    #2ea043;
 
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+  --red:
+    #da3633;
 
-      gap: 10px;
+  --red-hover:
+    #f85149;
 
-      padding: 8px 12px;
+  --yellow:
+    #f0c74b;
 
-      background: rgba(13, 17, 23, 0.94);
+  --shadow:
+    0 14px 45px rgba(0,0,0,.45);
 
-      border: 1px solid #30363d;
-      border-radius: 10px;
+}
 
-      box-shadow: 0 4px 20px rgba(0,0,0,.35);
-    }
 
-    #topbar h1 {
-      margin: 0;
+html,
+body {
 
-      font-size: 18px;
-    }
+  width: 100%;
+  height: 100%;
 
-    #top-actions {
-      display: flex;
+  margin: 0;
 
-      align-items: center;
+  overflow: hidden;
 
-      gap: 8px;
-    }
+  background:
+    var(--bg);
 
-    #admin-email {
-      color: #8b949e;
+  color:
+    var(--text);
 
-      font-size: 13px;
-    }
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
 
+}
 
-    /* =============================
-       BUTTONS
-    ============================= */
 
-    button {
-      border: 0;
+/* =========================================================
+   MAP
+========================================================= */
 
-      padding: 9px 12px;
+#map {
 
-      border-radius: 6px;
+  position: absolute;
 
-      background: #21262d;
-      color: white;
+  inset: 0;
 
-      cursor: pointer;
+  background:
+    #0a0d11;
 
-      font-weight: bold;
-    }
+  z-index: 1;
 
-    button:hover {
-      background: #30363d;
-    }
+}
 
-    button.green {
-      background: #238636;
-    }
 
-    button.green:hover {
-      background: #2ea043;
-    }
+.leaflet-container {
 
-    button.red {
-      background: #da3633;
-    }
+  background:
+    #0a0d11;
 
-    button.active {
-      background: #8957e5;
-    }
+}
 
-    button:disabled {
-      opacity: .45;
 
-      cursor: not-allowed;
-    }
+/* Zoom Leaflet */
 
+.leaflet-control-zoom {
 
-    /* =============================
-       PUBLIC LAYERS PANEL
-    ============================= */
+  border:
+    1px solid var(--border) !important;
 
-    #layers-panel {
-      position: absolute;
+  border-radius:
+    12px !important;
 
-      top: 75px;
-      right: 12px;
+  overflow:
+    hidden;
 
-      z-index: 1100;
+  box-shadow:
+    var(--shadow) !important;
 
-      width: 270px;
+}
 
-      max-height: calc(100vh - 90px);
 
-      overflow-y: auto;
+.leaflet-control-zoom a {
 
-      padding: 14px;
+  background:
+    rgba(17,22,29,.96) !important;
 
-      background: rgba(13, 17, 23, .94);
+  color:
+    white !important;
 
-      border: 1px solid #30363d;
-      border-radius: 10px;
+  border:
+    0 !important;
 
-      box-shadow: 0 4px 20px rgba(0,0,0,.35);
-    }
+}
 
-    #layers-panel h2 {
-      margin: 0 0 10px;
 
-      font-size: 16px;
-    }
+.leaflet-control-zoom a:hover {
 
-    #layers-list {
-      display: grid;
+  background:
+    #252d38 !important;
 
-      gap: 7px;
-    }
+}
 
-    .layer-item {
-      display: flex;
 
-      align-items: center;
 
-      gap: 8px;
+/* =========================================================
+   TOP BAR
+========================================================= */
 
-      padding: 8px;
+#topbar {
 
-      background: #161b22;
+  position: fixed;
 
-      border: 1px solid #30363d;
-      border-radius: 6px;
+  top: 14px;
+  left: 14px;
+  right: 14px;
 
-      cursor: pointer;
-    }
+  z-index: 5000;
 
-    .layer-item input {
-      width: 17px;
-      height: 17px;
-    }
+  min-height: 58px;
 
-    .layer-color {
-      width: 14px;
-      height: 14px;
+  display: flex;
 
-      flex: 0 0 auto;
+  align-items: center;
 
-      border: 1px solid rgba(255,255,255,.5);
-      border-radius: 3px;
-    }
+  justify-content: space-between;
 
-    .layer-title {
-      flex: 1;
+  gap: 14px;
 
-      font-size: 13px;
+  padding:
+    9px 10px 9px 18px;
 
-      font-weight: bold;
-    }
+  border:
+    1px solid var(--border);
 
-    .layer-count {
-      color: #8b949e;
+  border-radius:
+    16px;
 
-      font-size: 11px;
-    }
+  background:
+    rgba(12, 16, 22, .92);
 
+  backdrop-filter:
+    blur(18px);
 
-    /* =============================
-       EDITOR
-    ============================= */
+  box-shadow:
+    0 10px 40px rgba(0,0,0,.35);
 
-    #editor-panel {
-      position: absolute;
+}
 
-      top: 75px;
-      left: 12px;
 
-      z-index: 1100;
+.brand {
 
-      width: 310px;
+  display: flex;
 
-      max-height: calc(100vh - 90px);
+  align-items: center;
 
-      overflow-y: auto;
+  gap: 12px;
 
-      display: none;
+  min-width: 0;
 
-      padding: 14px;
+}
 
-      background: rgba(13, 17, 23, .97);
 
-      border: 1px solid #30363d;
-      border-radius: 10px;
+.brand-logo {
 
-      box-shadow: 0 4px 20px rgba(0,0,0,.4);
-    }
+  width: 36px;
+  height: 36px;
 
-    #editor-panel.visible {
-      display: block;
-    }
+  display: grid;
 
-    .section {
-      padding-bottom: 16px;
+  place-items: center;
 
-      margin-bottom: 16px;
+  flex:
+    0 0 auto;
 
-      border-bottom: 1px solid #30363d;
-    }
+  border-radius:
+    10px;
 
-    .section:last-child {
-      border-bottom: 0;
+  background:
+    linear-gradient(
+      135deg,
+      #8b5cf6,
+      #5b21b6
+    );
 
-      margin-bottom: 0;
-    }
+  box-shadow:
+    0 6px 22px rgba(139,92,246,.35);
 
-    .section h2 {
-      margin: 0 0 10px;
+  font-size:
+    18px;
 
-      font-size: 15px;
-    }
+  font-weight:
+    900;
 
-    label {
-      display: block;
+}
 
-      margin: 10px 0 5px;
 
-      font-size: 12px;
+.brand-text {
 
-      font-weight: bold;
-    }
+  min-width: 0;
 
-    input,
-    select,
-    textarea {
-      width: 100%;
+}
 
-      padding: 9px;
 
-      background: #0d1117;
-      color: white;
+.brand-title {
 
-      border: 1px solid #30363d;
-      border-radius: 6px;
-    }
+  margin: 0;
 
-    textarea {
-      resize: vertical;
-    }
+  font-size:
+    17px;
 
-    input[type="color"] {
-      height: 40px;
+  font-weight:
+    800;
 
-      padding: 3px;
-    }
+  letter-spacing:
+    .3px;
 
-    input[type="range"] {
-      padding: 0;
-    }
+}
 
-    .two-columns {
-      display: grid;
 
-      grid-template-columns: 1fr 1fr;
+.brand-subtitle {
 
-      gap: 10px;
-    }
+  margin-top:
+    2px;
 
-    .checkbox-line {
-      display: flex;
+  color:
+    var(--muted);
 
-      align-items: center;
+  font-size:
+    11px;
 
-      gap: 8px;
+}
 
-      margin-top: 12px;
-    }
 
-    .checkbox-line input {
-      width: auto;
-    }
+#top-actions {
 
-    .button-list {
-      display: grid;
+  display: flex;
 
-      gap: 7px;
+  align-items: center;
 
-      margin-top: 12px;
-    }
+  gap: 7px;
 
-    #status {
-      padding: 9px;
+  flex-wrap:
+    wrap;
 
-      background: #0d1117;
+  justify-content:
+    flex-end;
 
-      border: 1px solid #30363d;
-      border-radius: 6px;
+}
 
-      color: #f2cc60;
 
-      font-size: 12px;
-    }
+#admin-email {
 
+  max-width:
+    220px;
 
-    /* =============================
-       LOGIN MODAL
-    ============================= */
+  overflow:
+    hidden;
 
-    #login-overlay {
-      position: fixed;
+  text-overflow:
+    ellipsis;
 
-      inset: 0;
+  white-space:
+    nowrap;
 
-      z-index: 3000;
+  margin-right:
+    5px;
 
-      display: none;
+  color:
+    var(--muted);
 
-      align-items: center;
-      justify-content: center;
+  font-size:
+    12px;
 
-      background: rgba(0,0,0,.72);
-    }
+}
 
-    #login-overlay.visible {
-      display: flex;
-    }
 
-    #login-box {
-      width: 400px;
 
-      max-width: calc(100vw - 30px);
+/* =========================================================
+   BUTTONS
+========================================================= */
 
-      padding: 25px;
+button {
 
-      background: #161b22;
+  appearance:
+    none;
 
-      border: 1px solid #30363d;
-      border-radius: 12px;
+  border:
+    1px solid var(--border);
 
-      box-shadow: 0 15px 60px rgba(0,0,0,.6);
-    }
+  outline:
+    0;
 
-    #login-box h2 {
-      margin-top: 0;
-    }
+  min-height:
+    38px;
 
-    #login-error {
-      margin-top: 10px;
+  display:
+    inline-flex;
 
-      color: #f2cc60;
+  align-items:
+    center;
 
-      font-size: 13px;
-    }
+  justify-content:
+    center;
 
+  gap:
+    7px;
 
-    /* =============================
-       POPUPS
-    ============================= */
+  padding:
+    8px 12px;
 
-    .leaflet-popup-content-wrapper,
-    .leaflet-popup-tip {
-      background: #161b22;
-      color: white;
-    }
+  border-radius:
+    10px;
 
-    .popup-title {
-      margin: 0 0 5px;
+  background:
+    #1b222c;
 
-      font-size: 16px;
-    }
+  color:
+    white;
 
-    .popup-description {
-      margin: 0;
+  font-family:
+    inherit;
 
-      color: #b1bac4;
-    }
+  font-size:
+    12px;
 
+  font-weight:
+    700;
 
-    /* =============================
-       MOBILE
-    ============================= */
+  cursor:
+    pointer;
 
-    @media (max-width: 800px) {
+  transition:
+    transform .12s ease,
+    background .12s ease,
+    border-color .12s ease,
+    box-shadow .12s ease;
 
-      #topbar {
-        left: 45px;
-      }
+}
 
-      #layers-panel {
-        width: 220px;
-      }
 
-      #editor-panel {
-        width: 280px;
-      }
+button:hover {
 
-      #admin-email {
-        display: none;
-      }
+  background:
+    #252e3a;
 
-    }
+  border-color:
+    var(--border-strong);
 
-  </style>
+}
+
+
+button:active {
+
+  transform:
+    scale(.97);
+
+}
+
+
+button.primary {
+
+  background:
+    var(--purple);
+
+  border-color:
+    transparent;
+
+  box-shadow:
+    0 5px 18px rgba(139,92,246,.25);
+
+}
+
+
+button.primary:hover {
+
+  background:
+    var(--purple-hover);
+
+}
+
+
+button.green {
+
+  background:
+    var(--green);
+
+  border-color:
+    transparent;
+
+}
+
+
+button.green:hover {
+
+  background:
+    var(--green-hover);
+
+}
+
+
+button.red {
+
+  background:
+    rgba(218,54,51,.18);
+
+  color:
+    #ff8582;
+
+  border-color:
+    rgba(218,54,51,.35);
+
+}
+
+
+button.red:hover {
+
+  background:
+    var(--red);
+
+  color:
+    white;
+
+}
+
+
+button.ghost {
+
+  background:
+    transparent;
+
+}
+
+
+button.active {
+
+  background:
+    var(--purple);
+
+  border-color:
+    transparent;
+
+}
+
+
+button:disabled {
+
+  opacity:
+    .35;
+
+  cursor:
+    not-allowed;
+
+  transform:
+    none;
+
+}
+
+
+
+/* =========================================================
+   LAYER PANEL
+========================================================= */
+
+#layers-panel {
+
+  position: fixed;
+
+  top: 88px;
+
+  right: 14px;
+
+  z-index: 3000;
+
+  width:
+    290px;
+
+  max-height:
+    calc(100vh - 105px);
+
+  overflow:
+    hidden;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:
+    16px;
+
+  background:
+    var(--panel);
+
+  backdrop-filter:
+    blur(18px);
+
+  box-shadow:
+    var(--shadow);
+
+  transition:
+    transform .2s ease,
+    opacity .2s ease;
+
+}
+
+
+#layers-panel.hidden {
+
+  transform:
+    translateX(calc(100% + 30px));
+
+  opacity:
+    0;
+
+  pointer-events:
+    none;
+
+}
+
+
+.panel-header {
+
+  height:
+    54px;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    space-between;
+
+  padding:
+    0 13px 0 16px;
+
+  border-bottom:
+    1px solid var(--border);
+
+}
+
+
+.panel-title {
+
+  font-size:
+    14px;
+
+  font-weight:
+    800;
+
+}
+
+
+.panel-content {
+
+  max-height:
+    calc(100vh - 160px);
+
+  overflow-y:
+    auto;
+
+  padding:
+    12px;
+
+}
+
+
+#layers-list {
+
+  display:
+    grid;
+
+  gap:
+    8px;
+
+}
+
+
+.layer-item {
+
+  display:
+    grid;
+
+  grid-template-columns:
+    20px 16px 1fr auto;
+
+  align-items:
+    center;
+
+  gap:
+    8px;
+
+  min-height:
+    44px;
+
+  padding:
+    7px 9px;
+
+  border:
+    1px solid transparent;
+
+  border-radius:
+    10px;
+
+  background:
+    rgba(255,255,255,.035);
+
+  cursor:
+    pointer;
+
+  transition:
+    .15s ease;
+
+}
+
+
+.layer-item:hover {
+
+  background:
+    rgba(255,255,255,.07);
+
+  border-color:
+    var(--border);
+
+}
+
+
+.layer-item input {
+
+  width:
+    16px;
+
+  height:
+    16px;
+
+  accent-color:
+    var(--purple);
+
+}
+
+
+.layer-color {
+
+  width:
+    13px;
+
+  height:
+    13px;
+
+  border-radius:
+    4px;
+
+  border:
+    1px solid rgba(255,255,255,.4);
+
+}
+
+
+.layer-title {
+
+  overflow:
+    hidden;
+
+  text-overflow:
+    ellipsis;
+
+  white-space:
+    nowrap;
+
+  font-size:
+    12px;
+
+  font-weight:
+    700;
+
+}
+
+
+.layer-count {
+
+  min-width:
+    22px;
+
+  padding:
+    3px 6px;
+
+  border-radius:
+    999px;
+
+  background:
+    rgba(255,255,255,.06);
+
+  color:
+    var(--muted);
+
+  text-align:
+    center;
+
+  font-size:
+    10px;
+
+}
+
+
+
+/* =========================================================
+   EDITOR PANEL
+========================================================= */
+
+#editor-panel {
+
+  position: fixed;
+
+  top:
+    88px;
+
+  left:
+    14px;
+
+  z-index:
+    3200;
+
+  width:
+    330px;
+
+  max-height:
+    calc(100vh - 105px);
+
+  overflow:
+    hidden;
+
+  display:
+    none;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:
+    16px;
+
+  background:
+    var(--panel);
+
+  backdrop-filter:
+    blur(18px);
+
+  box-shadow:
+    var(--shadow);
+
+}
+
+
+#editor-panel.visible {
+
+  display:
+    block;
+
+}
+
+
+.editor-scroll {
+
+  max-height:
+    calc(100vh - 160px);
+
+  overflow-y:
+    auto;
+
+  padding:
+    14px;
+
+}
+
+
+.section {
+
+  padding:
+    0 0 17px;
+
+  margin:
+    0 0 17px;
+
+  border-bottom:
+    1px solid var(--border);
+
+}
+
+
+.section:last-child {
+
+  border-bottom:
+    0;
+
+  margin-bottom:
+    0;
+
+}
+
+
+.section-title {
+
+  margin:
+    0 0 12px;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  gap:
+    8px;
+
+  font-size:
+    13px;
+
+  font-weight:
+    800;
+
+}
+
+
+label {
+
+  display:
+    block;
+
+  margin:
+    11px 0 5px;
+
+  color:
+    #c8d1dc;
+
+  font-size:
+    11px;
+
+  font-weight:
+    700;
+
+}
+
+
+input,
+select,
+textarea {
+
+  width:
+    100%;
+
+  min-height:
+    40px;
+
+  border:
+    1px solid var(--border);
+
+  outline:
+    none;
+
+  padding:
+    9px 10px;
+
+  border-radius:
+    9px;
+
+  background:
+    #0c1117;
+
+  color:
+    white;
+
+  font-family:
+    inherit;
+
+  transition:
+    border-color .15s ease;
+
+}
+
+
+input:focus,
+select:focus,
+textarea:focus {
+
+  border-color:
+    var(--purple);
+
+}
+
+
+textarea {
+
+  min-height:
+    76px;
+
+  resize:
+    vertical;
+
+}
+
+
+input[type="color"] {
+
+  padding:
+    4px;
+
+  cursor:
+    pointer;
+
+}
+
+
+input[type="range"] {
+
+  min-height:
+    30px;
+
+  padding:
+    0;
+
+  accent-color:
+    var(--purple);
+
+}
+
+
+.two-columns {
+
+  display:
+    grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap:
+    10px;
+
+}
+
+
+.checkbox-line {
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  gap:
+    8px;
+
+  margin-top:
+    12px;
+
+}
+
+
+.checkbox-line input {
+
+  width:
+    16px;
+
+  min-height:
+    16px;
+
+  accent-color:
+    var(--purple);
+
+}
+
+
+.button-list {
+
+  display:
+    grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap:
+    7px;
+
+  margin-top:
+    13px;
+
+}
+
+
+.button-list .full {
+
+  grid-column:
+    1 / -1;
+
+}
+
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+#status {
+
+  padding:
+    10px 11px;
+
+  border:
+    1px solid rgba(240,199,75,.20);
+
+  border-radius:
+    10px;
+
+  background:
+    rgba(240,199,75,.06);
+
+  color:
+    var(--yellow);
+
+  font-size:
+    11px;
+
+  line-height:
+    1.4;
+
+}
+
+
+
+/* =========================================================
+   CUSTOM DRAW TOOLBAR
+========================================================= */
+
+#draw-toolbar {
+
+  position:
+    fixed;
+
+  left:
+    50%;
+
+  bottom:
+    18px;
+
+  z-index:
+    4500;
+
+  transform:
+    translateX(-50%);
+
+  display:
+    none;
+
+  align-items:
+    center;
+
+  gap:
+    6px;
+
+  padding:
+    7px;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:
+    16px;
+
+  background:
+    rgba(12,16,22,.94);
+
+  backdrop-filter:
+    blur(18px);
+
+  box-shadow:
+    0 14px 45px rgba(0,0,0,.5);
+
+}
+
+
+#draw-toolbar.visible {
+
+  display:
+    flex;
+
+}
+
+
+.tool-button {
+
+  position:
+    relative;
+
+  min-width:
+    48px;
+
+  height:
+    46px;
+
+  padding:
+    0 13px;
+
+  border-radius:
+    11px;
+
+  flex-direction:
+    column;
+
+  gap:
+    2px;
+
+  font-size:
+    9px;
+
+}
+
+
+.tool-icon {
+
+  font-size:
+    17px;
+
+  line-height:
+    18px;
+
+}
+
+
+.tool-divider {
+
+  width:
+    1px;
+
+  height:
+    32px;
+
+  margin:
+    0 3px;
+
+  background:
+    var(--border);
+
+}
+
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+#login-overlay {
+
+  position:
+    fixed;
+
+  inset:
+    0;
+
+  z-index:
+    9000;
+
+  display:
+    none;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  padding:
+    20px;
+
+  background:
+    rgba(2,4,8,.76);
+
+  backdrop-filter:
+    blur(12px);
+
+}
+
+
+#login-overlay.visible {
+
+  display:
+    flex;
+
+}
+
+
+#login-box {
+
+  width:
+    390px;
+
+  max-width:
+    100%;
+
+  padding:
+    24px;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:
+    18px;
+
+  background:
+    #11171f;
+
+  box-shadow:
+    0 30px 100px rgba(0,0,0,.65);
+
+}
+
+
+#login-box h2 {
+
+  margin:
+    0 0 6px;
+
+  font-size:
+    20px;
+
+}
+
+
+.login-subtitle {
+
+  margin:
+    0 0 18px;
+
+  color:
+    var(--muted);
+
+  font-size:
+    12px;
+
+}
+
+
+#login-error {
+
+  margin-top:
+    12px;
+
+  color:
+    var(--yellow);
+
+  font-size:
+    12px;
+
+}
+
+
+
+/* =========================================================
+   POPUP
+========================================================= */
+
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+
+  background:
+    #11171f;
+
+  color:
+    white;
+
+}
+
+
+.popup-title {
+
+  margin:
+    0 0 5px;
+
+}
+
+
+.popup-description {
+
+  margin:
+    0;
+
+  color:
+    var(--muted);
+
+}
+
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 850px) {
+
+  #topbar {
+
+    left:
+      8px;
+
+    right:
+      8px;
+
+    top:
+      8px;
+
+  }
+
+
+  .brand-subtitle,
+  #admin-email {
+
+    display:
+      none;
+
+  }
+
+
+  #top-actions button {
+
+    padding:
+      7px 9px;
+
+    font-size:
+      10px;
+
+  }
+
+
+  #layers-panel {
+
+    top:
+      78px;
+
+    right:
+      8px;
+
+    width:
+      235px;
+
+  }
+
+
+  #editor-panel {
+
+    top:
+      auto;
+
+    left:
+      8px;
+
+    right:
+      8px;
+
+    bottom:
+      82px;
+
+    width:
+      auto;
+
+    max-height:
+      52vh;
+
+  }
+
+
+  .editor-scroll {
+
+    max-height:
+      calc(52vh - 55px);
+
+  }
+
+
+  #draw-toolbar {
+
+    bottom:
+      10px;
+
+    max-width:
+      calc(100vw - 16px);
+
+    overflow-x:
+      auto;
+
+  }
+
+
+  .tool-button {
+
+    flex:
+      0 0 auto;
+
+  }
+
+}
+
+</style>
 
 </head>
 
@@ -488,107 +1482,157 @@
 <body>
 
 
-  <!-- MAP -->
+<!-- ======================================================
+     MAP
+====================================================== -->
 
-  <div id="map"></div>
-
-
-
-  <!-- TOP BAR -->
-
-  <header id="topbar">
-
-    <h1>
-      GTA MAP
-    </h1>
+<div id="map"></div>
 
 
-    <div id="top-actions">
 
-      <span id="admin-email"></span>
+<!-- ======================================================
+     TOP BAR
+====================================================== -->
 
+<header id="topbar">
 
-      <button id="login-button">
-        Connexion admin
-      </button>
+  <div class="brand">
 
+    <div class="brand-logo">
+      G
+    </div>
 
-      <button
-        id="edit-mode-button"
-        style="display:none;"
-      >
-        Activer édition
-      </button>
+    <div class="brand-text">
 
+      <div class="brand-title">
+        GTA MAP
+      </div>
 
-      <button
-        id="logout-button"
-        class="red"
-        style="display:none;"
-      >
-        Déconnexion
-      </button>
+      <div class="brand-subtitle">
+        Carte interactive
+      </div>
 
     </div>
 
-  </header>
+  </div>
+
+
+  <div id="top-actions">
+
+    <span id="admin-email"></span>
+
+
+    <button id="toggle-layers">
+      ☰ Couches
+    </button>
+
+
+    <button id="login-button">
+      🔐 Admin
+    </button>
+
+
+    <button
+      id="edit-mode-button"
+      class="primary"
+      style="display:none;"
+    >
+      ✏ Éditer
+    </button>
+
+
+    <button
+      id="logout-button"
+      class="red"
+      style="display:none;"
+    >
+      ↪ Quitter
+    </button>
+
+  </div>
+
+</header>
 
 
 
-  <!-- PUBLIC LAYERS -->
+<!-- ======================================================
+     LAYERS PANEL
+====================================================== -->
 
-  <aside id="layers-panel">
+<aside id="layers-panel">
 
-    <h2>
+  <div class="panel-header">
+
+    <span class="panel-title">
       Couches
-    </h2>
+    </span>
+
+    <button
+      id="close-layers"
+      class="ghost"
+    >
+      ✕
+    </button>
+
+  </div>
+
+
+  <div class="panel-content">
 
     <div id="layers-list">
       Chargement...
     </div>
 
-  </aside>
+  </div>
+
+</aside>
 
 
 
-  <!-- EDITOR -->
+<!-- ======================================================
+     EDITOR PANEL
+====================================================== -->
 
-  <aside id="editor-panel">
+<aside id="editor-panel">
+
+  <div class="panel-header">
+
+    <span class="panel-title">
+      Éditeur
+    </span>
+
+    <button
+      id="close-editor"
+      class="ghost"
+    >
+      ✕
+    </button>
+
+  </div>
 
 
-    <div class="section">
+  <div class="editor-scroll">
 
-      <h2>
-        Mode édition
-      </h2>
 
-      <div id="status">
-        Prêt.
+    <section class="section">
+
+      <div class="section-title">
+        ◉ État
       </div>
 
-      <p
-        style="
-          margin-bottom:0;
-          color:#8b949e;
-          font-size:12px;
-        "
-      >
-        Les nouveaux sommets s'accrochent
-        automatiquement aux sommets et
-        aux bords déjà présents.
-      </p>
+      <div id="status">
+        Initialisation...
+      </div>
 
-    </div>
+    </section>
 
 
 
-    <!-- SHAPE -->
+    <section class="section">
 
-    <div class="section">
-
-      <h2>
-        Élément sélectionné
-      </h2>
+      <div class="section-title">
+        ◇ Élément sélectionné
+      </div>
 
 
       <label>
@@ -615,7 +1659,6 @@
 
       <textarea
         id="shape-description"
-        rows="3"
         placeholder="Description optionnelle"
       ></textarea>
 
@@ -631,7 +1674,7 @@
           <input
             id="shape-color"
             type="color"
-            value="#8a3ffc"
+            value="#8b5cf6"
           >
 
         </div>
@@ -647,7 +1690,7 @@
             id="shape-opacity"
             type="range"
             min="0"
-            max=".8"
+            max=".85"
             step=".05"
             value=".35"
           >
@@ -674,10 +1717,10 @@
 
         <button
           id="save-shape"
-          class="green"
+          class="green full"
           disabled
         >
-          Enregistrer
+          ✓ Enregistrer
         </button>
 
 
@@ -685,7 +1728,7 @@
           id="edit-shape"
           disabled
         >
-          Modifier les points
+          ✦ Sommets
         </button>
 
 
@@ -693,7 +1736,7 @@
           id="finish-edit"
           disabled
         >
-          Terminer modification
+          ✓ Terminer
         </button>
 
 
@@ -701,7 +1744,7 @@
           id="cancel-selection"
           disabled
         >
-          Annuler sélection
+          ↶ Annuler
         </button>
 
 
@@ -710,22 +1753,20 @@
           class="red"
           disabled
         >
-          Supprimer
+          🗑 Supprimer
         </button>
 
       </div>
 
-    </div>
+    </section>
 
 
 
-    <!-- CREATE LAYER -->
+    <section class="section">
 
-    <div class="section">
-
-      <h2>
-        Nouvelle couche
-      </h2>
+      <div class="section-title">
+        ＋ Nouvelle couche
+      </div>
 
 
       <label>
@@ -734,7 +1775,6 @@
 
       <input
         id="new-layer-name"
-        type="text"
         placeholder="Ex. Quartiers"
       >
 
@@ -775,7 +1815,7 @@
           <input
             id="new-layer-color"
             type="color"
-            value="#8a3ffc"
+            value="#8b5cf6"
           >
 
         </div>
@@ -791,7 +1831,7 @@
             id="new-layer-opacity"
             type="range"
             min="0"
-            max=".8"
+            max=".85"
             step=".05"
             value=".35"
           >
@@ -805,103 +1845,184 @@
 
         <button
           id="create-layer"
-          class="green"
+          class="primary full"
         >
-          + Créer la couche
+          ＋ Créer la couche
         </button>
 
       </div>
 
-    </div>
-
-
-  </aside>
-
-
-
-  <!-- LOGIN -->
-
-  <div id="login-overlay">
-
-    <div id="login-box">
-
-      <h2>
-        Connexion administrateur
-      </h2>
-
-
-      <form id="login-form">
-
-        <label>
-          Email
-        </label>
-
-        <input
-          id="login-email"
-          type="email"
-          required
-        >
-
-
-        <label>
-          Mot de passe
-        </label>
-
-        <input
-          id="login-password"
-          type="password"
-          required
-        >
-
-
-        <div class="button-list">
-
-          <button
-            type="submit"
-            class="green"
-          >
-            Se connecter
-          </button>
-
-
-          <button
-            id="close-login"
-            type="button"
-          >
-            Annuler
-          </button>
-
-        </div>
-
-
-        <div id="login-error"></div>
-
-      </form>
-
-    </div>
+    </section>
 
   </div>
 
+</aside>
 
 
-  <!-- LIBRARIES -->
 
-  <script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-  ></script>
+<!-- ======================================================
+     CUSTOM DRAW TOOLBAR
+====================================================== -->
 
-  <script
-    src="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.js"
-  ></script>
-
-  <script
-    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
-  ></script>
+<div id="draw-toolbar">
 
 
-  <script src="js/config.js"></script>
+  <button
+    id="draw-polygon"
+    class="tool-button"
+  >
 
-  <script src="js/supabase-client.js"></script>
+    <span class="tool-icon">
+      ⬡
+    </span>
+
+    Polygone
+
+  </button>
+
+
+  <button
+    id="draw-rectangle"
+    class="tool-button"
+  >
+
+    <span class="tool-icon">
+      ▭
+    </span>
+
+    Rectangle
+
+  </button>
+
+
+  <button
+    id="draw-line"
+    class="tool-button"
+  >
+
+    <span class="tool-icon">
+      ╱
+    </span>
+
+    Frontière
+
+  </button>
+
+
+  <div class="tool-divider"></div>
+
+
+  <button
+    id="stop-drawing"
+    class="tool-button red"
+  >
+
+    <span class="tool-icon">
+      ✕
+    </span>
+
+    Annuler
+
+  </button>
+
+</div>
+
+
+
+<!-- ======================================================
+     LOGIN
+====================================================== -->
+
+<div id="login-overlay">
+
+  <div id="login-box">
+
+    <h2>
+      Connexion administrateur
+    </h2>
+
+    <p class="login-subtitle">
+      Accès aux outils d'édition de la carte.
+    </p>
+
+
+    <form id="login-form">
+
+      <label>
+        Email
+      </label>
+
+      <input
+        id="login-email"
+        type="email"
+        required
+      >
+
+
+      <label>
+        Mot de passe
+      </label>
+
+      <input
+        id="login-password"
+        type="password"
+        required
+      >
+
+
+      <div class="button-list">
+
+        <button
+          type="submit"
+          class="primary full"
+        >
+          Se connecter
+        </button>
+
+
+        <button
+          id="close-login"
+          type="button"
+          class="full"
+        >
+          Annuler
+        </button>
+
+      </div>
+
+
+      <div id="login-error"></div>
+
+    </form>
+
+  </div>
+
+</div>
+
+
+
+<!-- ======================================================
+     LIBRARIES
+====================================================== -->
+
+<script
+  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+></script>
+
+
+<script
+  src="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.js"
+></script>
+
+
+<script
+  src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+></script>
+
+
+<script src="js/config.js"></script>
+
+<script src="js/supabase-client.js"></script>
 
 
 
@@ -910,346 +2031,435 @@
 (async function () {
 
 
-  /* =========================================================
-     DOM
-  ========================================================= */
+/* =========================================================
+   ELEMENTS
+========================================================= */
 
-  const layersList =
-    document.getElementById("layers-list");
-
-  const editorPanel =
-    document.getElementById("editor-panel");
-
-  const status =
-    document.getElementById("status");
-
-  const loginButton =
-    document.getElementById("login-button");
-
-  const editModeButton =
-    document.getElementById("edit-mode-button");
-
-  const logoutButton =
-    document.getElementById("logout-button");
-
-  const adminEmail =
-    document.getElementById("admin-email");
-
-  const loginOverlay =
-    document.getElementById("login-overlay");
-
-  const loginForm =
-    document.getElementById("login-form");
-
-  const loginError =
-    document.getElementById("login-error");
+const layersPanel =
+  document.getElementById(
+    "layers-panel"
+  );
 
 
-  const shapeLayerInput =
-    document.getElementById("shape-layer");
-
-  const shapeNameInput =
-    document.getElementById("shape-name");
-
-  const shapeDescriptionInput =
-    document.getElementById("shape-description");
-
-  const shapeColorInput =
-    document.getElementById("shape-color");
-
-  const shapeOpacityInput =
-    document.getElementById("shape-opacity");
-
-  const shapePublishedInput =
-    document.getElementById("shape-published");
+const editorPanel =
+  document.getElementById(
+    "editor-panel"
+  );
 
 
-  const saveShapeButton =
-    document.getElementById("save-shape");
-
-  const editShapeButton =
-    document.getElementById("edit-shape");
-
-  const finishEditButton =
-    document.getElementById("finish-edit");
-
-  const cancelSelectionButton =
-    document.getElementById("cancel-selection");
-
-  const deleteShapeButton =
-    document.getElementById("delete-shape");
+const drawToolbar =
+  document.getElementById(
+    "draw-toolbar"
+  );
 
 
-
-  /* =========================================================
-     STATE
-  ========================================================= */
-
-  let map = null;
-
-  let currentUser = null;
-
-  let admin = false;
-
-  let editMode = false;
-
-  let mapLayers = [];
-
-  let mapShapes = [];
-
-  let layerGroups = {};
-
-  let renderedShapeLayers = [];
-
-  let selectedLeafletLayer = null;
-
-  let selectedShapeRecord = null;
-
-  let temporaryLayer = null;
+const layersList =
+  document.getElementById(
+    "layers-list"
+  );
 
 
-
-  /* =========================================================
-     IMAGE
-  ========================================================= */
-
-  const MAP_IMAGE =
-    window.APP_CONFIG.MAP_IMAGE;
+const status =
+  document.getElementById(
+    "status"
+  );
 
 
-  function loadImageSize(src) {
+const loginButton =
+  document.getElementById(
+    "login-button"
+  );
 
-    return new Promise(
-      (resolve, reject) => {
 
-        const image =
-          new Image();
+const editModeButton =
+  document.getElementById(
+    "edit-mode-button"
+  );
 
-        image.onload = () => {
+
+const logoutButton =
+  document.getElementById(
+    "logout-button"
+  );
+
+
+const adminEmail =
+  document.getElementById(
+    "admin-email"
+  );
+
+
+const loginOverlay =
+  document.getElementById(
+    "login-overlay"
+  );
+
+
+const loginForm =
+  document.getElementById(
+    "login-form"
+  );
+
+
+const loginError =
+  document.getElementById(
+    "login-error"
+  );
+
+
+const shapeLayerInput =
+  document.getElementById(
+    "shape-layer"
+  );
+
+
+const shapeNameInput =
+  document.getElementById(
+    "shape-name"
+  );
+
+
+const shapeDescriptionInput =
+  document.getElementById(
+    "shape-description"
+  );
+
+
+const shapeColorInput =
+  document.getElementById(
+    "shape-color"
+  );
+
+
+const shapeOpacityInput =
+  document.getElementById(
+    "shape-opacity"
+  );
+
+
+const shapePublishedInput =
+  document.getElementById(
+    "shape-published"
+  );
+
+
+const saveShapeButton =
+  document.getElementById(
+    "save-shape"
+  );
+
+
+const editShapeButton =
+  document.getElementById(
+    "edit-shape"
+  );
+
+
+const finishEditButton =
+  document.getElementById(
+    "finish-edit"
+  );
+
+
+const cancelSelectionButton =
+  document.getElementById(
+    "cancel-selection"
+  );
+
+
+const deleteShapeButton =
+  document.getElementById(
+    "delete-shape"
+  );
+
+
+
+/* =========================================================
+   STATE
+========================================================= */
+
+let map =
+  null;
+
+
+let currentUser =
+  null;
+
+
+let admin =
+  false;
+
+
+let editMode =
+  false;
+
+
+let mapLayers =
+  [];
+
+
+let mapShapes =
+  [];
+
+
+let layerGroups =
+  {};
+
+
+let renderedShapeLayers =
+  [];
+
+
+let selectedLeafletLayer =
+  null;
+
+
+let selectedShapeRecord =
+  null;
+
+
+let temporaryLayer =
+  null;
+
+
+
+/* =========================================================
+   MAP IMAGE
+========================================================= */
+
+const MAP_IMAGE =
+  window.APP_CONFIG.MAP_IMAGE;
+
+
+function loadImageSize(src) {
+
+  return new Promise(
+    (
+      resolve,
+      reject
+    ) => {
+
+      const image =
+        new Image();
+
+
+      image.onload =
+        () => {
 
           resolve({
-            width: image.naturalWidth,
-            height: image.naturalHeight
+
+            width:
+              image.naturalWidth,
+
+            height:
+              image.naturalHeight
+
           });
 
         };
 
-        image.onerror = () => {
+
+      image.onerror =
+        () => {
 
           reject(
             new Error(
-              "Impossible de charger " + src
+              "Impossible de charger la carte."
             )
           );
 
         };
 
-        image.src =
-          src + "?v=40";
 
-      }
-    );
+      image.src =
+        src + "?v=60";
 
-  }
+    }
+  );
 
-
-
-  /* =========================================================
-     MAP INITIALIZATION
-  ========================================================= */
-
-  const imageSize =
-    await loadImageSize(
-      MAP_IMAGE
-    );
+}
 
 
-  const bounds =
-    [
-      [0, 0],
 
-      [
-        imageSize.height,
-        imageSize.width
-      ]
-    ];
+/* =========================================================
+   MAP
+========================================================= */
 
-
-  map =
-    L.map(
-      "map",
-      {
-
-        crs:
-          L.CRS.Simple,
-
-        minZoom:
-          -6,
-
-        maxZoom:
-          5,
-
-        zoomSnap:
-          .25,
-
-        attributionControl:
-          false
-
-      }
-    );
-
-
-  const mapOverlay =
-    L.imageOverlay(
-      MAP_IMAGE + "?v=40",
-      bounds,
-      {
-
-        interactive:
-          false,
-
-        pmIgnore:
-          true
-
-      }
-    );
-
-
-  mapOverlay.addTo(map);
-
-
-  map.fitBounds(bounds);
-
-
-  map.setMaxBounds(
-    [
-      [
-        -imageSize.height,
-        -imageSize.width
-      ],
-
-      [
-        imageSize.height * 2,
-        imageSize.width * 2
-      ]
-    ]
+const imageSize =
+  await loadImageSize(
+    MAP_IMAGE
   );
 
 
-  map.pm.setGlobalOptions({
+const bounds =
+  [
 
-    snappable:
-      true,
+    [0,0],
 
-    snapDistance:
-      25,
+    [
+      imageSize.height,
+      imageSize.width
+    ]
 
-    snapVertex:
-      true,
+  ];
 
-    snapSegment:
-      true,
 
-    snapMiddle:
+map =
+  L.map(
+    "map",
+    {
+
+      crs:
+        L.CRS.Simple,
+
+      minZoom:
+        -6,
+
+      maxZoom:
+        5,
+
+      zoomSnap:
+        .25,
+
+      attributionControl:
+        false,
+
+      zoomControl:
+        false
+
+    }
+  );
+
+
+L.control
+  .zoom({
+
+    position:
+      "bottomright"
+
+  })
+  .addTo(
+    map
+  );
+
+
+L.imageOverlay(
+
+  MAP_IMAGE + "?v=60",
+
+  bounds,
+
+  {
+
+    interactive:
       false,
 
-    allowSelfIntersection:
-      false
-
-  });
-
-
-
-  /* =========================================================
-     AUTH
-  ========================================================= */
-
-  async function refreshAuth() {
-
-    const {
-      data:
-      {
-        user
-      }
-    } =
-      await db.auth.getUser();
-
-
-    currentUser =
-      user || null;
-
-
-    admin =
-      false;
-
-
-    if (currentUser) {
-
-      const {
-        data: isAdmin
-      } =
-        await db.rpc(
-          "is_admin"
-        );
-
-
-      admin =
-        isAdmin === true;
-
-    }
-
-
-    if (admin) {
-
-      loginButton.style.display =
-        "none";
-
-      editModeButton.style.display =
-        "";
-
-      logoutButton.style.display =
-        "";
-
-      adminEmail.textContent =
-        currentUser.email || "";
-
-    }
-    else {
-
-      loginButton.style.display =
-        "";
-
-      editModeButton.style.display =
-        "none";
-
-      logoutButton.style.display =
-        "none";
-
-      adminEmail.textContent =
-        "";
-
-      if (editMode) {
-        disableEditMode();
-      }
-
-    }
+    pmIgnore:
+      true
 
   }
 
+).addTo(
+  map
+);
 
 
-  /* =========================================================
-     LOGIN MODAL
-  ========================================================= */
+map.fitBounds(
+  bounds
+);
 
-  loginButton.addEventListener(
+
+map.setMaxBounds(
+  [
+
+    [
+      -imageSize.height,
+      -imageSize.width
+    ],
+
+    [
+      imageSize.height * 2,
+      imageSize.width * 2
+    ]
+
+  ]
+);
+
+
+
+/* =========================================================
+   SNAP CONFIG
+========================================================= */
+
+map.pm.setGlobalOptions({
+
+  snappable:
+    true,
+
+  snapDistance:
+    30,
+
+  snapVertex:
+    true,
+
+  snapSegment:
+    true,
+
+  snapMiddle:
+    false,
+
+  allowSelfIntersection:
+    false
+
+});
+
+
+
+/* =========================================================
+   UI PANELS
+========================================================= */
+
+document
+  .getElementById(
+    "toggle-layers"
+  )
+  .addEventListener(
     "click",
     () => {
 
-      loginError.textContent =
-        "";
+      layersPanel.classList.toggle(
+        "hidden"
+      );
 
-      loginOverlay.classList.add(
+    }
+  );
+
+
+document
+  .getElementById(
+    "close-layers"
+  )
+  .addEventListener(
+    "click",
+    () => {
+
+      layersPanel.classList.add(
+        "hidden"
+      );
+
+    }
+  );
+
+
+document
+  .getElementById(
+    "close-editor"
+  )
+  .addEventListener(
+    "click",
+    () => {
+
+      editorPanel.classList.remove(
         "visible"
       );
 
@@ -1257,137 +2467,1157 @@
   );
 
 
-  document
-    .getElementById(
-      "close-login"
-    )
-    .addEventListener(
-      "click",
-      () => {
 
-        loginOverlay.classList.remove(
-          "visible"
-        );
+/* =========================================================
+   AUTH
+========================================================= */
 
-      }
+async function refreshAuth() {
+
+  const {
+    data:
+    {
+      user
+    }
+  } =
+    await db.auth.getUser();
+
+
+  currentUser =
+    user || null;
+
+
+  admin =
+    false;
+
+
+  if (
+    currentUser
+  ) {
+
+    const {
+      data: isAdmin
+    } =
+      await db.rpc(
+        "is_admin"
+      );
+
+
+    admin =
+      isAdmin === true;
+
+  }
+
+
+  if (
+    admin
+  ) {
+
+    loginButton.style.display =
+      "none";
+
+
+    editModeButton.style.display =
+      "";
+
+
+    logoutButton.style.display =
+      "";
+
+
+    adminEmail.textContent =
+      currentUser.email || "";
+
+  }
+  else {
+
+    loginButton.style.display =
+      "";
+
+
+    editModeButton.style.display =
+      "none";
+
+
+    logoutButton.style.display =
+      "none";
+
+
+    adminEmail.textContent =
+      "";
+
+
+    if (
+      editMode
+    ) {
+
+      disableEditMode();
+
+    }
+
+  }
+
+}
+
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+loginButton.addEventListener(
+  "click",
+  () => {
+
+    loginError.textContent =
+      "";
+
+
+    loginOverlay.classList.add(
+      "visible"
     );
 
-
-  loginForm.addEventListener(
-    "submit",
-    async event => {
-
-      event.preventDefault();
+  }
+);
 
 
-      loginError.textContent =
-        "Connexion...";
-
-
-      const email =
-        document
-          .getElementById(
-            "login-email"
-          )
-          .value
-          .trim();
-
-
-      const password =
-        document
-          .getElementById(
-            "login-password"
-          )
-          .value;
-
-
-      const {
-        error
-      } =
-        await db.auth
-          .signInWithPassword({
-
-            email,
-            password
-
-          });
-
-
-      if (error) {
-
-        loginError.textContent =
-          error.message;
-
-        return;
-
-      }
-
-
-      await refreshAuth();
-
-
-      if (!admin) {
-
-        await db.auth.signOut();
-
-        loginError.textContent =
-          "Ce compte n'est pas administrateur.";
-
-        await refreshAuth();
-
-        return;
-
-      }
-
+document
+  .getElementById(
+    "close-login"
+  )
+  .addEventListener(
+    "click",
+    () => {
 
       loginOverlay.classList.remove(
         "visible"
       );
 
-
-      await loadDatabase();
-
     }
   );
 
 
-  logoutButton.addEventListener(
-    "click",
-    async () => {
+loginForm.addEventListener(
+  "submit",
+  async event => {
+
+    event.preventDefault();
+
+
+    loginError.textContent =
+      "Connexion...";
+
+
+    const email =
+      document
+        .getElementById(
+          "login-email"
+        )
+        .value
+        .trim();
+
+
+    const password =
+      document
+        .getElementById(
+          "login-password"
+        )
+        .value;
+
+
+    const {
+      error
+    } =
+      await db.auth
+        .signInWithPassword({
+
+          email,
+          password
+
+        });
+
+
+    if (
+      error
+    ) {
+
+      loginError.textContent =
+        error.message;
+
+      return;
+
+    }
+
+
+    await refreshAuth();
+
+
+    if (
+      !admin
+    ) {
 
       await db.auth.signOut();
 
+
+      loginError.textContent =
+        "Ce compte n'est pas administrateur.";
+
+
       await refreshAuth();
 
-      await loadDatabase();
+
+      return;
+
+    }
+
+
+    loginOverlay.classList.remove(
+      "visible"
+    );
+
+
+    await loadDatabase();
+
+  }
+);
+
+
+logoutButton.addEventListener(
+  "click",
+  async () => {
+
+    await db.auth.signOut();
+
+
+    await refreshAuth();
+
+
+    await loadDatabase();
+
+  }
+);
+
+
+
+/* =========================================================
+   EDIT MODE
+========================================================= */
+
+function enableEditMode() {
+
+  if (
+    !admin
+  ) {
+    return;
+  }
+
+
+  editMode =
+    true;
+
+
+  editModeButton.classList.add(
+    "active"
+  );
+
+
+  editModeButton.textContent =
+    "✓ Édition active";
+
+
+  editorPanel.classList.add(
+    "visible"
+  );
+
+
+  drawToolbar.classList.add(
+    "visible"
+  );
+
+
+  layersPanel.classList.remove(
+    "hidden"
+  );
+
+
+  status.textContent =
+    "Mode édition actif. Accrochage automatique activé.";
+
+
+  loadDatabase();
+
+}
+
+
+function disableEditMode() {
+
+  editMode =
+    false;
+
+
+  stopDrawing();
+
+
+  editModeButton.classList.remove(
+    "active"
+  );
+
+
+  editModeButton.textContent =
+    "✏ Éditer";
+
+
+  editorPanel.classList.remove(
+    "visible"
+  );
+
+
+  drawToolbar.classList.remove(
+    "visible"
+  );
+
+
+  cancelSelection();
+
+
+  loadDatabase();
+
+}
+
+
+editModeButton.addEventListener(
+  "click",
+  () => {
+
+    if (
+      editMode
+    ) {
+
+      disableEditMode();
+
+    }
+    else {
+
+      enableEditMode();
+
+    }
+
+  }
+);
+
+
+
+/* =========================================================
+   CUSTOM DRAW BUTTONS
+========================================================= */
+
+function clearToolActive() {
+
+  document
+    .querySelectorAll(
+      ".tool-button"
+    )
+    .forEach(
+      button => {
+
+        button.classList.remove(
+          "active"
+        );
+
+      }
+    );
+
+}
+
+
+function stopDrawing() {
+
+  map.pm.disableDraw();
+
+
+  clearToolActive();
+
+}
+
+
+function startDraw(
+  type,
+  button
+) {
+
+  if (
+    !editMode
+  ) {
+    return;
+  }
+
+
+  stopDrawing();
+
+
+  button.classList.add(
+    "active"
+  );
+
+
+  map.pm.enableDraw(
+
+    type,
+
+    {
+
+      snappable:
+        true,
+
+      snapDistance:
+        30,
+
+      snapVertex:
+        true,
+
+      snapSegment:
+        true,
+
+      allowSelfIntersection:
+        false
+
+    }
+
+  );
+
+}
+
+
+document
+  .getElementById(
+    "draw-polygon"
+  )
+  .addEventListener(
+    "click",
+    event => {
+
+      startDraw(
+        "Polygon",
+        event.currentTarget
+      );
 
     }
   );
 
 
+document
+  .getElementById(
+    "draw-rectangle"
+  )
+  .addEventListener(
+    "click",
+    event => {
 
-  /* =========================================================
-     EDIT MODE
-  ========================================================= */
+      startDraw(
+        "Rectangle",
+        event.currentTarget
+      );
 
-  function enableEditMode() {
+    }
+  );
 
-    if (!admin) {
-      return;
+
+document
+  .getElementById(
+    "draw-line"
+  )
+  .addEventListener(
+    "click",
+    event => {
+
+      startDraw(
+        "Line",
+        event.currentTarget
+      );
+
+    }
+  );
+
+
+document
+  .getElementById(
+    "stop-drawing"
+  )
+  .addEventListener(
+    "click",
+    stopDrawing
+  );
+
+
+map.on(
+  "pm:drawend",
+  () => {
+
+    clearToolActive();
+
+  }
+);
+
+
+
+/* =========================================================
+   LOAD DATABASE
+========================================================= */
+
+async function loadDatabase() {
+
+  let layersQuery =
+    db
+      .from(
+        "map_layers"
+      )
+      .select(
+        "*"
+      )
+      .order(
+        "sort_order"
+      )
+      .order(
+        "name"
+      );
+
+
+  let shapesQuery =
+    db
+      .from(
+        "map_shapes"
+      )
+      .select(
+        "*"
+      )
+      .order(
+        "created_at"
+      );
+
+
+  if (
+    !admin ||
+    !editMode
+  ) {
+
+    layersQuery =
+      layersQuery.eq(
+        "visible",
+        true
+      );
+
+
+    shapesQuery =
+      shapesQuery.eq(
+        "published",
+        true
+      );
+
+  }
+
+
+  const [
+    layersResponse,
+    shapesResponse
+  ] =
+    await Promise.all(
+      [
+
+        layersQuery,
+
+        shapesQuery
+
+      ]
+    );
+
+
+  if (
+    layersResponse.error
+  ) {
+
+    console.error(
+      layersResponse.error
+    );
+
+    return;
+
+  }
+
+
+  if (
+    shapesResponse.error
+  ) {
+
+    console.error(
+      shapesResponse.error
+    );
+
+    return;
+
+  }
+
+
+  mapLayers =
+    layersResponse.data || [];
+
+
+  mapShapes =
+    shapesResponse.data || [];
+
+
+  renderLayers();
+
+
+  renderShapes();
+
+
+  updateShapeLayerSelect();
+
+
+  if (
+    editMode
+  ) {
+
+    status.textContent =
+      `${mapLayers.length} couche(s) • ${mapShapes.length} élément(s)`;
+
+  }
+
+}
+
+
+
+/* =========================================================
+   CLEAR GROUPS
+========================================================= */
+
+function clearGroups() {
+
+  for (
+    const group
+    of Object.values(
+      layerGroups
+    )
+  ) {
+
+    if (
+      map.hasLayer(
+        group
+      )
+    ) {
+
+      map.removeLayer(
+        group
+      );
+
     }
 
+  }
 
-    editMode =
+
+  layerGroups =
+    {};
+
+}
+
+
+
+/* =========================================================
+   RENDER LAYERS
+========================================================= */
+
+function renderLayers() {
+
+  clearGroups();
+
+
+  layersList.innerHTML =
+    "";
+
+
+  if (
+    mapLayers.length === 0
+  ) {
+
+    layersList.textContent =
+      "Aucune couche.";
+
+    return;
+
+  }
+
+
+  for (
+    const layer
+    of mapLayers
+  ) {
+
+    const group =
+      L.layerGroup();
+
+
+    layerGroups[
+      layer.id
+    ] =
+      group;
+
+
+    group.addTo(
+      map
+    );
+
+
+    const shapeCount =
+      mapShapes.filter(
+        shape =>
+          shape.layer_id ===
+          layer.id
+      ).length;
+
+
+    const label =
+      document.createElement(
+        "label"
+      );
+
+
+    label.className =
+      "layer-item";
+
+
+    const checkbox =
+      document.createElement(
+        "input"
+      );
+
+
+    checkbox.type =
+      "checkbox";
+
+
+    checkbox.checked =
       true;
 
 
-    editModeButton.textContent =
-      "Désactiver édition";
+    const color =
+      document.createElement(
+        "span"
+      );
 
 
-    editModeButton.classList.add(
-      "active"
+    color.className =
+      "layer-color";
+
+
+    color.style.background =
+      layer.color ||
+      "#8b5cf6";
+
+
+    const title =
+      document.createElement(
+        "span"
+      );
+
+
+    title.className =
+      "layer-title";
+
+
+    title.textContent =
+      layer.name;
+
+
+    const count =
+      document.createElement(
+        "span"
+      );
+
+
+    count.className =
+      "layer-count";
+
+
+    count.textContent =
+      shapeCount;
+
+
+    checkbox.addEventListener(
+      "change",
+      () => {
+
+        if (
+          checkbox.checked
+        ) {
+
+          group.addTo(
+            map
+          );
+
+        }
+        else {
+
+          map.removeLayer(
+            group
+          );
+
+        }
+
+      }
     );
+
+
+    label.append(
+      checkbox,
+      color,
+      title,
+      count
+    );
+
+
+    layersList.appendChild(
+      label
+    );
+
+  }
+
+}
+
+
+
+/* =========================================================
+   RENDER SHAPES
+========================================================= */
+
+function renderShapes() {
+
+  renderedShapeLayers =
+    [];
+
+
+  for (
+    const shape
+    of mapShapes
+  ) {
+
+    const parentLayer =
+      mapLayers.find(
+        layer =>
+          layer.id ===
+          shape.layer_id
+      );
+
+
+    if (
+      !parentLayer ||
+      !shape.geometry
+    ) {
+      continue;
+    }
+
+
+    const color =
+      shape.style?.color ||
+      parentLayer.color ||
+      "#8b5cf6";
+
+
+    const opacity =
+      shape.style?.opacity ??
+      parentLayer.opacity ??
+      .35;
+
+
+    const geo =
+      L.geoJSON(
+
+        {
+
+          type:
+            "Feature",
+
+          geometry:
+            shape.geometry
+
+        },
+
+        {
+
+          style: {
+
+            color,
+
+            fillColor:
+              color,
+
+            fillOpacity:
+              opacity,
+
+            weight:
+              shape.style?.weight ??
+              3
+
+          }
+
+        }
+
+      );
+
+
+    geo.eachLayer(
+      leafletLayer => {
+
+        leafletLayer.options.pmIgnore =
+          false;
+
+
+        const popup =
+          document.createElement(
+            "div"
+          );
+
+
+        const title =
+          document.createElement(
+            "h3"
+          );
+
+
+        title.className =
+          "popup-title";
+
+
+        title.textContent =
+          shape.name ||
+          "Zone";
+
+
+        popup.appendChild(
+          title
+        );
+
+
+        if (
+          shape.description
+        ) {
+
+          const description =
+            document.createElement(
+              "p"
+            );
+
+
+          description.className =
+            "popup-description";
+
+
+          description.textContent =
+            shape.description;
+
+
+          popup.appendChild(
+            description
+          );
+
+        }
+
+
+        leafletLayer.bindPopup(
+          popup
+        );
+
+
+        leafletLayer.on(
+          "click",
+          event => {
+
+            if (
+              !editMode
+            ) {
+              return;
+            }
+
+
+            L.DomEvent.stopPropagation(
+              event
+            );
+
+
+            selectExistingShape(
+              leafletLayer,
+              shape
+            );
+
+          }
+        );
+
+
+        const group =
+          layerGroups[
+            shape.layer_id
+          ];
+
+
+        if (
+          group
+        ) {
+
+          leafletLayer.addTo(
+            group
+          );
+
+        }
+
+
+        renderedShapeLayers.push(
+          leafletLayer
+        );
+
+      }
+    );
+
+  }
+
+}
+
+
+
+/* =========================================================
+   LAYER SELECT
+========================================================= */
+
+function updateShapeLayerSelect() {
+
+  shapeLayerInput.innerHTML =
+    "";
+
+
+  if (
+    mapLayers.length === 0
+  ) {
+
+    const option =
+      document.createElement(
+        "option"
+      );
+
+
+    option.value =
+      "";
+
+
+    option.textContent =
+      "Aucune couche";
+
+
+    shapeLayerInput.appendChild(
+      option
+    );
+
+
+    return;
+
+  }
+
+
+  for (
+    const layer
+    of mapLayers
+  ) {
+
+    const option =
+      document.createElement(
+        "option"
+      );
+
+
+    option.value =
+      layer.id;
+
+
+    option.textContent =
+      layer.name;
+
+
+    shapeLayerInput.appendChild(
+      option
+    );
+
+  }
+
+}
+
+
+
+/* =========================================================
+   CREATE SHAPE
+========================================================= */
+
+map.on(
+  "pm:create",
+  event => {
+
+    if (
+      !editMode
+    ) {
+
+      map.removeLayer(
+        event.layer
+      );
+
+      return;
+
+    }
+
+
+    stopDrawing();
+
+
+    selectedLeafletLayer =
+      event.layer;
+
+
+    temporaryLayer =
+      event.layer;
+
+
+    selectedShapeRecord =
+      null;
+
+
+    shapeNameInput.value =
+      "";
+
+
+    shapeDescriptionInput.value =
+      "";
+
+
+    shapePublishedInput.checked =
+      true;
+
+
+    if (
+      mapLayers.length > 0
+    ) {
+
+      shapeLayerInput.value =
+        mapLayers[0].id;
+
+
+      shapeColorInput.value =
+        mapLayers[0].color ||
+        "#8b5cf6";
+
+
+      shapeOpacityInput.value =
+        mapLayers[0].opacity ??
+        .35;
+
+    }
+
+
+    applyShapePreview();
 
 
     editorPanel.classList.add(
@@ -1395,1123 +3625,262 @@
     );
 
 
-    map.pm.addControls({
-
-      position:
-        "topleft",
-
-      drawMarker:
-        false,
-
-      drawCircleMarker:
-        false,
-
-      drawCircle:
-        false,
-
-      drawText:
-        false,
-
-      drawPolygon:
-        true,
-
-      drawRectangle:
-        true,
-
-      drawPolyline:
-        true,
-
-      editMode:
-        false,
-
-      dragMode:
-        false,
-
-      cutPolygon:
-        false,
-
-      removalMode:
-        false,
-
-      rotateMode:
-        false
-
-    });
-
-
     status.textContent =
-      "Mode édition actif. Le snapping est activé.";
-
-
-    loadDatabase();
-
-  }
-
-
-  function disableEditMode() {
-
-    editMode =
-      false;
-
-
-    editModeButton.textContent =
-      "Activer édition";
-
-
-    editModeButton.classList.remove(
-      "active"
-    );
-
-
-    editorPanel.classList.remove(
-      "visible"
-    );
-
-
-    map.pm.removeControls();
-
-
-    cancelSelection();
-
-
-    loadDatabase();
-
-  }
-
-
-  editModeButton.addEventListener(
-    "click",
-    () => {
-
-      if (editMode) {
-        disableEditMode();
-      }
-      else {
-        enableEditMode();
-      }
-
-    }
-  );
-
-
-
-  /* =========================================================
-     DATABASE
-  ========================================================= */
-
-  async function loadDatabase() {
-
-    let layersQuery =
-      db
-        .from("map_layers")
-        .select("*")
-        .order("sort_order")
-        .order("name");
-
-
-    let shapesQuery =
-      db
-        .from("map_shapes")
-        .select("*")
-        .order("created_at");
-
-
-    /*
-      Public mode:
-      only public data.
-
-      Admin edit mode:
-      all data allowed by the
-      additional admin policies.
-    */
-
-    if (
-      !admin ||
-      !editMode
-    ) {
-
-      layersQuery =
-        layersQuery.eq(
-          "visible",
-          true
-        );
-
-
-      shapesQuery =
-        shapesQuery.eq(
-          "published",
-          true
-        );
-
-    }
-
-
-    const [
-      layersResponse,
-      shapesResponse
-    ] =
-      await Promise.all([
-        layersQuery,
-        shapesQuery
-      ]);
-
-
-    if (layersResponse.error) {
-
-      console.error(
-        layersResponse.error
-      );
-
-      if (editMode) {
-
-        status.textContent =
-          "Erreur couches : " +
-          layersResponse.error.message;
-
-      }
-
-      return;
-
-    }
-
-
-    if (shapesResponse.error) {
-
-      console.error(
-        shapesResponse.error
-      );
-
-      if (editMode) {
-
-        status.textContent =
-          "Erreur zones : " +
-          shapesResponse.error.message;
-
-      }
-
-      return;
-
-    }
-
-
-    mapLayers =
-      layersResponse.data || [];
-
-
-    mapShapes =
-      shapesResponse.data || [];
-
-
-    renderLayers();
-
-
-    renderShapes();
-
-
-    updateShapeLayerSelect();
-
-
-    if (editMode) {
-
-      status.textContent =
-        "Éditeur prêt. " +
-        mapLayers.length +
-        " couche(s), " +
-        mapShapes.length +
-        " élément(s).";
-
-    }
-
-  }
-
-
-
-  /* =========================================================
-     LAYER LIST
-  ========================================================= */
-
-  function renderLayers() {
-
-    layersList.innerHTML =
-      "";
-
-
-    if (
-      mapLayers.length === 0
-    ) {
-
-      layersList.textContent =
-        "Aucune couche.";
-
-      return;
-
-    }
-
-
-    layerGroups =
-      {};
-
-
-    for (
-      const layer
-      of mapLayers
-    ) {
-
-      const group =
-        L.layerGroup();
-
-
-      layerGroups[
-        layer.id
-      ] =
-        group;
-
-
-      group.addTo(map);
-
-
-      const shapesCount =
-        mapShapes.filter(
-          shape =>
-            shape.layer_id ===
-            layer.id
-        ).length;
-
-
-      const label =
-        document.createElement(
-          "label"
-        );
-
-
-      label.className =
-        "layer-item";
-
-
-      const checkbox =
-        document.createElement(
-          "input"
-        );
-
-
-      checkbox.type =
-        "checkbox";
-
-
-      checkbox.checked =
-        true;
-
-
-      const color =
-        document.createElement(
-          "span"
-        );
-
-
-      color.className =
-        "layer-color";
-
-
-      color.style.background =
-        layer.color ||
-        "#8a3ffc";
-
-
-      const title =
-        document.createElement(
-          "span"
-        );
-
-
-      title.className =
-        "layer-title";
-
-
-      title.textContent =
-        layer.name;
-
-
-      const count =
-        document.createElement(
-          "span"
-        );
-
-
-      count.className =
-        "layer-count";
-
-
-      count.textContent =
-        shapesCount;
-
-
-      checkbox.addEventListener(
-        "change",
-        () => {
-
-          if (checkbox.checked) {
-
-            group.addTo(map);
-
-          }
-          else {
-
-            map.removeLayer(
-              group
-            );
-
-          }
-
-        }
-      );
-
-
-      label.append(
-        checkbox,
-        color,
-        title,
-        count
-      );
-
-
-      layersList.appendChild(
-        label
-      );
-
-    }
-
-  }
-
-
-
-  /* =========================================================
-     SHAPES
-  ========================================================= */
-
-  function clearRenderedShapes() {
-
-    for (
-      const layer
-      of renderedShapeLayers
-    ) {
-
-      if (
-        map.hasLayer(layer)
-      ) {
-
-        map.removeLayer(layer);
-
-      }
-
-    }
-
-
-    renderedShapeLayers =
-      [];
-
-  }
-
-
-  function renderShapes() {
-
-    clearRenderedShapes();
-
-
-    for (
-      const shape
-      of mapShapes
-    ) {
-
-      const parentLayer =
-        mapLayers.find(
-          layer =>
-            layer.id ===
-            shape.layer_id
-        );
-
-
-      if (
-        !parentLayer ||
-        !shape.geometry
-      ) {
-        continue;
-      }
-
-
-      const color =
-        shape.style?.color ||
-        parentLayer.color ||
-        "#8a3ffc";
-
-
-      const opacity =
-        shape.style?.opacity ??
-        parentLayer.opacity ??
-        .35;
-
-
-      const weight =
-        shape.style?.weight ??
-        3;
-
-
-      const geo =
-        L.geoJSON(
-          {
-
-            type:
-              "Feature",
-
-            geometry:
-              shape.geometry,
-
-            properties:
-              {}
-
-          },
-          {
-
-            style: {
-
-              color,
-              fillColor:
-                color,
-
-              fillOpacity:
-                opacity,
-
-              weight
-
-            }
-
-          }
-        );
-
-
-      geo.eachLayer(
-        leafletLayer => {
-
-          leafletLayer.options.pmIgnore =
-            false;
-
-
-          const popup =
-            document.createElement(
-              "div"
-            );
-
-
-          const title =
-            document.createElement(
-              "h3"
-            );
-
-
-          title.className =
-            "popup-title";
-
-
-          title.textContent =
-            shape.name ||
-            "Zone";
-
-
-          popup.appendChild(title);
-
-
-          if (
-            shape.description
-          ) {
-
-            const description =
-              document.createElement(
-                "p"
-              );
-
-
-            description.className =
-              "popup-description";
-
-
-            description.textContent =
-              shape.description;
-
-
-            popup.appendChild(
-              description
-            );
-
-          }
-
-
-          leafletLayer.bindPopup(
-            popup
-          );
-
-
-          leafletLayer.on(
-            "click",
-            event => {
-
-              if (
-                !editMode
-              ) {
-                return;
-              }
-
-
-              L.DomEvent.stopPropagation(
-                event
-              );
-
-
-              selectExistingShape(
-                leafletLayer,
-                shape
-              );
-
-            }
-          );
-
-
-          const group =
-            layerGroups[
-              shape.layer_id
-            ];
-
-
-          if (group) {
-
-            leafletLayer.addTo(
-              group
-            );
-
-          }
-
-
-          renderedShapeLayers.push(
-            leafletLayer
-          );
-
-        }
-      );
-
-    }
-
-  }
-
-
-
-  /* =========================================================
-     LAYER SELECT
-  ========================================================= */
-
-  function updateShapeLayerSelect() {
-
-    shapeLayerInput.innerHTML =
-      "";
-
-
-    if (
-      mapLayers.length === 0
-    ) {
-
-      const option =
-        document.createElement(
-          "option"
-        );
-
-
-      option.value =
-        "";
-
-
-      option.textContent =
-        "Aucune couche";
-
-
-      shapeLayerInput.appendChild(
-        option
-      );
-
-
-      return;
-
-    }
-
-
-    for (
-      const layer
-      of mapLayers
-    ) {
-
-      const option =
-        document.createElement(
-          "option"
-        );
-
-
-      option.value =
-        layer.id;
-
-
-      option.textContent =
-        layer.name;
-
-
-      shapeLayerInput.appendChild(
-        option
-      );
-
-    }
-
-  }
-
-
-
-  /* =========================================================
-     NEW SHAPE
-  ========================================================= */
-
-  map.on(
-    "pm:create",
-    event => {
-
-      if (!editMode) {
-
-        map.removeLayer(
-          event.layer
-        );
-
-        return;
-
-      }
-
-
-      selectedLeafletLayer =
-        event.layer;
-
-
-      temporaryLayer =
-        event.layer;
-
-
-      selectedShapeRecord =
-        null;
-
-
-      selectedLeafletLayer.options.pmIgnore =
-        false;
-
-
-      shapeNameInput.value =
-        "";
-
-
-      shapeDescriptionInput.value =
-        "";
-
-
-      shapePublishedInput.checked =
-        true;
-
-
-      if (
-        mapLayers.length > 0
-      ) {
-
-        shapeLayerInput.value =
-          mapLayers[0].id;
-
-
-        shapeColorInput.value =
-          mapLayers[0].color ||
-          "#8a3ffc";
-
-
-        shapeOpacityInput.value =
-          mapLayers[0].opacity ??
-          .35;
-
-      }
-
-
-      applyShapePreview();
-
-
-      status.textContent =
-        "Nouvel élément. Les sommets sont aimantés aux éléments existants.";
-
-
-      updateButtons();
-
-    }
-  );
-
-
-
-  /* =========================================================
-     SELECT EXISTING SHAPE
-  ========================================================= */
-
-  function selectExistingShape(
-    leafletLayer,
-    shape
-  ) {
-
-    if (
-      selectedLeafletLayer &&
-      selectedLeafletLayer.pm
-    ) {
-
-      selectedLeafletLayer.pm.disable();
-
-    }
-
-
-    selectedLeafletLayer =
-      leafletLayer;
-
-
-    selectedShapeRecord =
-      shape;
-
-
-    temporaryLayer =
-      null;
-
-
-    shapeLayerInput.value =
-      shape.layer_id;
-
-
-    shapeNameInput.value =
-      shape.name || "";
-
-
-    shapeDescriptionInput.value =
-      shape.description || "";
-
-
-    shapeColorInput.value =
-      shape.style?.color ||
-      "#8a3ffc";
-
-
-    shapeOpacityInput.value =
-      shape.style?.opacity ??
-      .35;
-
-
-    shapePublishedInput.checked =
-      shape.published === true;
-
-
-    status.textContent =
-      "Sélection : " +
-      (
-        shape.name ||
-        "Sans nom"
-      );
+      "Nouvel élément. Choisis son nom puis enregistre.";
 
 
     updateButtons();
 
   }
+);
 
 
 
-  /* =========================================================
-     PREVIEW STYLE
-  ========================================================= */
+/* =========================================================
+   SELECT SHAPE
+========================================================= */
 
-  function applyShapePreview() {
+function selectExistingShape(
+  leafletLayer,
+  shape
+) {
+
+  if (
+    selectedLeafletLayer?.pm
+  ) {
+
+    selectedLeafletLayer.pm.disable();
+
+  }
+
+
+  selectedLeafletLayer =
+    leafletLayer;
+
+
+  selectedShapeRecord =
+    shape;
+
+
+  temporaryLayer =
+    null;
+
+
+  shapeLayerInput.value =
+    shape.layer_id;
+
+
+  shapeNameInput.value =
+    shape.name || "";
+
+
+  shapeDescriptionInput.value =
+    shape.description || "";
+
+
+  shapeColorInput.value =
+    shape.style?.color ||
+    "#8b5cf6";
+
+
+  shapeOpacityInput.value =
+    shape.style?.opacity ??
+    .35;
+
+
+  shapePublishedInput.checked =
+    shape.published === true;
+
+
+  editorPanel.classList.add(
+    "visible"
+  );
+
+
+  status.textContent =
+    `Sélection : ${shape.name || "Sans nom"}`;
+
+
+  updateButtons();
+
+}
+
+
+
+/* =========================================================
+   STYLE PREVIEW
+========================================================= */
+
+function applyShapePreview() {
+
+  if (
+    !selectedLeafletLayer ||
+    typeof
+    selectedLeafletLayer.setStyle
+    !== "function"
+  ) {
+    return;
+  }
+
+
+  selectedLeafletLayer.setStyle({
+
+    color:
+      shapeColorInput.value,
+
+    fillColor:
+      shapeColorInput.value,
+
+    fillOpacity:
+      Number(
+        shapeOpacityInput.value
+      ),
+
+    weight:
+      3
+
+  });
+
+}
+
+
+shapeColorInput.addEventListener(
+  "input",
+  applyShapePreview
+);
+
+
+shapeOpacityInput.addEventListener(
+  "input",
+  applyShapePreview
+);
+
+
+
+/* =========================================================
+   SAVE
+========================================================= */
+
+saveShapeButton.addEventListener(
+  "click",
+  async () => {
 
     if (
-      !selectedLeafletLayer ||
-      typeof selectedLeafletLayer.setStyle
-      !== "function"
+      !selectedLeafletLayer
     ) {
       return;
     }
 
 
-    selectedLeafletLayer.setStyle({
-
-      color:
-        shapeColorInput.value,
-
-      fillColor:
-        shapeColorInput.value,
-
-      fillOpacity:
-        Number(
-          shapeOpacityInput.value
-        ),
-
-      weight:
-        3
-
-    });
-
-  }
-
-
-  shapeColorInput.addEventListener(
-    "input",
-    applyShapePreview
-  );
-
-
-  shapeOpacityInput.addEventListener(
-    "input",
-    applyShapePreview
-  );
-
-
-
-  /* =========================================================
-     SAVE SHAPE
-  ========================================================= */
-
-  saveShapeButton.addEventListener(
-    "click",
-    async () => {
-
-      if (
-        !selectedLeafletLayer
-      ) {
-        return;
-      }
-
-
-      if (
-        !shapeLayerInput.value
-      ) {
-
-        status.textContent =
-          "Crée d'abord une couche.";
-
-        return;
-
-      }
-
-
-      if (
-        selectedLeafletLayer.pm
-      ) {
-
-        selectedLeafletLayer.pm.disable();
-
-      }
-
-
-      const payload = {
-
-        layer_id:
-          shapeLayerInput.value,
-
-        name:
-          shapeNameInput
-            .value
-            .trim() ||
-          "Sans nom",
-
-        description:
-          shapeDescriptionInput
-            .value
-            .trim(),
-
-        geometry:
-          selectedLeafletLayer
-            .toGeoJSON()
-            .geometry,
-
-        style: {
-
-          color:
-            shapeColorInput.value,
-
-          opacity:
-            Number(
-              shapeOpacityInput.value
-            ),
-
-          weight:
-            3
-
-        },
-
-        published:
-          shapePublishedInput.checked
-
-      };
-
+    if (
+      !shapeLayerInput.value
+    ) {
 
       status.textContent =
-        "Enregistrement...";
+        "Crée d'abord une couche.";
 
-
-      let response;
-
-
-      if (
-        selectedShapeRecord
-      ) {
-
-        response =
-          await db
-            .from("map_shapes")
-            .update(payload)
-            .eq(
-              "id",
-              selectedShapeRecord.id
-            );
-
-      }
-      else {
-
-        response =
-          await db
-            .from("map_shapes")
-            .insert(payload);
-
-      }
-
-
-      if (
-        response.error
-      ) {
-
-        console.error(
-          response.error
-        );
-
-
-        status.textContent =
-          "Erreur : " +
-          response.error.message;
-
-        return;
-
-      }
-
-
-      if (
-        temporaryLayer &&
-        map.hasLayer(
-          temporaryLayer
-        )
-      ) {
-
-        map.removeLayer(
-          temporaryLayer
-        );
-
-      }
-
-
-      selectedLeafletLayer =
-        null;
-
-      selectedShapeRecord =
-        null;
-
-      temporaryLayer =
-        null;
-
-
-      await loadDatabase();
-
-
-      updateButtons();
-
-
-      status.textContent =
-        "Élément enregistré.";
+      return;
 
     }
-  );
 
 
-
-  /* =========================================================
-     EDIT SHAPE
-  ========================================================= */
-
-  editShapeButton.addEventListener(
-    "click",
-    () => {
-
-      if (
-        !selectedLeafletLayer ||
-        !selectedLeafletLayer.pm
-      ) {
-        return;
-      }
+    selectedLeafletLayer.pm?.disable();
 
 
-      selectedLeafletLayer.pm.enable({
+    const payload = {
 
-        snappable:
-          true,
+      layer_id:
+        shapeLayerInput.value,
 
-        snapDistance:
-          25,
+      name:
+        shapeNameInput
+          .value
+          .trim() ||
+        "Sans nom",
 
-        snapVertex:
-          true,
+      description:
+        shapeDescriptionInput
+          .value
+          .trim(),
 
-        snapSegment:
-          true,
+      geometry:
+        selectedLeafletLayer
+          .toGeoJSON()
+          .geometry,
 
-        allowSelfIntersection:
-          false
+      style: {
 
-      });
+        color:
+          shapeColorInput.value,
+
+        opacity:
+          Number(
+            shapeOpacityInput.value
+          ),
+
+        weight:
+          3
+
+      },
+
+      published:
+        shapePublishedInput.checked
+
+    };
 
 
-      status.textContent =
-        "Déplace les points. Approche un point d'un autre pour l'y accrocher.";
+    status.textContent =
+      "Enregistrement...";
 
 
-      updateButtons();
+    let response;
+
+
+    if (
+      selectedShapeRecord
+    ) {
+
+      response =
+        await db
+          .from(
+            "map_shapes"
+          )
+          .update(
+            payload
+          )
+          .eq(
+            "id",
+            selectedShapeRecord.id
+          );
 
     }
-  );
+    else {
 
-
-  finishEditButton.addEventListener(
-    "click",
-    () => {
-
-      if (
-        !selectedLeafletLayer ||
-        !selectedLeafletLayer.pm
-      ) {
-        return;
-      }
-
-
-      selectedLeafletLayer.pm.disable();
-
-
-      status.textContent =
-        "Modification terminée. Clique sur Enregistrer.";
-
-
-      updateButtons();
+      response =
+        await db
+          .from(
+            "map_shapes"
+          )
+          .insert(
+            payload
+          );
 
     }
-  );
 
 
+    if (
+      response.error
+    ) {
 
-  /* =========================================================
-     CANCEL
-  ========================================================= */
+      status.textContent =
+        "Erreur : " +
+        response.error.message;
 
-  function cancelSelection() {
+
+      return;
+
+    }
+
 
     if (
       temporaryLayer &&
@@ -2527,75 +3896,257 @@
     }
 
 
-    if (
-      selectedLeafletLayer &&
-      selectedLeafletLayer.pm
-    ) {
-
-      selectedLeafletLayer.pm.disable();
-
-    }
-
-
     selectedLeafletLayer =
       null;
 
+
     selectedShapeRecord =
       null;
+
 
     temporaryLayer =
       null;
 
 
-    shapeNameInput.value =
-      "";
+    await loadDatabase();
 
 
-    shapeDescriptionInput.value =
-      "";
+    updateButtons();
+
+
+    status.textContent =
+      "✓ Élément enregistré.";
+
+  }
+);
+
+
+
+/* =========================================================
+   EDIT VERTICES
+========================================================= */
+
+editShapeButton.addEventListener(
+  "click",
+  () => {
+
+    if (
+      !selectedLeafletLayer?.pm
+    ) {
+      return;
+    }
+
+
+    selectedLeafletLayer.pm.enable({
+
+      snappable:
+        true,
+
+      snapDistance:
+        30,
+
+      snapVertex:
+        true,
+
+      snapSegment:
+        true,
+
+      allowSelfIntersection:
+        false
+
+    });
+
+
+    status.textContent =
+      "Déplace les sommets. Ils s'accrochent aux points et bords voisins.";
 
 
     updateButtons();
 
   }
+);
 
 
-  cancelSelectionButton.addEventListener(
-    "click",
-    () => {
+finishEditButton.addEventListener(
+  "click",
+  () => {
 
-      cancelSelection();
+    selectedLeafletLayer?.pm
+      ?.disable();
 
+
+    status.textContent =
+      "Modification terminée. Clique sur Enregistrer.";
+
+
+    updateButtons();
+
+  }
+);
+
+
+
+/* =========================================================
+   CANCEL
+========================================================= */
+
+function cancelSelection() {
+
+  if (
+    temporaryLayer &&
+    map.hasLayer(
+      temporaryLayer
+    )
+  ) {
+
+    map.removeLayer(
+      temporaryLayer
+    );
+
+  }
+
+
+  selectedLeafletLayer
+    ?.pm
+    ?.disable();
+
+
+  selectedLeafletLayer =
+    null;
+
+
+  selectedShapeRecord =
+    null;
+
+
+  temporaryLayer =
+    null;
+
+
+  shapeNameInput.value =
+    "";
+
+
+  shapeDescriptionInput.value =
+    "";
+
+
+  updateButtons();
+
+}
+
+
+cancelSelectionButton.addEventListener(
+  "click",
+  () => {
+
+    cancelSelection();
+
+
+    status.textContent =
+      "Sélection annulée.";
+
+  }
+);
+
+
+
+/* =========================================================
+   DELETE
+========================================================= */
+
+deleteShapeButton.addEventListener(
+  "click",
+  async () => {
+
+    if (
+      !selectedShapeRecord
+    ) {
+      return;
+    }
+
+
+    if (
+      !confirm(
+        "Supprimer cet élément ?"
+      )
+    ) {
+      return;
+    }
+
+
+    const {
+      error
+    } =
+      await db
+        .from(
+          "map_shapes"
+        )
+        .delete()
+        .eq(
+          "id",
+          selectedShapeRecord.id
+        );
+
+
+    if (
+      error
+    ) {
 
       status.textContent =
-        "Sélection annulée.";
+        "Erreur : " +
+        error.message;
+
+
+      return;
 
     }
-  );
+
+
+    cancelSelection();
+
+
+    await loadDatabase();
+
+
+    status.textContent =
+      "Élément supprimé.";
+
+  }
+);
 
 
 
-  /* =========================================================
-     DELETE
-  ========================================================= */
+/* =========================================================
+   CREATE LAYER
+========================================================= */
 
-  deleteShapeButton.addEventListener(
+document
+  .getElementById(
+    "create-layer"
+  )
+  .addEventListener(
     "click",
     async () => {
 
-      if (
-        !selectedShapeRecord
-      ) {
-        return;
-      }
+      const name =
+        document
+          .getElementById(
+            "new-layer-name"
+          )
+          .value
+          .trim();
 
 
       if (
-        !confirm(
-          "Supprimer cet élément ?"
-        )
+        !name
       ) {
+
+        status.textContent =
+          "Entre un nom de couche.";
+
         return;
+
       }
 
 
@@ -2603,195 +4154,129 @@
         error
       } =
         await db
-          .from("map_shapes")
-          .delete()
-          .eq(
-            "id",
-            selectedShapeRecord.id
-          );
+          .from(
+            "map_layers"
+          )
+          .insert({
+
+            name,
+
+            kind:
+              document
+                .getElementById(
+                  "new-layer-kind"
+                )
+                .value,
+
+            color:
+              document
+                .getElementById(
+                  "new-layer-color"
+                )
+                .value,
+
+            opacity:
+              Number(
+                document
+                  .getElementById(
+                    "new-layer-opacity"
+                  )
+                  .value
+              ),
+
+            visible:
+              true
+
+          });
 
 
-      if (error) {
+      if (
+        error
+      ) {
 
         status.textContent =
           "Erreur : " +
           error.message;
+
 
         return;
 
       }
 
 
-      cancelSelection();
+      document
+        .getElementById(
+          "new-layer-name"
+        )
+        .value =
+          "";
 
 
       await loadDatabase();
 
 
       status.textContent =
-        "Élément supprimé.";
+        "✓ Couche créée.";
 
     }
   );
 
 
 
-  /* =========================================================
-     CREATE LAYER
-  ========================================================= */
+/* =========================================================
+   BUTTON STATES
+========================================================= */
 
-  document
-    .getElementById(
-      "create-layer"
-    )
-    .addEventListener(
-      "click",
-      async () => {
+function updateButtons() {
 
-        const name =
-          document
-            .getElementById(
-              "new-layer-name"
-            )
-            .value
-            .trim();
+  saveShapeButton.disabled =
+    !selectedLeafletLayer;
 
 
-        if (!name) {
-
-          status.textContent =
-            "Entre un nom de couche.";
-
-          return;
-
-        }
+  editShapeButton.disabled =
+    !selectedShapeRecord;
 
 
-        const {
-          error
-        } =
-          await db
-            .from("map_layers")
-            .insert({
-
-              name,
-
-              kind:
-                document
-                  .getElementById(
-                    "new-layer-kind"
-                  )
-                  .value,
-
-              color:
-                document
-                  .getElementById(
-                    "new-layer-color"
-                  )
-                  .value,
-
-              opacity:
-                Number(
-                  document
-                    .getElementById(
-                      "new-layer-opacity"
-                    )
-                    .value
-                ),
-
-              visible:
-                true
-
-            });
-
-
-        if (error) {
-
-          console.error(error);
-
-
-          status.textContent =
-            "Erreur couche : " +
-            error.message;
-
-          return;
-
-        }
-
-
-        document
-          .getElementById(
-            "new-layer-name"
-          )
-          .value =
-            "";
-
-
-        await loadDatabase();
-
-
-        status.textContent =
-          "Couche créée.";
-
-      }
+  finishEditButton.disabled =
+    !(
+      selectedLeafletLayer &&
+      selectedLeafletLayer.pm &&
+      selectedLeafletLayer.pm.enabled()
     );
 
 
-
-  /* =========================================================
-     BUTTONS
-  ========================================================= */
-
-  function updateButtons() {
-
-    saveShapeButton.disabled =
-      !selectedLeafletLayer;
+  cancelSelectionButton.disabled =
+    !selectedLeafletLayer;
 
 
-    editShapeButton.disabled =
-      !selectedShapeRecord;
+  deleteShapeButton.disabled =
+    !selectedShapeRecord;
 
-
-    deleteShapeButton.disabled =
-      !selectedShapeRecord;
-
-
-    cancelSelectionButton.disabled =
-      !selectedLeafletLayer;
-
-
-    finishEditButton.disabled =
-      !(
-        selectedLeafletLayer &&
-        selectedLeafletLayer.pm &&
-        selectedLeafletLayer.pm.enabled()
-      );
-
-  }
+}
 
 
 
-  /* =========================================================
-     START
-  ========================================================= */
+/* =========================================================
+   START
+========================================================= */
 
-  await refreshAuth();
-
-
-  await loadDatabase();
+await refreshAuth();
 
 
-  updateButtons();
+await loadDatabase();
 
 
-  setTimeout(
-    () => {
+updateButtons();
 
-      map.invalidateSize();
 
-    },
-    300
-  );
+setTimeout(
+  () => {
+
+    map.invalidateSize();
+
+  },
+  300
+);
 
 
 })();
@@ -2800,4 +4285,5 @@
 
 
 </body>
+
 </html>
