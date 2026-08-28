@@ -13,23 +13,32 @@
 <title>GTA MAP</title>
 
 
-<!-- Leaflet -->
+<!-- ======================================================
+     LEAFLET
+====================================================== -->
+
 <link
   rel="stylesheet"
   href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
 >
 
-<!-- Leaflet Geoman -->
 <link
   rel="stylesheet"
   href="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css"
 >
 
 
+<!-- ======================================================
+     LUCIDE ICONS
+====================================================== -->
+
+<script src="https://unpkg.com/lucide@latest"></script>
+
+
 <style>
 
 /* =========================================================
-   RESET
+   ROOT
 ========================================================= */
 
 * {
@@ -39,49 +48,67 @@
 :root {
 
   --bg:
-    #090d12;
+    #050807;
+
+  --black:
+    #080b0a;
 
   --panel:
-    rgba(17, 22, 29, .96);
+    rgba(8, 13, 11, .94);
+
+  --panel-2:
+    rgba(11, 18, 15, .95);
 
   --panel-soft:
-    rgba(22, 28, 36, .92);
+    rgba(18, 29, 24, .72);
 
   --border:
-    rgba(255,255,255,.10);
+    rgba(140, 177, 155, .13);
 
   --border-strong:
-    rgba(255,255,255,.18);
-
-  --text:
-    #f4f7fb;
-
-  --muted:
-    #8f9baa;
-
-  --purple:
-    #8b5cf6;
-
-  --purple-hover:
-    #9f7aea;
+    rgba(140, 177, 155, .25);
 
   --green:
-    #238636;
+    #86ad96;
 
-  --green-hover:
-    #2ea043;
+  --green-light:
+    #a7c4b2;
+
+  --green-dark:
+    #173025;
+
+  --green-deep:
+    #0d1d16;
+
+  --gold:
+    #c6a443;
+
+  --gold-light:
+    #e3c868;
 
   --red:
-    #da3633;
+    #c95a5a;
 
-  --red-hover:
-    #f85149;
+  --text:
+    #edf2ef;
 
-  --yellow:
-    #f0c74b;
+  --muted:
+    #87928c;
 
-  --shadow:
-    0 14px 45px rgba(0,0,0,.45);
+  --muted-2:
+    #626e68;
+
+  --top-height:
+    72px;
+
+  --left-panel:
+    366px;
+
+  --right-panel:
+    320px;
+
+  --panel-gap:
+    18px;
 
 }
 
@@ -113,20 +140,61 @@ body {
 }
 
 
+
+/* =========================================================
+   BACKGROUND TEXTURE
+========================================================= */
+
+body::before {
+
+  content: "";
+
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 0;
+
+  pointer-events: none;
+
+  background:
+
+    radial-gradient(
+      circle at 65% 10%,
+      rgba(41, 92, 69, .15),
+      transparent 35%
+    ),
+
+    radial-gradient(
+      circle at 15% 85%,
+      rgba(26, 75, 53, .12),
+      transparent 35%
+    ),
+
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,.012) 25%,
+      transparent 25%
+    );
+
+}
+
+
+
 /* =========================================================
    MAP
 ========================================================= */
 
 #map {
 
-  position: absolute;
+  position: fixed;
 
   inset: 0;
 
-  background:
-    #0a0d11;
-
   z-index: 1;
+
+  background:
+    #070a09;
 
 }
 
@@ -134,97 +202,69 @@ body {
 .leaflet-container {
 
   background:
-    #0a0d11;
+    #070a09;
 
 }
 
 
-/* Zoom Leaflet */
+/* Smooth Leaflet */
 
-.leaflet-control-zoom {
+.leaflet-pane,
+.leaflet-control {
 
-  border:
-    1px solid var(--border) !important;
-
-  border-radius:
-    12px !important;
-
-  overflow:
-    hidden;
-
-  box-shadow:
-    var(--shadow) !important;
-
-}
-
-
-.leaflet-control-zoom a {
-
-  background:
-    rgba(17,22,29,.96) !important;
-
-  color:
-    white !important;
-
-  border:
-    0 !important;
-
-}
-
-
-.leaflet-control-zoom a:hover {
-
-  background:
-    #252d38 !important;
+  transition:
+    opacity .15s ease;
 
 }
 
 
 
 /* =========================================================
-   TOP BAR
+   TOP NAVIGATION
 ========================================================= */
 
 #topbar {
 
   position: fixed;
 
-  top: 14px;
-  left: 14px;
-  right: 14px;
+  top: 0;
+  left: 0;
+  right: 0;
 
-  z-index: 5000;
+  z-index: 9000;
 
-  min-height: 58px;
+  height:
+    var(--top-height);
 
-  display: flex;
+  display: grid;
+
+  grid-template-columns:
+    290px 1fr auto;
 
   align-items: center;
 
-  justify-content: space-between;
-
-  gap: 14px;
-
   padding:
-    9px 10px 9px 18px;
+    0 22px;
 
-  border:
+  border-bottom:
     1px solid var(--border);
 
-  border-radius:
-    16px;
-
   background:
-    rgba(12, 16, 22, .92);
+    rgba(3, 6, 5, .96);
 
   backdrop-filter:
     blur(18px);
 
   box-shadow:
-    0 10px 40px rgba(0,0,0,.35);
+    0 10px 40px rgba(0,0,0,.3);
 
 }
 
+
+
+/* =========================================================
+   BRAND
+========================================================= */
 
 .brand {
 
@@ -232,71 +272,65 @@ body {
 
   align-items: center;
 
-  gap: 12px;
-
-  min-width: 0;
+  gap: 13px;
 
 }
 
 
-.brand-logo {
+.brand-emblem {
 
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
 
   display: grid;
 
   place-items: center;
 
-  flex:
-    0 0 auto;
+  border:
+    1px solid rgba(198,164,67,.35);
 
   border-radius:
-    10px;
+    50%;
+
+  color:
+    var(--gold);
 
   background:
-    linear-gradient(
-      135deg,
-      #8b5cf6,
-      #5b21b6
+    radial-gradient(
+      circle,
+      rgba(198,164,67,.12),
+      rgba(198,164,67,.02)
     );
 
   box-shadow:
-    0 6px 22px rgba(139,92,246,.35);
-
-  font-size:
-    18px;
-
-  font-weight:
-    900;
+    inset 0 0 18px rgba(198,164,67,.08);
 
 }
 
 
-.brand-text {
+.brand-emblem svg {
 
-  min-width: 0;
+  width: 19px;
+  height: 19px;
 
 }
 
 
-.brand-title {
-
-  margin: 0;
+.brand-name {
 
   font-size:
-    17px;
+    13px;
 
   font-weight:
     800;
 
   letter-spacing:
-    .3px;
+    3px;
 
 }
 
 
-.brand-subtitle {
+.brand-sub {
 
   margin-top:
     2px;
@@ -305,24 +339,122 @@ body {
     var(--muted);
 
   font-size:
-    11px;
+    9px;
+
+  letter-spacing:
+    1px;
 
 }
 
 
-#top-actions {
+
+/* =========================================================
+   NAVIGATION LINKS
+========================================================= */
+
+.main-nav {
+
+  height:
+    100%;
 
   display: flex;
 
   align-items: center;
 
-  gap: 7px;
+  justify-content: center;
 
-  flex-wrap:
-    wrap;
+  gap:
+    28px;
 
-  justify-content:
-    flex-end;
+}
+
+
+.nav-item {
+
+  position: relative;
+
+  height:
+    100%;
+
+  display: flex;
+
+  align-items: center;
+
+  color:
+    #89908d;
+
+  font-size:
+    10px;
+
+  font-weight:
+    800;
+
+  letter-spacing:
+    2px;
+
+  cursor:
+    pointer;
+
+  user-select:
+    none;
+
+  transition:
+    color .15s ease;
+
+}
+
+
+.nav-item:hover {
+
+  color:
+    var(--text);
+
+}
+
+
+.nav-item.active {
+
+  color:
+    var(--green-light);
+
+}
+
+
+.nav-item.active::after {
+
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  height: 2px;
+
+  background:
+    var(--green);
+
+  box-shadow:
+    0 0 12px rgba(134,173,150,.6);
+
+}
+
+
+
+/* =========================================================
+   USER AREA
+========================================================= */
+
+.account-area {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: flex-end;
+
+  gap: 8px;
 
 }
 
@@ -330,7 +462,7 @@ body {
 #admin-email {
 
   max-width:
-    220px;
+    170px;
 
   overflow:
     hidden;
@@ -341,14 +473,11 @@ body {
   white-space:
     nowrap;
 
-  margin-right:
-    5px;
-
   color:
     var(--muted);
 
   font-size:
-    12px;
+    10px;
 
 }
 
@@ -360,70 +489,77 @@ body {
 
 button {
 
-  appearance:
-    none;
-
-  border:
-    1px solid var(--border);
-
-  outline:
-    0;
+  appearance: none;
 
   min-height:
     38px;
 
+  border:
+    1px solid var(--border);
+
+  border-radius:
+    9px;
+
   display:
     inline-flex;
 
-  align-items:
-    center;
+  align-items: center;
 
-  justify-content:
-    center;
+  justify-content: center;
 
-  gap:
-    7px;
+  gap: 7px;
 
   padding:
     8px 12px;
 
-  border-radius:
-    10px;
-
   background:
-    #1b222c;
+    rgba(20, 28, 24, .9);
 
   color:
-    white;
+    #dce5e0;
 
   font-family:
     inherit;
 
   font-size:
-    12px;
+    10px;
 
   font-weight:
-    700;
+    750;
+
+  letter-spacing:
+    .3px;
 
   cursor:
     pointer;
 
   transition:
-    transform .12s ease,
-    background .12s ease,
-    border-color .12s ease,
-    box-shadow .12s ease;
+    background .15s ease,
+    border-color .15s ease,
+    transform .1s ease,
+    color .15s ease;
+
+}
+
+
+button svg {
+
+  width: 15px;
+  height: 15px;
 
 }
 
 
 button:hover {
 
-  background:
-    #252e3a;
-
   border-color:
     var(--border-strong);
+
+  background:
+    rgba(33, 46, 39, .96);
+
+  color:
+    white;
 
 }
 
@@ -431,7 +567,7 @@ button:hover {
 button:active {
 
   transform:
-    scale(.97);
+    scale(.975);
 
 }
 
@@ -439,13 +575,13 @@ button:active {
 button.primary {
 
   background:
-    var(--purple);
+    rgba(43, 77, 59, .9);
 
   border-color:
-    transparent;
+    rgba(134,173,150,.3);
 
-  box-shadow:
-    0 5px 18px rgba(139,92,246,.25);
+  color:
+    #c9ded1;
 
 }
 
@@ -453,48 +589,51 @@ button.primary {
 button.primary:hover {
 
   background:
-    var(--purple-hover);
+    rgba(57, 99, 76, .95);
 
 }
 
 
-button.green {
+button.gold {
 
   background:
-    var(--green);
+    rgba(117, 92, 26, .19);
 
   border-color:
-    transparent;
-
-}
-
-
-button.green:hover {
-
-  background:
-    var(--green-hover);
-
-}
-
-
-button.red {
-
-  background:
-    rgba(218,54,51,.18);
+    rgba(198,164,67,.38);
 
   color:
-    #ff8582;
-
-  border-color:
-    rgba(218,54,51,.35);
+    var(--gold-light);
 
 }
 
 
-button.red:hover {
+button.gold:hover {
 
   background:
-    var(--red);
+    rgba(117,92,26,.35);
+
+}
+
+
+button.danger {
+
+  background:
+    rgba(112, 34, 34, .12);
+
+  border-color:
+    rgba(201,90,90,.25);
+
+  color:
+    #e88484;
+
+}
+
+
+button.danger:hover {
+
+  background:
+    rgba(151, 42, 42, .45);
 
   color:
     white;
@@ -502,21 +641,19 @@ button.red:hover {
 }
 
 
-button.ghost {
-
-  background:
-    transparent;
-
-}
-
-
 button.active {
 
-  background:
-    var(--purple);
-
   border-color:
-    transparent;
+    rgba(134,173,150,.55);
+
+  background:
+    rgba(43,77,59,.95);
+
+  color:
+    white;
+
+  box-shadow:
+    0 0 18px rgba(94,145,113,.18);
 
 }
 
@@ -524,7 +661,7 @@ button.active {
 button:disabled {
 
   opacity:
-    .35;
+    .32;
 
   cursor:
     not-allowed;
@@ -537,80 +674,53 @@ button:disabled {
 
 
 /* =========================================================
-   LAYER PANEL
+   PANEL COMMON
 ========================================================= */
 
-#layers-panel {
+.panel {
 
   position: fixed;
 
-  top: 88px;
+  z-index:
+    6000;
 
-  right: 14px;
-
-  z-index: 3000;
-
-  width:
-    290px;
-
-  max-height:
-    calc(100vh - 105px);
-
-  overflow:
-    hidden;
+  overflow: hidden;
 
   border:
     1px solid var(--border);
 
   border-radius:
-    16px;
+    13px;
 
   background:
-    var(--panel);
+    linear-gradient(
+      145deg,
+      rgba(7,12,10,.97),
+      rgba(10,18,14,.94)
+    );
 
   backdrop-filter:
     blur(18px);
 
   box-shadow:
-    var(--shadow);
-
-  transition:
-    transform .2s ease,
-    opacity .2s ease;
-
-}
-
-
-#layers-panel.hidden {
-
-  transform:
-    translateX(calc(100% + 30px));
-
-  opacity:
-    0;
-
-  pointer-events:
-    none;
+    0 22px 65px rgba(0,0,0,.46);
 
 }
 
 
 .panel-header {
 
-  height:
-    54px;
+  min-height:
+    56px;
 
-  display:
-    flex;
+  display: flex;
 
-  align-items:
-    center;
+  align-items: center;
 
-  justify-content:
-    space-between;
+  justify-content: space-between;
 
   padding:
-    0 13px 0 16px;
+    0 16px;
 
   border-bottom:
     1px solid var(--border);
@@ -618,24 +728,105 @@ button:disabled {
 }
 
 
-.panel-title {
+.panel-kicker {
+
+  color:
+    var(--muted);
 
   font-size:
-    14px;
+    8px;
 
   font-weight:
     800;
 
+  letter-spacing:
+    2px;
+
 }
 
 
-.panel-content {
+.panel-title {
+
+  margin-top:
+    3px;
+
+  font-size:
+    15px;
+
+  font-weight:
+    750;
+
+}
+
+
+.panel-scroll {
+
+  overflow-y: auto;
+
+}
+
+
+.panel-scroll::-webkit-scrollbar {
+
+  width:
+    5px;
+
+}
+
+
+.panel-scroll::-webkit-scrollbar-thumb {
+
+  border-radius:
+    999px;
+
+  background:
+    rgba(134,173,150,.2);
+
+}
+
+
+
+/* =========================================================
+   LAYERS PANEL
+========================================================= */
+
+#layers-panel {
+
+  top:
+    calc(var(--top-height) + 18px);
+
+  right:
+    var(--panel-gap);
+
+  width:
+    var(--right-panel);
 
   max-height:
-    calc(100vh - 160px);
+    calc(
+      100vh
+      - var(--top-height)
+      - 36px
+    );
 
-  overflow-y:
-    auto;
+}
+
+
+#layers-panel.closed {
+
+  display:
+    none;
+
+}
+
+
+#layers-panel .panel-scroll {
+
+  max-height:
+    calc(
+      100vh
+      - var(--top-height)
+      - 108px
+    );
 
   padding:
     12px;
@@ -643,13 +834,18 @@ button:disabled {
 }
 
 
+
+/* =========================================================
+   LAYER ITEM
+========================================================= */
+
 #layers-list {
 
   display:
     grid;
 
   gap:
-    8px;
+    7px;
 
 }
 
@@ -660,34 +856,35 @@ button:disabled {
     grid;
 
   grid-template-columns:
-    20px 16px 1fr auto;
+    18px 10px 1fr auto;
 
   align-items:
     center;
 
   gap:
-    8px;
-
-  min-height:
-    44px;
-
-  padding:
-    7px 9px;
-
-  border:
-    1px solid transparent;
-
-  border-radius:
     10px;
 
+  min-height:
+    48px;
+
+  padding:
+    8px 11px;
+
+  border:
+    1px solid rgba(255,255,255,.045);
+
+  border-radius:
+    9px;
+
   background:
-    rgba(255,255,255,.035);
+    rgba(255,255,255,.018);
 
   cursor:
     pointer;
 
   transition:
-    .15s ease;
+    background .15s ease,
+    border-color .15s ease;
 
 }
 
@@ -695,7 +892,7 @@ button:disabled {
 .layer-item:hover {
 
   background:
-    rgba(255,255,255,.07);
+    rgba(81,118,96,.08);
 
   border-color:
     var(--border);
@@ -706,50 +903,51 @@ button:disabled {
 .layer-item input {
 
   width:
-    16px;
+    15px;
 
   height:
-    16px;
+    15px;
+
+  margin: 0;
 
   accent-color:
-    var(--purple);
+    var(--green);
 
 }
 
 
-.layer-color {
+.layer-swatch {
 
   width:
-    13px;
-
+    9px;
   height:
-    13px;
+    9px;
 
   border-radius:
-    4px;
+    50%;
 
-  border:
-    1px solid rgba(255,255,255,.4);
+  box-shadow:
+    0 0 7px currentColor;
 
 }
 
 
-.layer-title {
+.layer-name {
 
   overflow:
     hidden;
 
-  text-overflow:
-    ellipsis;
-
   white-space:
     nowrap;
 
+  text-overflow:
+    ellipsis;
+
   font-size:
-    12px;
+    11px;
 
   font-weight:
-    700;
+    650;
 
 }
 
@@ -757,7 +955,7 @@ button:disabled {
 .layer-count {
 
   min-width:
-    22px;
+    24px;
 
   padding:
     3px 6px;
@@ -766,7 +964,7 @@ button:disabled {
     999px;
 
   background:
-    rgba(255,255,255,.06);
+    rgba(255,255,255,.035);
 
   color:
     var(--muted);
@@ -775,7 +973,7 @@ button:disabled {
     center;
 
   font-size:
-    10px;
+    9px;
 
 }
 
@@ -787,48 +985,29 @@ button:disabled {
 
 #editor-panel {
 
-  position: fixed;
-
   top:
-    88px;
+    calc(var(--top-height) + 18px);
 
   left:
-    14px;
-
-  z-index:
-    3200;
+    var(--panel-gap);
 
   width:
-    330px;
+    var(--left-panel);
 
   max-height:
-    calc(100vh - 105px);
-
-  overflow:
-    hidden;
+    calc(
+      100vh
+      - var(--top-height)
+      - 36px
+    );
 
   display:
     none;
 
-  border:
-    1px solid var(--border);
-
-  border-radius:
-    16px;
-
-  background:
-    var(--panel);
-
-  backdrop-filter:
-    blur(18px);
-
-  box-shadow:
-    var(--shadow);
-
 }
 
 
-#editor-panel.visible {
+body.editing #editor-panel {
 
   display:
     block;
@@ -836,27 +1015,33 @@ button:disabled {
 }
 
 
-.editor-scroll {
+#editor-panel .panel-scroll {
 
   max-height:
-    calc(100vh - 160px);
-
-  overflow-y:
-    auto;
+    calc(
+      100vh
+      - var(--top-height)
+      - 108px
+    );
 
   padding:
-    14px;
+    16px;
 
 }
 
 
-.section {
 
-  padding:
-    0 0 17px;
+/* =========================================================
+   EDIT SECTIONS
+========================================================= */
 
-  margin:
-    0 0 17px;
+.editor-section {
+
+  padding-bottom:
+    18px;
+
+  margin-bottom:
+    18px;
 
   border-bottom:
     1px solid var(--border);
@@ -864,56 +1049,103 @@ button:disabled {
 }
 
 
-.section:last-child {
+.editor-section:last-child {
 
-  border-bottom:
-    0;
+  margin-bottom: 0;
 
-  margin-bottom:
-    0;
+  border-bottom: 0;
 
 }
 
 
-.section-title {
+.section-head {
 
-  margin:
-    0 0 12px;
+  display: flex;
 
-  display:
-    flex;
+  align-items: center;
 
-  align-items:
-    center;
+  justify-content: space-between;
 
-  gap:
-    8px;
+  margin-bottom:
+    12px;
+
+}
+
+
+.section-name {
+
+  color:
+    #b8c5be;
 
   font-size:
-    13px;
+    9px;
 
   font-weight:
     800;
 
+  letter-spacing:
+    2px;
+
 }
 
 
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+#status {
+
+  padding:
+    11px 12px;
+
+  border:
+    1px solid rgba(134,173,150,.14);
+
+  border-radius:
+    9px;
+
+  background:
+    rgba(48,81,62,.09);
+
+  color:
+    #9db7a7;
+
+  font-size:
+    10px;
+
+  line-height:
+    1.5;
+
+}
+
+
+
+/* =========================================================
+   FORMS
+========================================================= */
+
 label {
 
-  display:
-    block;
+  display: block;
 
   margin:
     11px 0 5px;
 
   color:
-    #c8d1dc;
+    #89968f;
 
   font-size:
-    11px;
+    8px;
 
   font-weight:
-    700;
+    800;
+
+  letter-spacing:
+    1.4px;
+
+  text-transform:
+    uppercase;
 
 }
 
@@ -928,29 +1160,33 @@ textarea {
   min-height:
     40px;
 
+  padding:
+    9px 11px;
+
   border:
     1px solid var(--border);
+
+  border-radius:
+    8px;
 
   outline:
     none;
 
-  padding:
-    9px 10px;
-
-  border-radius:
-    9px;
-
   background:
-    #0c1117;
+    rgba(4,8,6,.88);
 
   color:
-    white;
+    #e5ece8;
 
   font-family:
     inherit;
 
+  font-size:
+    11px;
+
   transition:
-    border-color .15s ease;
+    border-color .15s ease,
+    box-shadow .15s ease;
 
 }
 
@@ -960,7 +1196,10 @@ select:focus,
 textarea:focus {
 
   border-color:
-    var(--purple);
+    rgba(134,173,150,.42);
+
+  box-shadow:
+    0 0 0 3px rgba(134,173,150,.045);
 
 }
 
@@ -968,7 +1207,7 @@ textarea:focus {
 textarea {
 
   min-height:
-    76px;
+    74px;
 
   resize:
     vertical;
@@ -978,11 +1217,11 @@ textarea {
 
 input[type="color"] {
 
+  height:
+    40px;
+
   padding:
     4px;
-
-  cursor:
-    pointer;
 
 }
 
@@ -992,19 +1231,17 @@ input[type="range"] {
   min-height:
     30px;
 
-  padding:
-    0;
+  padding: 0;
 
   accent-color:
-    var(--purple);
+    var(--green);
 
 }
 
 
-.two-columns {
+.form-grid {
 
-  display:
-    grid;
+  display: grid;
 
   grid-template-columns:
     1fr 1fr;
@@ -1015,13 +1252,11 @@ input[type="range"] {
 }
 
 
-.checkbox-line {
+.check-row {
 
-  display:
-    flex;
+  display: flex;
 
-  align-items:
-    center;
+  align-items: center;
 
   gap:
     8px;
@@ -1029,24 +1264,35 @@ input[type="range"] {
   margin-top:
     12px;
 
+  color:
+    #a4afa9;
+
+  font-size:
+    10px;
+
 }
 
 
-.checkbox-line input {
+.check-row input {
 
   width:
-    16px;
+    15px;
 
   min-height:
-    16px;
+    15px;
 
   accent-color:
-    var(--purple);
+    var(--green);
 
 }
 
 
-.button-list {
+
+/* =========================================================
+   ACTION GRID
+========================================================= */
+
+.action-grid {
 
   display:
     grid;
@@ -1063,7 +1309,7 @@ input[type="range"] {
 }
 
 
-.button-list .full {
+.action-grid .wide {
 
   grid-column:
     1 / -1;
@@ -1073,53 +1319,34 @@ input[type="range"] {
 
 
 /* =========================================================
-   STATUS
-========================================================= */
-
-#status {
-
-  padding:
-    10px 11px;
-
-  border:
-    1px solid rgba(240,199,75,.20);
-
-  border-radius:
-    10px;
-
-  background:
-    rgba(240,199,75,.06);
-
-  color:
-    var(--yellow);
-
-  font-size:
-    11px;
-
-  line-height:
-    1.4;
-
-}
-
-
-
-/* =========================================================
-   CUSTOM DRAW TOOLBAR
+   DRAW TOOLBAR
 ========================================================= */
 
 #draw-toolbar {
 
-  position:
-    fixed;
+  position: fixed;
 
-  left:
-    50%;
+  z-index:
+    8000;
 
   bottom:
     18px;
 
-  z-index:
-    4500;
+  /*
+    Centre automatiquement la toolbar
+    ENTRE les panneaux.
+  */
+
+  left:
+    calc(
+      var(--left-safe, 0px)
+      +
+      (
+        100vw
+        - var(--left-safe, 0px)
+        - var(--right-safe, 0px)
+      ) / 2
+    );
 
   transform:
     translateX(-50%);
@@ -1128,33 +1355,33 @@ input[type="range"] {
     none;
 
   align-items:
-    center;
+    stretch;
 
   gap:
-    6px;
+    4px;
 
   padding:
-    7px;
+    6px;
 
   border:
     1px solid var(--border);
 
   border-radius:
-    16px;
+    12px;
 
   background:
-    rgba(12,16,22,.94);
+    rgba(5,9,7,.96);
 
   backdrop-filter:
-    blur(18px);
+    blur(16px);
 
   box-shadow:
-    0 14px 45px rgba(0,0,0,.5);
+    0 18px 50px rgba(0,0,0,.55);
 
 }
 
 
-#draw-toolbar.visible {
+body.editing #draw-toolbar {
 
   display:
     flex;
@@ -1162,56 +1389,122 @@ input[type="range"] {
 }
 
 
-.tool-button {
+body.editing {
 
-  position:
-    relative;
+  --left-safe:
+    calc(
+      var(--left-panel)
+      + var(--panel-gap)
+      + 18px
+    );
 
-  min-width:
-    48px;
+}
 
-  height:
-    46px;
 
-  padding:
-    0 13px;
+body.layers-open {
 
-  border-radius:
-    11px;
+  --right-safe:
+    calc(
+      var(--right-panel)
+      + var(--panel-gap)
+      + 18px
+    );
+
+}
+
+
+.draw-tool {
+
+  width:
+    76px;
+
+  min-height:
+    54px;
+
+  display:
+    flex;
 
   flex-direction:
     column;
 
   gap:
-    2px;
+    4px;
 
-  font-size:
-    9px;
+  padding:
+    6px;
+
+  border:
+    1px solid transparent;
+
+  background:
+    transparent;
+
+  color:
+    #909b95;
 
 }
 
 
-.tool-icon {
+.draw-tool svg {
 
-  font-size:
-    17px;
+  width:
+    18px;
 
-  line-height:
+  height:
     18px;
 
 }
 
 
-.tool-divider {
+.draw-tool:hover {
+
+  border-color:
+    var(--border);
+
+  background:
+    rgba(63,94,75,.1);
+
+  color:
+    white;
+
+}
+
+
+.draw-tool.active {
+
+  border-color:
+    rgba(134,173,150,.3);
+
+  background:
+    rgba(49,84,64,.28);
+
+  color:
+    var(--green-light);
+
+}
+
+
+.draw-label {
+
+  font-size:
+    8px;
+
+  font-weight:
+    800;
+
+  letter-spacing:
+    .5px;
+
+}
+
+
+.toolbar-separator {
 
   width:
     1px;
 
-  height:
-    32px;
-
   margin:
-    0 3px;
+    7px 4px;
 
   background:
     var(--border);
@@ -1221,19 +1514,84 @@ input[type="range"] {
 
 
 /* =========================================================
-   LOGIN
+   ZOOM CONTROL SAFE AREA
+========================================================= */
+
+.leaflet-bottom.leaflet-right {
+
+  right:
+    calc(
+      var(--right-safe, 0px)
+      + 14px
+    );
+
+  bottom:
+    14px;
+
+}
+
+
+.leaflet-control-zoom {
+
+  overflow:
+    hidden;
+
+  border:
+    1px solid var(--border) !important;
+
+  border-radius:
+    10px !important;
+
+  box-shadow:
+    0 12px 35px rgba(0,0,0,.42) !important;
+
+}
+
+
+.leaflet-control-zoom a {
+
+  width:
+    38px !important;
+
+  height:
+    38px !important;
+
+  line-height:
+    38px !important;
+
+  border:
+    0 !important;
+
+  background:
+    rgba(6,10,8,.96) !important;
+
+  color:
+    var(--green-light) !important;
+
+}
+
+
+.leaflet-control-zoom a:hover {
+
+  background:
+    #15221b !important;
+
+}
+
+
+
+/* =========================================================
+   LOGIN MODAL
 ========================================================= */
 
 #login-overlay {
 
-  position:
-    fixed;
+  position: fixed;
 
-  inset:
-    0;
+  inset: 0;
 
   z-index:
-    9000;
+    12000;
 
   display:
     none;
@@ -1248,7 +1606,7 @@ input[type="range"] {
     20px;
 
   background:
-    rgba(2,4,8,.76);
+    rgba(0,0,0,.78);
 
   backdrop-filter:
     blur(12px);
@@ -1264,53 +1622,95 @@ input[type="range"] {
 }
 
 
-#login-box {
+.login-box {
 
   width:
-    390px;
+    410px;
 
   max-width:
     100%;
 
-  padding:
-    24px;
+  overflow:
+    hidden;
 
   border:
     1px solid var(--border);
 
   border-radius:
-    18px;
+    14px;
 
   background:
-    #11171f;
+    linear-gradient(
+      145deg,
+      #080d0a,
+      #0d1511
+    );
 
   box-shadow:
-    0 30px 100px rgba(0,0,0,.65);
+    0 35px 100px rgba(0,0,0,.7);
 
 }
 
 
-#login-box h2 {
+.login-head {
 
-  margin:
-    0 0 6px;
+  padding:
+    22px;
+
+  border-bottom:
+    1px solid var(--border);
+
+}
+
+
+.login-kicker {
+
+  margin-bottom:
+    7px;
+
+  color:
+    var(--green);
 
   font-size:
-    20px;
+    8px;
+
+  font-weight:
+    900;
+
+  letter-spacing:
+    2px;
 
 }
 
 
-.login-subtitle {
+.login-title {
+
+  margin: 0;
+
+  font-size:
+    21px;
+
+}
+
+
+.login-sub {
 
   margin:
-    0 0 18px;
+    6px 0 0;
 
   color:
     var(--muted);
 
   font-size:
-    12px;
+    10px;
+
+}
+
+
+.login-body {
+
+  padding:
+    20px 22px 22px;
 
 }
 
@@ -1321,72 +1721,146 @@ input[type="range"] {
     12px;
 
   color:
-    var(--yellow);
+    #d6bd68;
 
   font-size:
-    12px;
+    10px;
 
 }
 
 
 
 /* =========================================================
-   POPUP
+   POPUPS
 ========================================================= */
 
-.leaflet-popup-content-wrapper,
-.leaflet-popup-tip {
+.leaflet-popup-content-wrapper {
+
+  border:
+    1px solid var(--border);
+
+  border-radius:
+    10px;
 
   background:
-    #11171f;
+    rgba(6,11,8,.97);
 
   color:
     white;
 
+  box-shadow:
+    0 20px 50px rgba(0,0,0,.5);
+
 }
 
 
-.popup-title {
+.leaflet-popup-tip {
+
+  background:
+    rgba(6,11,8,.97);
+
+}
+
+
+.zone-category {
+
+  margin-bottom:
+    5px;
+
+  color:
+    var(--green);
+
+  font-size:
+    7px;
+
+  font-weight:
+    900;
+
+  letter-spacing:
+    1.6px;
+
+  text-transform:
+    uppercase;
+
+}
+
+
+.zone-title {
 
   margin:
     0 0 5px;
 
+  font-size:
+    15px;
+
 }
 
 
-.popup-description {
+.zone-description {
 
-  margin:
-    0;
+  margin: 0;
 
   color:
     var(--muted);
+
+  font-size:
+    10px;
 
 }
 
 
 
 /* =========================================================
-   MOBILE
+   RESPONSIVE
 ========================================================= */
 
-@media (max-width: 850px) {
+@media (max-width: 1000px) {
 
   #topbar {
 
-    left:
-      8px;
-
-    right:
-      8px;
-
-    top:
-      8px;
+    grid-template-columns:
+      1fr auto;
 
   }
 
 
-  .brand-subtitle,
+  .main-nav {
+
+    display:
+      none;
+
+  }
+
+}
+
+
+@media (max-width: 760px) {
+
+  :root {
+
+    --top-height:
+      62px;
+
+  }
+
+
+  #topbar {
+
+    padding:
+      0 10px;
+
+  }
+
+
+  .brand-name {
+
+    font-size:
+      10px;
+
+  }
+
+
+  .brand-sub,
   #admin-email {
 
     display:
@@ -1395,13 +1869,24 @@ input[type="range"] {
   }
 
 
-  #top-actions button {
+  .brand-emblem {
+
+    width:
+      32px;
+
+    height:
+      32px;
+
+  }
+
+
+  .account-area button {
+
+    min-height:
+      34px;
 
     padding:
-      7px 9px;
-
-    font-size:
-      10px;
+      6px 8px;
 
   }
 
@@ -1409,13 +1894,16 @@ input[type="range"] {
   #layers-panel {
 
     top:
-      78px;
+      74px;
 
     right:
       8px;
 
     width:
-      235px;
+      245px;
+
+    max-height:
+      44vh;
 
   }
 
@@ -1432,32 +1920,38 @@ input[type="range"] {
       8px;
 
     bottom:
-      82px;
+      78px;
 
     width:
       auto;
 
     max-height:
-      52vh;
+      50vh;
 
   }
 
 
-  .editor-scroll {
+  #editor-panel .panel-scroll {
 
     max-height:
-      calc(52vh - 55px);
+      calc(50vh - 56px);
 
   }
 
 
   #draw-toolbar {
 
-    bottom:
-      10px;
+    left:
+      8px !important;
 
-    max-width:
-      calc(100vw - 16px);
+    right:
+      8px;
+
+    bottom:
+      8px;
+
+    transform:
+      none;
 
     overflow-x:
       auto;
@@ -1465,10 +1959,37 @@ input[type="range"] {
   }
 
 
-  .tool-button {
+  .draw-tool {
 
     flex:
-      0 0 auto;
+      0 0 68px;
+
+  }
+
+
+  body.editing {
+
+    --left-safe:
+      0px;
+
+  }
+
+
+  body.layers-open {
+
+    --right-safe:
+      0px;
+
+  }
+
+
+  .leaflet-bottom.leaflet-right {
+
+    right:
+      8px;
+
+    bottom:
+      78px;
 
   }
 
@@ -1479,7 +2000,8 @@ input[type="range"] {
 </head>
 
 
-<body>
+
+<body class="layers-open">
 
 
 <!-- ======================================================
@@ -1491,25 +2013,29 @@ input[type="range"] {
 
 
 <!-- ======================================================
-     TOP BAR
+     HEADER
 ====================================================== -->
 
 <header id="topbar">
 
+
   <div class="brand">
 
-    <div class="brand-logo">
-      G
+    <div class="brand-emblem">
+
+      <i data-lucide="compass"></i>
+
     </div>
 
-    <div class="brand-text">
 
-      <div class="brand-title">
+    <div>
+
+      <div class="brand-name">
         GTA MAP
       </div>
 
-      <div class="brand-subtitle">
-        Carte interactive
+      <div class="brand-sub">
+        TERRITORIAL INTELLIGENCE
       </div>
 
     </div>
@@ -1517,18 +2043,57 @@ input[type="range"] {
   </div>
 
 
-  <div id="top-actions">
+
+  <nav class="main-nav">
+
+    <div
+      id="nav-map"
+      class="nav-item active"
+    >
+      CARTE
+    </div>
+
+
+    <div
+      id="nav-layers"
+      class="nav-item"
+    >
+      COUCHES
+    </div>
+
+
+    <div
+      id="nav-editor"
+      class="nav-item"
+      style="display:none;"
+    >
+      ÉDITION
+    </div>
+
+  </nav>
+
+
+
+  <div class="account-area">
 
     <span id="admin-email"></span>
 
 
-    <button id="toggle-layers">
-      ☰ Couches
+    <button id="reset-map">
+
+      <i data-lucide="scan"></i>
+
+      Centrer
+
     </button>
 
 
     <button id="login-button">
-      🔐 Admin
+
+      <i data-lucide="lock-keyhole"></i>
+
+      Admin
+
     </button>
 
 
@@ -1537,16 +2102,22 @@ input[type="range"] {
       class="primary"
       style="display:none;"
     >
-      ✏ Éditer
+
+      <i data-lucide="pen-tool"></i>
+
+      Éditer
+
     </button>
 
 
     <button
       id="logout-button"
-      class="red"
+      class="danger"
       style="display:none;"
     >
-      ↪ Quitter
+
+      <i data-lucide="log-out"></i>
+
     </button>
 
   </div>
@@ -1559,25 +2130,36 @@ input[type="range"] {
      LAYERS PANEL
 ====================================================== -->
 
-<aside id="layers-panel">
+<aside
+  id="layers-panel"
+  class="panel"
+>
 
   <div class="panel-header">
 
-    <span class="panel-title">
-      Couches
-    </span>
+    <div>
 
-    <button
-      id="close-layers"
-      class="ghost"
-    >
-      ✕
+      <div class="panel-kicker">
+        AFFICHAGE
+      </div>
+
+      <div class="panel-title">
+        Couches cartographiques
+      </div>
+
+    </div>
+
+
+    <button id="close-layers">
+
+      <i data-lucide="x"></i>
+
     </button>
 
   </div>
 
 
-  <div class="panel-content">
+  <div class="panel-scroll">
 
     <div id="layers-list">
       Chargement...
@@ -1590,35 +2172,55 @@ input[type="range"] {
 
 
 <!-- ======================================================
-     EDITOR PANEL
+     EDITOR
 ====================================================== -->
 
-<aside id="editor-panel">
+<aside
+  id="editor-panel"
+  class="panel"
+>
 
   <div class="panel-header">
 
-    <span class="panel-title">
-      Éditeur
-    </span>
+    <div>
 
-    <button
-      id="close-editor"
-      class="ghost"
-    >
-      ✕
-    </button>
+      <div class="panel-kicker">
+        ADMINISTRATION
+      </div>
+
+      <div class="panel-title">
+        Éditeur territorial
+      </div>
+
+    </div>
+
+
+    <i
+      data-lucide="shield-check"
+      style="
+        color:#86ad96;
+        width:18px;
+      "
+    ></i>
 
   </div>
 
 
-  <div class="editor-scroll">
+  <div class="panel-scroll">
 
 
-    <section class="section">
+    <!-- STATUS -->
 
-      <div class="section-title">
-        ◉ État
+    <section class="editor-section">
+
+      <div class="section-head">
+
+        <span class="section-name">
+          ÉTAT
+        </span>
+
       </div>
+
 
       <div id="status">
         Initialisation...
@@ -1628,10 +2230,16 @@ input[type="range"] {
 
 
 
-    <section class="section">
+    <!-- SELECTED ELEMENT -->
 
-      <div class="section-title">
-        ◇ Élément sélectionné
+    <section class="editor-section">
+
+      <div class="section-head">
+
+        <span class="section-name">
+          ÉLÉMENT SÉLECTIONNÉ
+        </span>
+
       </div>
 
 
@@ -1659,11 +2267,11 @@ input[type="range"] {
 
       <textarea
         id="shape-description"
-        placeholder="Description optionnelle"
+        placeholder="Description optionnelle..."
       ></textarea>
 
 
-      <div class="two-columns">
+      <div class="form-grid">
 
         <div>
 
@@ -1674,7 +2282,7 @@ input[type="range"] {
           <input
             id="shape-color"
             type="color"
-            value="#8b5cf6"
+            value="#86ad96"
           >
 
         </div>
@@ -1692,7 +2300,7 @@ input[type="range"] {
             min="0"
             max=".85"
             step=".05"
-            value=".35"
+            value=".30"
           >
 
         </div>
@@ -1700,7 +2308,7 @@ input[type="range"] {
       </div>
 
 
-      <label class="checkbox-line">
+      <label class="check-row">
 
         <input
           id="shape-published"
@@ -1713,14 +2321,19 @@ input[type="range"] {
       </label>
 
 
-      <div class="button-list">
+      <div class="action-grid">
+
 
         <button
           id="save-shape"
-          class="green full"
+          class="primary wide"
           disabled
         >
-          ✓ Enregistrer
+
+          <i data-lucide="save"></i>
+
+          Enregistrer
+
         </button>
 
 
@@ -1728,7 +2341,11 @@ input[type="range"] {
           id="edit-shape"
           disabled
         >
-          ✦ Sommets
+
+          <i data-lucide="move-3d"></i>
+
+          Sommets
+
         </button>
 
 
@@ -1736,7 +2353,11 @@ input[type="range"] {
           id="finish-edit"
           disabled
         >
-          ✓ Terminer
+
+          <i data-lucide="check"></i>
+
+          Terminer
+
         </button>
 
 
@@ -1744,16 +2365,24 @@ input[type="range"] {
           id="cancel-selection"
           disabled
         >
-          ↶ Annuler
+
+          <i data-lucide="undo-2"></i>
+
+          Annuler
+
         </button>
 
 
         <button
           id="delete-shape"
-          class="red"
+          class="danger"
           disabled
         >
-          🗑 Supprimer
+
+          <i data-lucide="trash-2"></i>
+
+          Supprimer
+
         </button>
 
       </div>
@@ -1762,10 +2391,16 @@ input[type="range"] {
 
 
 
-    <section class="section">
+    <!-- CREATE LAYER -->
 
-      <div class="section-title">
-        ＋ Nouvelle couche
+    <section class="editor-section">
+
+      <div class="section-head">
+
+        <span class="section-name">
+          NOUVELLE COUCHE
+        </span>
+
       </div>
 
 
@@ -1775,6 +2410,7 @@ input[type="range"] {
 
       <input
         id="new-layer-name"
+        type="text"
         placeholder="Ex. Quartiers"
       >
 
@@ -1804,7 +2440,7 @@ input[type="range"] {
       </select>
 
 
-      <div class="two-columns">
+      <div class="form-grid">
 
         <div>
 
@@ -1815,7 +2451,7 @@ input[type="range"] {
           <input
             id="new-layer-color"
             type="color"
-            value="#8b5cf6"
+            value="#86ad96"
           >
 
         </div>
@@ -1833,7 +2469,7 @@ input[type="range"] {
             min="0"
             max=".85"
             step=".05"
-            value=".35"
+            value=".30"
           >
 
         </div>
@@ -1841,18 +2477,26 @@ input[type="range"] {
       </div>
 
 
-      <div class="button-list">
+      <div
+        class="action-grid"
+        style="margin-top:14px;"
+      >
 
         <button
           id="create-layer"
-          class="primary full"
+          class="gold wide"
         >
-          ＋ Créer la couche
+
+          <i data-lucide="layers-3"></i>
+
+          Créer la couche
+
         </button>
 
       </div>
 
     </section>
+
 
   </div>
 
@@ -1861,7 +2505,7 @@ input[type="range"] {
 
 
 <!-- ======================================================
-     CUSTOM DRAW TOOLBAR
+     DRAW TOOLBAR
 ====================================================== -->
 
 <div id="draw-toolbar">
@@ -1869,59 +2513,59 @@ input[type="range"] {
 
   <button
     id="draw-polygon"
-    class="tool-button"
+    class="draw-tool"
   >
 
-    <span class="tool-icon">
-      ⬡
-    </span>
+    <i data-lucide="pentagon"></i>
 
-    Polygone
+    <span class="draw-label">
+      POLYGONE
+    </span>
 
   </button>
 
 
   <button
     id="draw-rectangle"
-    class="tool-button"
+    class="draw-tool"
   >
 
-    <span class="tool-icon">
-      ▭
-    </span>
+    <i data-lucide="square"></i>
 
-    Rectangle
+    <span class="draw-label">
+      RECTANGLE
+    </span>
 
   </button>
 
 
   <button
     id="draw-line"
-    class="tool-button"
+    class="draw-tool"
   >
 
-    <span class="tool-icon">
-      ╱
-    </span>
+    <i data-lucide="route"></i>
 
-    Frontière
+    <span class="draw-label">
+      FRONTIÈRE
+    </span>
 
   </button>
 
 
-  <div class="tool-divider"></div>
+  <div class="toolbar-separator"></div>
 
 
   <button
     id="stop-drawing"
-    class="tool-button red"
+    class="draw-tool"
   >
 
-    <span class="tool-icon">
-      ✕
-    </span>
+    <i data-lucide="mouse-pointer-2"></i>
 
-    Annuler
+    <span class="draw-label">
+      SÉLECTION
+    </span>
 
   </button>
 
@@ -1930,70 +2574,91 @@ input[type="range"] {
 
 
 <!-- ======================================================
-     LOGIN
+     LOGIN MODAL
 ====================================================== -->
 
 <div id="login-overlay">
 
-  <div id="login-box">
-
-    <h2>
-      Connexion administrateur
-    </h2>
-
-    <p class="login-subtitle">
-      Accès aux outils d'édition de la carte.
-    </p>
+  <div class="login-box">
 
 
-    <form id="login-form">
+    <div class="login-head">
 
-      <label>
-        Email
-      </label>
-
-      <input
-        id="login-email"
-        type="email"
-        required
-      >
-
-
-      <label>
-        Mot de passe
-      </label>
-
-      <input
-        id="login-password"
-        type="password"
-        required
-      >
-
-
-      <div class="button-list">
-
-        <button
-          type="submit"
-          class="primary full"
-        >
-          Se connecter
-        </button>
-
-
-        <button
-          id="close-login"
-          type="button"
-          class="full"
-        >
-          Annuler
-        </button>
-
+      <div class="login-kicker">
+        ACCÈS RESTREINT
       </div>
 
+      <h2 class="login-title">
+        Administration
+      </h2>
 
-      <div id="login-error"></div>
+      <p class="login-sub">
+        Connexion aux outils de gestion territoriale.
+      </p>
 
-    </form>
+    </div>
+
+
+    <div class="login-body">
+
+      <form id="login-form">
+
+
+        <label>
+          Adresse email
+        </label>
+
+        <input
+          id="login-email"
+          type="email"
+          required
+        >
+
+
+        <label>
+          Mot de passe
+        </label>
+
+        <input
+          id="login-password"
+          type="password"
+          required
+        >
+
+
+        <div
+          class="action-grid"
+          style="margin-top:17px;"
+        >
+
+          <button
+            type="submit"
+            class="primary wide"
+          >
+
+            <i data-lucide="log-in"></i>
+
+            Se connecter
+
+          </button>
+
+
+          <button
+            id="close-login"
+            type="button"
+            class="wide"
+          >
+            Annuler
+          </button>
+
+        </div>
+
+
+        <div id="login-error"></div>
+
+      </form>
+
+    </div>
 
   </div>
 
@@ -2002,23 +2667,14 @@ input[type="range"] {
 
 
 <!-- ======================================================
-     LIBRARIES
+     JS LIBRARIES
 ====================================================== -->
 
-<script
-  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+<script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.js"></script>
 
-<script
-  src="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.js"
-></script>
-
-
-<script
-  src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
-></script>
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script src="js/config.js"></script>
 
@@ -2031,146 +2687,86 @@ input[type="range"] {
 (async function () {
 
 
+
 /* =========================================================
-   ELEMENTS
+   ICONS
+========================================================= */
+
+lucide.createIcons();
+
+
+
+/* =========================================================
+   DOM
 ========================================================= */
 
 const layersPanel =
-  document.getElementById(
-    "layers-panel"
-  );
-
-
-const editorPanel =
-  document.getElementById(
-    "editor-panel"
-  );
-
-
-const drawToolbar =
-  document.getElementById(
-    "draw-toolbar"
-  );
-
+  document.getElementById("layers-panel");
 
 const layersList =
-  document.getElementById(
-    "layers-list"
-  );
+  document.getElementById("layers-list");
 
+const editorPanel =
+  document.getElementById("editor-panel");
 
 const status =
-  document.getElementById(
-    "status"
-  );
-
-
-const loginButton =
-  document.getElementById(
-    "login-button"
-  );
-
-
-const editModeButton =
-  document.getElementById(
-    "edit-mode-button"
-  );
-
-
-const logoutButton =
-  document.getElementById(
-    "logout-button"
-  );
-
-
-const adminEmail =
-  document.getElementById(
-    "admin-email"
-  );
-
+  document.getElementById("status");
 
 const loginOverlay =
-  document.getElementById(
-    "login-overlay"
-  );
-
+  document.getElementById("login-overlay");
 
 const loginForm =
-  document.getElementById(
-    "login-form"
-  );
-
+  document.getElementById("login-form");
 
 const loginError =
-  document.getElementById(
-    "login-error"
-  );
+  document.getElementById("login-error");
+
+const loginButton =
+  document.getElementById("login-button");
+
+const logoutButton =
+  document.getElementById("logout-button");
+
+const editModeButton =
+  document.getElementById("edit-mode-button");
+
+const adminEmail =
+  document.getElementById("admin-email");
 
 
 const shapeLayerInput =
-  document.getElementById(
-    "shape-layer"
-  );
-
+  document.getElementById("shape-layer");
 
 const shapeNameInput =
-  document.getElementById(
-    "shape-name"
-  );
-
+  document.getElementById("shape-name");
 
 const shapeDescriptionInput =
-  document.getElementById(
-    "shape-description"
-  );
-
+  document.getElementById("shape-description");
 
 const shapeColorInput =
-  document.getElementById(
-    "shape-color"
-  );
-
+  document.getElementById("shape-color");
 
 const shapeOpacityInput =
-  document.getElementById(
-    "shape-opacity"
-  );
-
+  document.getElementById("shape-opacity");
 
 const shapePublishedInput =
-  document.getElementById(
-    "shape-published"
-  );
+  document.getElementById("shape-published");
 
 
 const saveShapeButton =
-  document.getElementById(
-    "save-shape"
-  );
-
+  document.getElementById("save-shape");
 
 const editShapeButton =
-  document.getElementById(
-    "edit-shape"
-  );
-
+  document.getElementById("edit-shape");
 
 const finishEditButton =
-  document.getElementById(
-    "finish-edit"
-  );
-
+  document.getElementById("finish-edit");
 
 const cancelSelectionButton =
-  document.getElementById(
-    "cancel-selection"
-  );
-
+  document.getElementById("cancel-selection");
 
 const deleteShapeButton =
-  document.getElementById(
-    "delete-shape"
-  );
+  document.getElementById("delete-shape");
 
 
 
@@ -2178,66 +2774,295 @@ const deleteShapeButton =
    STATE
 ========================================================= */
 
-let map =
-  null;
+let map;
 
+let initialBounds;
 
-let currentUser =
-  null;
+let currentUser = null;
 
+let admin = false;
 
-let admin =
-  false;
+let editMode = false;
 
+let mapLayers = [];
 
-let editMode =
-  false;
+let mapShapes = [];
 
+let layerGroups = {};
 
-let mapLayers =
-  [];
+let selectedLeafletLayer = null;
 
+let selectedShapeRecord = null;
 
-let mapShapes =
-  [];
+let temporaryLayer = null;
 
-
-let layerGroups =
-  {};
-
-
-let renderedShapeLayers =
-  [];
-
-
-let selectedLeafletLayer =
-  null;
-
-
-let selectedShapeRecord =
-  null;
-
-
-let temporaryLayer =
-  null;
+let layerVisibility =
+  new Map();
 
 
 
 /* =========================================================
-   MAP IMAGE
+   INNER OUTLINE SYSTEM
+
+   Leaflet dessine normalement le trait moitié
+   dedans / moitié dehors.
+
+   Ici on crée un clip SVG identique au polygone.
+   Le stroke est donc coupé à la frontière :
+   seule sa moitié intérieure reste visible.
+========================================================= */
+
+const SVG_NS =
+  "http://www.w3.org/2000/svg";
+
+
+const innerClipRegistry =
+  new Map();
+
+
+let innerClipId =
+  0;
+
+
+
+function clearInnerClips() {
+
+  for (
+    const record
+    of innerClipRegistry.values()
+  ) {
+
+    record.clipPath.remove();
+
+  }
+
+
+  innerClipRegistry.clear();
+
+}
+
+
+
+function enableInnerOutline(
+  layer
+) {
+
+  if (
+    !layer ||
+    !layer._path ||
+    !(layer instanceof L.Polygon)
+  ) {
+    return;
+  }
+
+
+  const path =
+    layer._path;
+
+
+  const svg =
+    path.ownerSVGElement;
+
+
+  if (!svg) {
+    return;
+  }
+
+
+  let defs =
+    svg.querySelector(
+      "defs[data-gta-map='true']"
+    );
+
+
+  if (!defs) {
+
+    defs =
+      document.createElementNS(
+        SVG_NS,
+        "defs"
+      );
+
+
+    defs.setAttribute(
+      "data-gta-map",
+      "true"
+    );
+
+
+    svg.insertBefore(
+      defs,
+      svg.firstChild
+    );
+
+  }
+
+
+  let record =
+    innerClipRegistry.get(
+      layer
+    );
+
+
+  if (!record) {
+
+    const id =
+      "gta-inner-outline-" +
+      (++innerClipId);
+
+
+    const clipPath =
+      document.createElementNS(
+        SVG_NS,
+        "clipPath"
+      );
+
+
+    clipPath.setAttribute(
+      "id",
+      id
+    );
+
+
+    const clipShape =
+      document.createElementNS(
+        SVG_NS,
+        "path"
+      );
+
+
+    clipShape.setAttribute(
+      "fill",
+      "#fff"
+    );
+
+
+    clipShape.setAttribute(
+      "stroke",
+      "none"
+    );
+
+
+    clipShape.setAttribute(
+      "fill-rule",
+      "evenodd"
+    );
+
+
+    clipPath.appendChild(
+      clipShape
+    );
+
+
+    defs.appendChild(
+      clipPath
+    );
+
+
+    path.setAttribute(
+      "clip-path",
+      `url(#${id})`
+    );
+
+
+    record = {
+
+      clipPath,
+      clipShape
+
+    };
+
+
+    innerClipRegistry.set(
+      layer,
+      record
+    );
+
+  }
+
+
+  syncInnerOutline(
+    layer
+  );
+
+}
+
+
+
+function syncInnerOutline(
+  layer
+) {
+
+  const record =
+    innerClipRegistry.get(
+      layer
+    );
+
+
+  if (
+    !record ||
+    !layer._path
+  ) {
+    return;
+  }
+
+
+  const d =
+    layer._path.getAttribute(
+      "d"
+    );
+
+
+  if (d) {
+
+    record.clipShape.setAttribute(
+      "d",
+      d
+    );
+
+  }
+
+}
+
+
+
+function syncAllInnerOutlines() {
+
+  requestAnimationFrame(
+    () => {
+
+      for (
+        const layer
+        of innerClipRegistry.keys()
+      ) {
+
+        syncInnerOutline(
+          layer
+        );
+
+      }
+
+    }
+  );
+
+}
+
+
+
+/* =========================================================
+   IMAGE
 ========================================================= */
 
 const MAP_IMAGE =
   window.APP_CONFIG.MAP_IMAGE;
 
 
-function loadImageSize(src) {
+function loadImageSize(
+  src
+) {
 
   return new Promise(
-    (
-      resolve,
-      reject
-    ) => {
+    (resolve, reject) => {
 
       const image =
         new Image();
@@ -2272,7 +3097,7 @@ function loadImageSize(src) {
 
 
       image.src =
-        src + "?v=60";
+        src + "?v=80";
 
     }
   );
@@ -2291,17 +3116,16 @@ const imageSize =
   );
 
 
-const bounds =
+initialBounds = [
+
+  [0, 0],
+
   [
+    imageSize.height,
+    imageSize.width
+  ]
 
-    [0,0],
-
-    [
-      imageSize.height,
-      imageSize.width
-    ]
-
-  ];
+];
 
 
 map =
@@ -2345,9 +3169,9 @@ L.control
 
 L.imageOverlay(
 
-  MAP_IMAGE + "?v=60",
+  MAP_IMAGE + "?v=80",
 
-  bounds,
+  initialBounds,
 
   {
 
@@ -2365,7 +3189,7 @@ L.imageOverlay(
 
 
 map.fitBounds(
-  bounds
+  initialBounds
 );
 
 
@@ -2388,7 +3212,18 @@ map.setMaxBounds(
 
 
 /* =========================================================
-   SNAP CONFIG
+   UPDATE INNER OUTLINES WHEN MAP MOVES
+========================================================= */
+
+map.on(
+  "zoomend moveend resize viewreset",
+  syncAllInnerOutlines
+);
+
+
+
+/* =========================================================
+   SNAP
 ========================================================= */
 
 map.pm.setGlobalOptions({
@@ -2416,19 +3251,70 @@ map.pm.setGlobalOptions({
 
 
 /* =========================================================
-   UI PANELS
+   RESET MAP
 ========================================================= */
 
 document
   .getElementById(
-    "toggle-layers"
+    "reset-map"
   )
   .addEventListener(
     "click",
     () => {
 
-      layersPanel.classList.toggle(
-        "hidden"
+      map.fitBounds(
+        initialBounds
+      );
+
+    }
+  );
+
+
+
+/* =========================================================
+   LAYER PANEL
+========================================================= */
+
+function setLayersOpen(
+  open
+) {
+
+  document.body.classList.toggle(
+    "layers-open",
+    open
+  );
+
+
+  layersPanel.classList.toggle(
+    "closed",
+    !open
+  );
+
+
+  document
+    .getElementById(
+      "nav-layers"
+    )
+    .classList.toggle(
+      "active",
+      open
+    );
+
+}
+
+
+document
+  .getElementById(
+    "nav-layers"
+  )
+  .addEventListener(
+    "click",
+    () => {
+
+      setLayersOpen(
+        !document.body.classList.contains(
+          "layers-open"
+        )
       );
 
     }
@@ -2443,24 +3329,8 @@ document
     "click",
     () => {
 
-      layersPanel.classList.add(
-        "hidden"
-      );
-
-    }
-  );
-
-
-document
-  .getElementById(
-    "close-editor"
-  )
-  .addEventListener(
-    "click",
-    () => {
-
-      editorPanel.classList.remove(
-        "visible"
+      setLayersOpen(
+        false
       );
 
     }
@@ -2491,9 +3361,7 @@ async function refreshAuth() {
     false;
 
 
-  if (
-    currentUser
-  ) {
+  if (currentUser) {
 
     const {
       data: isAdmin
@@ -2509,9 +3377,17 @@ async function refreshAuth() {
   }
 
 
-  if (
-    admin
-  ) {
+  document
+    .getElementById(
+      "nav-editor"
+    )
+    .style.display =
+      admin
+        ? ""
+        : "none";
+
+
+  if (admin) {
 
     loginButton.style.display =
       "none";
@@ -2547,15 +3423,16 @@ async function refreshAuth() {
       "";
 
 
-    if (
-      editMode
-    ) {
+    if (editMode) {
 
       disableEditMode();
 
     }
 
   }
+
+
+  lucide.createIcons();
 
 }
 
@@ -2595,6 +3472,25 @@ document
 
     }
   );
+
+
+loginOverlay.addEventListener(
+  "click",
+  event => {
+
+    if (
+      event.target ===
+      loginOverlay
+    ) {
+
+      loginOverlay.classList.remove(
+        "visible"
+      );
+
+    }
+
+  }
+);
 
 
 loginForm.addEventListener(
@@ -2637,9 +3533,7 @@ loginForm.addEventListener(
         });
 
 
-    if (
-      error
-    ) {
+    if (error) {
 
       loginError.textContent =
         error.message;
@@ -2652,9 +3546,7 @@ loginForm.addEventListener(
     await refreshAuth();
 
 
-    if (
-      !admin
-    ) {
+    if (!admin) {
 
       await db.auth.signOut();
 
@@ -2664,7 +3556,6 @@ loginForm.addEventListener(
 
 
       await refreshAuth();
-
 
       return;
 
@@ -2681,6 +3572,11 @@ loginForm.addEventListener(
   }
 );
 
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
 
 logoutButton.addEventListener(
   "click",
@@ -2705,9 +3601,7 @@ logoutButton.addEventListener(
 
 function enableEditMode() {
 
-  if (
-    !admin
-  ) {
+  if (!admin) {
     return;
   }
 
@@ -2716,37 +3610,42 @@ function enableEditMode() {
     true;
 
 
+  document.body.classList.add(
+    "editing"
+  );
+
+
   editModeButton.classList.add(
     "active"
   );
 
 
-  editModeButton.textContent =
-    "✓ Édition active";
+  editModeButton.innerHTML = `
+    <i data-lucide="check"></i>
+    Édition active
+  `;
 
 
-  editorPanel.classList.add(
-    "visible"
-  );
-
-
-  drawToolbar.classList.add(
-    "visible"
-  );
-
-
-  layersPanel.classList.remove(
-    "hidden"
-  );
+  document
+    .getElementById(
+      "nav-editor"
+    )
+    .classList.add(
+      "active"
+    );
 
 
   status.textContent =
-    "Mode édition actif. Accrochage automatique activé.";
+    "Mode édition actif. Les sommets et segments existants sont aimantés.";
+
+
+  lucide.createIcons();
 
 
   loadDatabase();
 
 }
+
 
 
 function disableEditMode() {
@@ -2758,26 +3657,35 @@ function disableEditMode() {
   stopDrawing();
 
 
+  cancelSelection();
+
+
+  document.body.classList.remove(
+    "editing"
+  );
+
+
   editModeButton.classList.remove(
     "active"
   );
 
 
-  editModeButton.textContent =
-    "✏ Éditer";
+  editModeButton.innerHTML = `
+    <i data-lucide="pen-tool"></i>
+    Éditer
+  `;
 
 
-  editorPanel.classList.remove(
-    "visible"
-  );
+  document
+    .getElementById(
+      "nav-editor"
+    )
+    .classList.remove(
+      "active"
+    );
 
 
-  drawToolbar.classList.remove(
-    "visible"
-  );
-
-
-  cancelSelection();
+  lucide.createIcons();
 
 
   loadDatabase();
@@ -2785,13 +3693,12 @@ function disableEditMode() {
 }
 
 
+
 editModeButton.addEventListener(
   "click",
   () => {
 
-    if (
-      editMode
-    ) {
+    if (editMode) {
 
       disableEditMode();
 
@@ -2806,16 +3713,39 @@ editModeButton.addEventListener(
 );
 
 
+document
+  .getElementById(
+    "nav-editor"
+  )
+  .addEventListener(
+    "click",
+    () => {
+
+      if (!admin) {
+        return;
+      }
+
+
+      if (!editMode) {
+
+        enableEditMode();
+
+      }
+
+  }
+);
+
+
 
 /* =========================================================
-   CUSTOM DRAW BUTTONS
+   DRAWING TOOLS
 ========================================================= */
 
 function clearToolActive() {
 
   document
     .querySelectorAll(
-      ".tool-button"
+      ".draw-tool"
     )
     .forEach(
       button => {
@@ -2830,6 +3760,7 @@ function clearToolActive() {
 }
 
 
+
 function stopDrawing() {
 
   map.pm.disableDraw();
@@ -2840,14 +3771,13 @@ function stopDrawing() {
 }
 
 
-function startDraw(
+
+function startDrawing(
   type,
   button
 ) {
 
-  if (
-    !editMode
-  ) {
+  if (!editMode) {
     return;
   }
 
@@ -2879,13 +3809,50 @@ function startDraw(
         true,
 
       allowSelfIntersection:
-        false
+        false,
+
+      templineStyle: {
+
+        color:
+          "#86ad96",
+
+        weight:
+          2
+
+      },
+
+      hintlineStyle: {
+
+        color:
+          "#86ad96",
+
+        dashArray:
+          "5,6"
+
+      },
+
+      pathOptions: {
+
+        color:
+          "#86ad96",
+
+        fillColor:
+          "#86ad96",
+
+        fillOpacity:
+          .25,
+
+        weight:
+          5
+
+      }
 
     }
 
   );
 
 }
+
 
 
 document
@@ -2896,7 +3863,7 @@ document
     "click",
     event => {
 
-      startDraw(
+      startDrawing(
         "Polygon",
         event.currentTarget
       );
@@ -2913,7 +3880,7 @@ document
     "click",
     event => {
 
-      startDraw(
+      startDrawing(
         "Rectangle",
         event.currentTarget
       );
@@ -2930,7 +3897,7 @@ document
     "click",
     event => {
 
-      startDraw(
+      startDrawing(
         "Line",
         event.currentTarget
       );
@@ -2949,16 +3916,6 @@ document
   );
 
 
-map.on(
-  "pm:drawend",
-  () => {
-
-    clearToolActive();
-
-  }
-);
-
-
 
 /* =========================================================
    LOAD DATABASE
@@ -2971,9 +3928,7 @@ async function loadDatabase() {
       .from(
         "map_layers"
       )
-      .select(
-        "*"
-      )
+      .select("*")
       .order(
         "sort_order"
       )
@@ -2987,9 +3942,7 @@ async function loadDatabase() {
       .from(
         "map_shapes"
       )
-      .select(
-        "*"
-      )
+      .select("*")
       .order(
         "created_at"
       );
@@ -3022,35 +3975,46 @@ async function loadDatabase() {
   ] =
     await Promise.all(
       [
-
         layersQuery,
-
         shapesQuery
-
       ]
     );
 
 
-  if (
-    layersResponse.error
-  ) {
+  if (layersResponse.error) {
 
     console.error(
       layersResponse.error
     );
+
+
+    if (editMode) {
+
+      status.textContent =
+        "Erreur couches : " +
+        layersResponse.error.message;
+
+    }
 
     return;
 
   }
 
 
-  if (
-    shapesResponse.error
-  ) {
+  if (shapesResponse.error) {
 
     console.error(
       shapesResponse.error
     );
+
+
+    if (editMode) {
+
+      status.textContent =
+        "Erreur zones : " +
+        shapesResponse.error.message;
+
+    }
 
     return;
 
@@ -3074,9 +4038,7 @@ async function loadDatabase() {
   updateShapeLayerSelect();
 
 
-  if (
-    editMode
-  ) {
+  if (editMode) {
 
     status.textContent =
       `${mapLayers.length} couche(s) • ${mapShapes.length} élément(s)`;
@@ -3118,6 +4080,9 @@ function clearGroups() {
   layerGroups =
     {};
 
+
+  clearInnerClips();
+
 }
 
 
@@ -3139,8 +4104,18 @@ function renderLayers() {
     mapLayers.length === 0
   ) {
 
-    layersList.textContent =
-      "Aucune couche.";
+    layersList.innerHTML =
+      `
+        <div
+          style="
+            color:#68736d;
+            font-size:10px;
+            padding:10px;
+          "
+        >
+          Aucune couche disponible.
+        </div>
+      `;
 
     return;
 
@@ -3162,12 +4137,26 @@ function renderLayers() {
       group;
 
 
-    group.addTo(
-      map
-    );
+    const previousVisible =
+      layerVisibility.has(
+        layer.id
+      )
+        ? layerVisibility.get(
+            layer.id
+          )
+        : true;
 
 
-    const shapeCount =
+    if (previousVisible) {
+
+      group.addTo(
+        map
+      );
+
+    }
+
+
+    const count =
       mapShapes.filter(
         shape =>
           shape.layer_id ===
@@ -3196,22 +4185,27 @@ function renderLayers() {
 
 
     checkbox.checked =
-      true;
+      previousVisible;
 
 
-    const color =
+    const swatch =
       document.createElement(
         "span"
       );
 
 
-    color.className =
-      "layer-color";
+    swatch.className =
+      "layer-swatch";
 
 
-    color.style.background =
+    swatch.style.background =
       layer.color ||
-      "#8b5cf6";
+      "#86ad96";
+
+
+    swatch.style.color =
+      layer.color ||
+      "#86ad96";
 
 
     const title =
@@ -3221,30 +4215,36 @@ function renderLayers() {
 
 
     title.className =
-      "layer-title";
+      "layer-name";
 
 
     title.textContent =
       layer.name;
 
 
-    const count =
+    const countElement =
       document.createElement(
         "span"
       );
 
 
-    count.className =
+    countElement.className =
       "layer-count";
 
 
-    count.textContent =
-      shapeCount;
+    countElement.textContent =
+      count;
 
 
     checkbox.addEventListener(
       "change",
       () => {
+
+        layerVisibility.set(
+          layer.id,
+          checkbox.checked
+        );
+
 
         if (
           checkbox.checked
@@ -3269,9 +4269,9 @@ function renderLayers() {
 
     label.append(
       checkbox,
-      color,
+      swatch,
       title,
-      count
+      countElement
     );
 
 
@@ -3286,14 +4286,211 @@ function renderLayers() {
 
 
 /* =========================================================
+   POPUP
+========================================================= */
+
+function buildPopup(
+  shape,
+  parentLayer
+) {
+
+  const popup =
+    document.createElement(
+      "div"
+    );
+
+
+  const category =
+    document.createElement(
+      "div"
+    );
+
+
+  category.className =
+    "zone-category";
+
+
+  category.textContent =
+    parentLayer.name;
+
+
+  popup.appendChild(
+    category
+  );
+
+
+  const title =
+    document.createElement(
+      "h3"
+    );
+
+
+  title.className =
+    "zone-title";
+
+
+  title.textContent =
+    shape.name ||
+    "Zone";
+
+
+  popup.appendChild(
+    title
+  );
+
+
+  if (
+    shape.description
+  ) {
+
+    const description =
+      document.createElement(
+        "p"
+      );
+
+
+    description.className =
+      "zone-description";
+
+
+    description.textContent =
+      shape.description;
+
+
+    popup.appendChild(
+      description
+    );
+
+  }
+
+
+  return popup;
+
+}
+
+
+
+/* =========================================================
+   BIND SHAPE INTERACTIONS
+========================================================= */
+
+function configureShapeLayer(
+  leafletLayer,
+  shape,
+  parentLayer
+) {
+
+  leafletLayer.options.pmIgnore =
+    false;
+
+
+  leafletLayer.bindPopup(
+
+    buildPopup(
+      shape,
+      parentLayer
+    )
+
+  );
+
+
+  leafletLayer.on(
+    "click",
+    event => {
+
+      if (!editMode) {
+        return;
+      }
+
+
+      L.DomEvent.stopPropagation(
+        event
+      );
+
+
+      selectExistingShape(
+        leafletLayer,
+        shape
+      );
+
+    }
+  );
+
+
+  /*
+    Update clip while editing vertices.
+  */
+
+  const updateClip =
+    () => {
+
+      requestAnimationFrame(
+        () => {
+
+          syncInnerOutline(
+            leafletLayer
+          );
+
+        }
+      );
+
+    };
+
+
+  leafletLayer.on(
+    "pm:edit",
+    updateClip
+  );
+
+
+  leafletLayer.on(
+    "pm:change",
+    updateClip
+  );
+
+
+  leafletLayer.on(
+    "pm:markerdrag",
+    updateClip
+  );
+
+
+  leafletLayer.on(
+    "pm:vertexadded",
+    updateClip
+  );
+
+
+  leafletLayer.on(
+    "pm:vertexremoved",
+    updateClip
+  );
+
+
+  /*
+    IMPORTANT:
+    active uniquement pour Polygon/Rectangle.
+  */
+
+  requestAnimationFrame(
+    () => {
+
+      enableInnerOutline(
+        leafletLayer
+      );
+
+    }
+  );
+
+}
+
+
+
+/* =========================================================
    RENDER SHAPES
 ========================================================= */
 
 function renderShapes() {
-
-  renderedShapeLayers =
-    [];
-
 
   for (
     const shape
@@ -3319,13 +4516,28 @@ function renderShapes() {
     const color =
       shape.style?.color ||
       parentLayer.color ||
-      "#8b5cf6";
+      "#86ad96";
 
 
     const opacity =
       shape.style?.opacity ??
       parentLayer.opacity ??
-      .35;
+      .30;
+
+
+    /*
+      Comme le stroke est découpé en deux,
+      weight = 6 donne environ 3px visibles
+      À L'INTÉRIEUR.
+    */
+
+    const geometryType =
+      shape.geometry.type;
+
+
+    const polygon =
+      geometryType === "Polygon" ||
+      geometryType === "MultiPolygon";
 
 
     const geo =
@@ -3345,17 +4557,27 @@ function renderShapes() {
 
           style: {
 
-            color,
+            color:
+              color,
 
             fillColor:
               color,
 
             fillOpacity:
-              opacity,
+              polygon
+                ? opacity
+                : 0,
 
             weight:
-              shape.style?.weight ??
-              3
+              polygon
+                ? 6
+                : 3,
+
+            lineCap:
+              "round",
+
+            lineJoin:
+              "round"
 
           }
 
@@ -3367,88 +4589,10 @@ function renderShapes() {
     geo.eachLayer(
       leafletLayer => {
 
-        leafletLayer.options.pmIgnore =
-          false;
-
-
-        const popup =
-          document.createElement(
-            "div"
-          );
-
-
-        const title =
-          document.createElement(
-            "h3"
-          );
-
-
-        title.className =
-          "popup-title";
-
-
-        title.textContent =
-          shape.name ||
-          "Zone";
-
-
-        popup.appendChild(
-          title
-        );
-
-
-        if (
-          shape.description
-        ) {
-
-          const description =
-            document.createElement(
-              "p"
-            );
-
-
-          description.className =
-            "popup-description";
-
-
-          description.textContent =
-            shape.description;
-
-
-          popup.appendChild(
-            description
-          );
-
-        }
-
-
-        leafletLayer.bindPopup(
-          popup
-        );
-
-
-        leafletLayer.on(
-          "click",
-          event => {
-
-            if (
-              !editMode
-            ) {
-              return;
-            }
-
-
-            L.DomEvent.stopPropagation(
-              event
-            );
-
-
-            selectExistingShape(
-              leafletLayer,
-              shape
-            );
-
-          }
+        configureShapeLayer(
+          leafletLayer,
+          shape,
+          parentLayer
         );
 
 
@@ -3458,9 +4602,7 @@ function renderShapes() {
           ];
 
 
-        if (
-          group
-        ) {
+        if (group) {
 
           leafletLayer.addTo(
             group
@@ -3468,15 +4610,13 @@ function renderShapes() {
 
         }
 
-
-        renderedShapeLayers.push(
-          leafletLayer
-        );
-
       }
     );
 
   }
+
+
+  syncAllInnerOutlines();
 
 }
 
@@ -3557,9 +4697,7 @@ map.on(
   "pm:create",
   event => {
 
-    if (
-      !editMode
-    ) {
+    if (!editMode) {
 
       map.removeLayer(
         event.layer
@@ -3585,6 +4723,10 @@ map.on(
       null;
 
 
+    selectedLeafletLayer.options.pmIgnore =
+      false;
+
+
     shapeNameInput.value =
       "";
 
@@ -3607,12 +4749,12 @@ map.on(
 
       shapeColorInput.value =
         mapLayers[0].color ||
-        "#8b5cf6";
+        "#86ad96";
 
 
       shapeOpacityInput.value =
         mapLayers[0].opacity ??
-        .35;
+        .30;
 
     }
 
@@ -3620,13 +4762,19 @@ map.on(
     applyShapePreview();
 
 
-    editorPanel.classList.add(
-      "visible"
+    requestAnimationFrame(
+      () => {
+
+        enableInnerOutline(
+          selectedLeafletLayer
+        );
+
+      }
     );
 
 
     status.textContent =
-      "Nouvel élément. Choisis son nom puis enregistre.";
+      "Nouvel élément créé. Renseigne ses informations puis enregistre.";
 
 
     updateButtons();
@@ -3637,7 +4785,7 @@ map.on(
 
 
 /* =========================================================
-   SELECT SHAPE
+   SELECT EXISTING SHAPE
 ========================================================= */
 
 function selectExistingShape(
@@ -3680,25 +4828,24 @@ function selectExistingShape(
 
   shapeColorInput.value =
     shape.style?.color ||
-    "#8b5cf6";
+    "#86ad96";
 
 
   shapeOpacityInput.value =
     shape.style?.opacity ??
-    .35;
+    .30;
 
 
   shapePublishedInput.checked =
     shape.published === true;
 
 
-  editorPanel.classList.add(
-    "visible"
-  );
-
-
   status.textContent =
-    `Sélection : ${shape.name || "Sans nom"}`;
+    "Sélection : " +
+    (
+      shape.name ||
+      "Sans nom"
+    );
 
 
   updateButtons();
@@ -3708,7 +4855,7 @@ function selectExistingShape(
 
 
 /* =========================================================
-   STYLE PREVIEW
+   PREVIEW STYLE
 ========================================================= */
 
 function applyShapePreview() {
@@ -3716,11 +4863,22 @@ function applyShapePreview() {
   if (
     !selectedLeafletLayer ||
     typeof
-    selectedLeafletLayer.setStyle
-    !== "function"
+      selectedLeafletLayer.setStyle
+      !== "function"
   ) {
     return;
   }
+
+
+  const geo =
+    selectedLeafletLayer
+      .toGeoJSON()
+      .geometry;
+
+
+  const polygon =
+    geo.type === "Polygon" ||
+    geo.type === "MultiPolygon";
 
 
   selectedLeafletLayer.setStyle({
@@ -3732,14 +4890,29 @@ function applyShapePreview() {
       shapeColorInput.value,
 
     fillOpacity:
-      Number(
-        shapeOpacityInput.value
-      ),
+      polygon
+        ? Number(
+            shapeOpacityInput.value
+          )
+        : 0,
 
     weight:
-      3
+      polygon
+        ? 6
+        : 3,
+
+    lineJoin:
+      "round",
+
+    lineCap:
+      "round"
 
   });
+
+
+  syncInnerOutline(
+    selectedLeafletLayer
+  );
 
 }
 
@@ -3784,7 +4957,9 @@ saveShapeButton.addEventListener(
     }
 
 
-    selectedLeafletLayer.pm?.disable();
+    selectedLeafletLayer
+      .pm
+      ?.disable();
 
 
     const payload = {
@@ -3819,7 +4994,7 @@ saveShapeButton.addEventListener(
           ),
 
         weight:
-          3
+          6
 
       },
 
@@ -3872,6 +5047,11 @@ saveShapeButton.addEventListener(
       response.error
     ) {
 
+      console.error(
+        response.error
+      );
+
+
       status.textContent =
         "Erreur : " +
         response.error.message;
@@ -3915,7 +5095,7 @@ saveShapeButton.addEventListener(
 
 
     status.textContent =
-      "✓ Élément enregistré.";
+      "Élément enregistré.";
 
   }
 );
@@ -3958,7 +5138,7 @@ editShapeButton.addEventListener(
 
 
     status.textContent =
-      "Déplace les sommets. Ils s'accrochent aux points et bords voisins.";
+      "Modification active. Les points s'accrochent automatiquement aux sommets et aux lignes existantes.";
 
 
     updateButtons();
@@ -3967,16 +5147,23 @@ editShapeButton.addEventListener(
 );
 
 
+
 finishEditButton.addEventListener(
   "click",
   () => {
 
-    selectedLeafletLayer?.pm
+    selectedLeafletLayer
+      ?.pm
       ?.disable();
 
 
+    syncInnerOutline(
+      selectedLeafletLayer
+    );
+
+
     status.textContent =
-      "Modification terminée. Clique sur Enregistrer.";
+      "Modification terminée. Clique sur Enregistrer pour valider.";
 
 
     updateButtons();
@@ -4036,6 +5223,7 @@ function cancelSelection() {
 }
 
 
+
 cancelSelectionButton.addEventListener(
   "click",
   () => {
@@ -4068,7 +5256,7 @@ deleteShapeButton.addEventListener(
 
     if (
       !confirm(
-        "Supprimer cet élément ?"
+        "Supprimer définitivement cet élément ?"
       )
     ) {
       return;
@@ -4089,9 +5277,7 @@ deleteShapeButton.addEventListener(
         );
 
 
-    if (
-      error
-    ) {
+    if (error) {
 
       status.textContent =
         "Erreur : " +
@@ -4138,12 +5324,10 @@ document
           .trim();
 
 
-      if (
-        !name
-      ) {
+      if (!name) {
 
         status.textContent =
-          "Entre un nom de couche.";
+          "Entre un nom pour la couche.";
 
         return;
 
@@ -4190,9 +5374,7 @@ document
           });
 
 
-      if (
-        error
-      ) {
+      if (error) {
 
         status.textContent =
           "Erreur : " +
@@ -4216,7 +5398,7 @@ document
 
 
       status.textContent =
-        "✓ Couche créée.";
+        "Couche créée.";
 
     }
   );
@@ -4274,6 +5456,9 @@ setTimeout(
 
     map.invalidateSize();
 
+
+    syncAllInnerOutlines();
+
   },
   300
 );
@@ -4285,5 +5470,4 @@ setTimeout(
 
 
 </body>
-
 </html>
