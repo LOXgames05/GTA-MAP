@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,18 +13,22 @@
 />
 
 <style>
+
 html, body {
     margin: 0;
     width: 100%;
     height: 100%;
-    background: #111;
+    overflow: hidden;
 }
 
 #map {
-    width: 100%;
+    width: 100vw;
     height: 100vh;
+    background: #111;
 }
+
 </style>
+
 </head>
 
 <body>
@@ -34,40 +39,53 @@ html, body {
 
 <script>
 
-const map = L.map("map", {
-    crs: L.CRS.Simple,
-    minZoom: -5,
-    maxZoom: 3,
-    attributionControl: false
-});
-
-
-// Ta map fait 6000 × 8000
+const largeur = 6000;
+const hauteur = 8000;
 
 const bounds = [
     [0, 0],
-    [8000, 6000]
+    [hauteur, largeur]
 ];
 
+const map = L.map("map", {
 
-// Ton image
+    crs: L.CRS.Simple,
+
+    minZoom: -5,
+    maxZoom: 3,
+
+    zoomSnap: 0.25,
+
+    attributionControl: false
+
+});
+
+
+// IMAGE PRINCIPALE
 
 const carte = L.imageOverlay(
-    "images/map.png",
+
+    "https://raw.githubusercontent.com/LOXgames05/GTA-MAP/main/images/map.png",
+
     bounds
+
 ).addTo(map);
 
 
-// Affichage initial
+// Centrer automatiquement
 
 map.fitBounds(bounds);
 
 
-// Limites
+// Empêcher de partir trop loin
 
-map.setMaxBounds(bounds);
+map.setMaxBounds([
+    [-1000, -1000],
+    [hauteur + 1000, largeur + 1000]
+]);
 
 </script>
 
 </body>
+
 </html>
