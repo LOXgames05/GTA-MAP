@@ -13,25 +13,21 @@
 <title>GTA MAP</title>
 
 
-<!-- ======================================================
-     LEAFLET
-====================================================== -->
-
+<!-- LEAFLET -->
 <link
   rel="stylesheet"
   href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
 >
 
+
+<!-- LEAFLET GEOMAN -->
 <link
   rel="stylesheet"
   href="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css"
 >
 
 
-<!-- ======================================================
-     LUCIDE ICONS
-====================================================== -->
-
+<!-- ICONES -->
 <script src="https://unpkg.com/lucide@latest"></script>
 
 
@@ -47,20 +43,10 @@
 
 :root {
 
-  --bg:
-    #050807;
-
-  --black:
-    #080b0a;
+  --bg: #050807;
 
   --panel:
     rgba(8, 13, 11, .94);
-
-  --panel-2:
-    rgba(11, 18, 15, .95);
-
-  --panel-soft:
-    rgba(18, 29, 24, .72);
 
   --border:
     rgba(140, 177, 155, .13);
@@ -73,12 +59,6 @@
 
   --green-light:
     #a7c4b2;
-
-  --green-dark:
-    #173025;
-
-  --green-deep:
-    #0d1d16;
 
   --gold:
     #c6a443;
@@ -94,9 +74,6 @@
 
   --muted:
     #87928c;
-
-  --muted-2:
-    #626e68;
 
   --top-height:
     72px;
@@ -140,11 +117,6 @@ body {
 }
 
 
-
-/* =========================================================
-   BACKGROUND TEXTURE
-========================================================= */
-
 body::before {
 
   content: "";
@@ -169,12 +141,6 @@ body::before {
       circle at 15% 85%,
       rgba(26, 75, 53, .12),
       transparent 35%
-    ),
-
-    linear-gradient(
-      135deg,
-      rgba(255,255,255,.012) 25%,
-      transparent 25%
     );
 
 }
@@ -207,20 +173,9 @@ body::before {
 }
 
 
-/* Smooth Leaflet */
-
-.leaflet-pane,
-.leaflet-control {
-
-  transition:
-    opacity .15s ease;
-
-}
-
-
 
 /* =========================================================
-   TOP NAVIGATION
+   HEADER
 ========================================================= */
 
 #topbar {
@@ -302,9 +257,6 @@ body::before {
       rgba(198,164,67,.02)
     );
 
-  box-shadow:
-    inset 0 0 18px rgba(198,164,67,.08);
-
 }
 
 
@@ -318,44 +270,37 @@ body::before {
 
 .brand-name {
 
-  font-size:
-    13px;
+  font-size: 13px;
 
-  font-weight:
-    800;
+  font-weight: 800;
 
-  letter-spacing:
-    3px;
+  letter-spacing: 3px;
 
 }
 
 
 .brand-sub {
 
-  margin-top:
-    2px;
+  margin-top: 2px;
 
   color:
     var(--muted);
 
-  font-size:
-    9px;
+  font-size: 9px;
 
-  letter-spacing:
-    1px;
+  letter-spacing: 1px;
 
 }
 
 
 
 /* =========================================================
-   NAVIGATION LINKS
+   NAV
 ========================================================= */
 
 .main-nav {
 
-  height:
-    100%;
+  height: 100%;
 
   display: flex;
 
@@ -363,8 +308,7 @@ body::before {
 
   justify-content: center;
 
-  gap:
-    28px;
+  gap: 28px;
 
 }
 
@@ -373,8 +317,7 @@ body::before {
 
   position: relative;
 
-  height:
-    100%;
+  height: 100%;
 
   display: flex;
 
@@ -383,31 +326,22 @@ body::before {
   color:
     #89908d;
 
-  font-size:
-    10px;
+  font-size: 10px;
 
-  font-weight:
-    800;
+  font-weight: 800;
 
-  letter-spacing:
-    2px;
+  letter-spacing: 2px;
 
-  cursor:
-    pointer;
+  cursor: pointer;
 
-  user-select:
-    none;
-
-  transition:
-    color .15s ease;
+  user-select: none;
 
 }
 
 
 .nav-item:hover {
 
-  color:
-    var(--text);
+  color: white;
 
 }
 
@@ -435,15 +369,12 @@ body::before {
   background:
     var(--green);
 
-  box-shadow:
-    0 0 12px rgba(134,173,150,.6);
-
 }
 
 
 
 /* =========================================================
-   USER AREA
+   ACCOUNT
 ========================================================= */
 
 .account-area {
@@ -461,23 +392,18 @@ body::before {
 
 #admin-email {
 
-  max-width:
-    170px;
+  max-width: 170px;
 
-  overflow:
-    hidden;
+  overflow: hidden;
 
-  text-overflow:
-    ellipsis;
+  text-overflow: ellipsis;
 
-  white-space:
-    nowrap;
+  white-space: nowrap;
 
   color:
     var(--muted);
 
-  font-size:
-    10px;
+  font-size: 10px;
 
 }
 
@@ -491,17 +417,14 @@ button {
 
   appearance: none;
 
-  min-height:
-    38px;
+  min-height: 38px;
 
   border:
     1px solid var(--border);
 
-  border-radius:
-    9px;
+  border-radius: 9px;
 
-  display:
-    inline-flex;
+  display: inline-flex;
 
   align-items: center;
 
@@ -518,26 +441,16 @@ button {
   color:
     #dce5e0;
 
-  font-family:
-    inherit;
+  font-family: inherit;
 
-  font-size:
-    10px;
+  font-size: 10px;
 
-  font-weight:
-    750;
+  font-weight: 750;
 
-  letter-spacing:
-    .3px;
-
-  cursor:
-    pointer;
+  cursor: pointer;
 
   transition:
-    background .15s ease,
-    border-color .15s ease,
-    transform .1s ease,
-    color .15s ease;
+    .15s ease;
 
 }
 
@@ -558,8 +471,7 @@ button:hover {
   background:
     rgba(33, 46, 39, .96);
 
-  color:
-    white;
+  color: white;
 
 }
 
@@ -586,14 +498,6 @@ button.primary {
 }
 
 
-button.primary:hover {
-
-  background:
-    rgba(57, 99, 76, .95);
-
-}
-
-
 button.gold {
 
   background:
@@ -604,14 +508,6 @@ button.gold {
 
   color:
     var(--gold-light);
-
-}
-
-
-button.gold:hover {
-
-  background:
-    rgba(117,92,26,.35);
 
 }
 
@@ -630,17 +526,6 @@ button.danger {
 }
 
 
-button.danger:hover {
-
-  background:
-    rgba(151, 42, 42, .45);
-
-  color:
-    white;
-
-}
-
-
 button.active {
 
   border-color:
@@ -649,19 +534,14 @@ button.active {
   background:
     rgba(43,77,59,.95);
 
-  color:
-    white;
-
-  box-shadow:
-    0 0 18px rgba(94,145,113,.18);
+  color: white;
 
 }
 
 
 button:disabled {
 
-  opacity:
-    .32;
+  opacity: .32;
 
   cursor:
     not-allowed;
@@ -674,23 +554,21 @@ button:disabled {
 
 
 /* =========================================================
-   PANEL COMMON
+   PANELS
 ========================================================= */
 
 .panel {
 
   position: fixed;
 
-  z-index:
-    6000;
+  z-index: 6000;
 
   overflow: hidden;
 
   border:
     1px solid var(--border);
 
-  border-radius:
-    13px;
+  border-radius: 13px;
 
   background:
     linear-gradient(
@@ -710,8 +588,7 @@ button:disabled {
 
 .panel-header {
 
-  min-height:
-    56px;
+  min-height: 56px;
 
   display: flex;
 
@@ -733,28 +610,22 @@ button:disabled {
   color:
     var(--muted);
 
-  font-size:
-    8px;
+  font-size: 8px;
 
-  font-weight:
-    800;
+  font-weight: 800;
 
-  letter-spacing:
-    2px;
+  letter-spacing: 2px;
 
 }
 
 
 .panel-title {
 
-  margin-top:
-    3px;
+  margin-top: 3px;
 
-  font-size:
-    15px;
+  font-size: 15px;
 
-  font-weight:
-    750;
+  font-weight: 750;
 
 }
 
@@ -768,16 +639,14 @@ button:disabled {
 
 .panel-scroll::-webkit-scrollbar {
 
-  width:
-    5px;
+  width: 5px;
 
 }
 
 
 .panel-scroll::-webkit-scrollbar-thumb {
 
-  border-radius:
-    999px;
+  border-radius: 999px;
 
   background:
     rgba(134,173,150,.2);
@@ -787,7 +656,7 @@ button:disabled {
 
 
 /* =========================================================
-   LAYERS PANEL
+   LAYERS
 ========================================================= */
 
 #layers-panel {
@@ -813,8 +682,7 @@ button:disabled {
 
 #layers-panel.closed {
 
-  display:
-    none;
+  display: none;
 
 }
 
@@ -828,44 +696,32 @@ button:disabled {
       - 108px
     );
 
-  padding:
-    12px;
+  padding: 12px;
 
 }
 
 
-
-/* =========================================================
-   LAYER ITEM
-========================================================= */
-
 #layers-list {
 
-  display:
-    grid;
+  display: grid;
 
-  gap:
-    7px;
+  gap: 7px;
 
 }
 
 
 .layer-item {
 
-  display:
-    grid;
+  display: grid;
 
   grid-template-columns:
     18px 10px 1fr auto;
 
-  align-items:
-    center;
+  align-items: center;
 
-  gap:
-    10px;
+  gap: 10px;
 
-  min-height:
-    48px;
+  min-height: 48px;
 
   padding:
     8px 11px;
@@ -873,18 +729,12 @@ button:disabled {
   border:
     1px solid rgba(255,255,255,.045);
 
-  border-radius:
-    9px;
+  border-radius: 9px;
 
   background:
     rgba(255,255,255,.018);
 
-  cursor:
-    pointer;
-
-  transition:
-    background .15s ease,
-    border-color .15s ease;
+  cursor: pointer;
 
 }
 
@@ -894,19 +744,13 @@ button:disabled {
   background:
     rgba(81,118,96,.08);
 
-  border-color:
-    var(--border);
-
 }
 
 
 .layer-item input {
 
-  width:
-    15px;
-
-  height:
-    15px;
+  width: 15px;
+  height: 15px;
 
   margin: 0;
 
@@ -918,13 +762,10 @@ button:disabled {
 
 .layer-swatch {
 
-  width:
-    9px;
-  height:
-    9px;
+  width: 9px;
+  height: 9px;
 
-  border-radius:
-    50%;
+  border-radius: 50%;
 
   box-shadow:
     0 0 7px currentColor;
@@ -934,34 +775,27 @@ button:disabled {
 
 .layer-name {
 
-  overflow:
-    hidden;
+  overflow: hidden;
 
-  white-space:
-    nowrap;
+  white-space: nowrap;
 
-  text-overflow:
-    ellipsis;
+  text-overflow: ellipsis;
 
-  font-size:
-    11px;
+  font-size: 11px;
 
-  font-weight:
-    650;
+  font-weight: 650;
 
 }
 
 
 .layer-count {
 
-  min-width:
-    24px;
+  min-width: 24px;
 
   padding:
     3px 6px;
 
-  border-radius:
-    999px;
+  border-radius: 999px;
 
   background:
     rgba(255,255,255,.035);
@@ -969,18 +803,16 @@ button:disabled {
   color:
     var(--muted);
 
-  text-align:
-    center;
+  text-align: center;
 
-  font-size:
-    9px;
+  font-size: 9px;
 
 }
 
 
 
 /* =========================================================
-   EDITOR PANEL
+   EDITOR
 ========================================================= */
 
 #editor-panel {
@@ -1001,16 +833,14 @@ button:disabled {
       - 36px
     );
 
-  display:
-    none;
+  display: none;
 
 }
 
 
 body.editing #editor-panel {
 
-  display:
-    block;
+  display: block;
 
 }
 
@@ -1024,24 +854,16 @@ body.editing #editor-panel {
       - 108px
     );
 
-  padding:
-    16px;
+  padding: 16px;
 
 }
 
 
-
-/* =========================================================
-   EDIT SECTIONS
-========================================================= */
-
 .editor-section {
 
-  padding-bottom:
-    18px;
+  padding-bottom: 18px;
 
-  margin-bottom:
-    18px;
+  margin-bottom: 18px;
 
   border-bottom:
     1px solid var(--border);
@@ -1066,8 +888,7 @@ body.editing #editor-panel {
 
   justify-content: space-between;
 
-  margin-bottom:
-    12px;
+  margin-bottom: 12px;
 
 }
 
@@ -1077,14 +898,11 @@ body.editing #editor-panel {
   color:
     #b8c5be;
 
-  font-size:
-    9px;
+  font-size: 9px;
 
-  font-weight:
-    800;
+  font-weight: 800;
 
-  letter-spacing:
-    2px;
+  letter-spacing: 2px;
 
 }
 
@@ -1102,8 +920,7 @@ body.editing #editor-panel {
   border:
     1px solid rgba(134,173,150,.14);
 
-  border-radius:
-    9px;
+  border-radius: 9px;
 
   background:
     rgba(48,81,62,.09);
@@ -1111,11 +928,9 @@ body.editing #editor-panel {
   color:
     #9db7a7;
 
-  font-size:
-    10px;
+  font-size: 10px;
 
-  line-height:
-    1.5;
+  line-height: 1.5;
 
 }
 
@@ -1135,17 +950,13 @@ label {
   color:
     #89968f;
 
-  font-size:
-    8px;
+  font-size: 8px;
 
-  font-weight:
-    800;
+  font-weight: 800;
 
-  letter-spacing:
-    1.4px;
+  letter-spacing: 1.4px;
 
-  text-transform:
-    uppercase;
+  text-transform: uppercase;
 
 }
 
@@ -1154,11 +965,9 @@ input,
 select,
 textarea {
 
-  width:
-    100%;
+  width: 100%;
 
-  min-height:
-    40px;
+  min-height: 40px;
 
   padding:
     9px 11px;
@@ -1166,11 +975,9 @@ textarea {
   border:
     1px solid var(--border);
 
-  border-radius:
-    8px;
+  border-radius: 8px;
 
-  outline:
-    none;
+  outline: none;
 
   background:
     rgba(4,8,6,.88);
@@ -1178,15 +985,9 @@ textarea {
   color:
     #e5ece8;
 
-  font-family:
-    inherit;
+  font-family: inherit;
 
-  font-size:
-    11px;
-
-  transition:
-    border-color .15s ease,
-    box-shadow .15s ease;
+  font-size: 11px;
 
 }
 
@@ -1198,38 +999,30 @@ textarea:focus {
   border-color:
     rgba(134,173,150,.42);
 
-  box-shadow:
-    0 0 0 3px rgba(134,173,150,.045);
-
 }
 
 
 textarea {
 
-  min-height:
-    74px;
+  min-height: 74px;
 
-  resize:
-    vertical;
+  resize: vertical;
 
 }
 
 
 input[type="color"] {
 
-  height:
-    40px;
+  height: 40px;
 
-  padding:
-    4px;
+  padding: 4px;
 
 }
 
 
 input[type="range"] {
 
-  min-height:
-    30px;
+  min-height: 30px;
 
   padding: 0;
 
@@ -1246,8 +1039,7 @@ input[type="range"] {
   grid-template-columns:
     1fr 1fr;
 
-  gap:
-    10px;
+  gap: 10px;
 
 }
 
@@ -1258,28 +1050,23 @@ input[type="range"] {
 
   align-items: center;
 
-  gap:
-    8px;
+  gap: 8px;
 
-  margin-top:
-    12px;
+  margin-top: 12px;
 
   color:
     #a4afa9;
 
-  font-size:
-    10px;
+  font-size: 10px;
 
 }
 
 
 .check-row input {
 
-  width:
-    15px;
+  width: 15px;
 
-  min-height:
-    15px;
+  min-height: 15px;
 
   accent-color:
     var(--green);
@@ -1289,22 +1076,19 @@ input[type="range"] {
 
 
 /* =========================================================
-   ACTION GRID
+   ACTIONS
 ========================================================= */
 
 .action-grid {
 
-  display:
-    grid;
+  display: grid;
 
   grid-template-columns:
     1fr 1fr;
 
-  gap:
-    7px;
+  gap: 7px;
 
-  margin-top:
-    13px;
+  margin-top: 13px;
 
 }
 
@@ -1326,16 +1110,9 @@ input[type="range"] {
 
   position: fixed;
 
-  z-index:
-    8000;
+  z-index: 8000;
 
-  bottom:
-    18px;
-
-  /*
-    Centre automatiquement la toolbar
-    ENTRE les panneaux.
-  */
+  bottom: 18px;
 
   left:
     calc(
@@ -1351,23 +1128,18 @@ input[type="range"] {
   transform:
     translateX(-50%);
 
-  display:
-    none;
+  display: none;
 
-  align-items:
-    stretch;
+  align-items: stretch;
 
-  gap:
-    4px;
+  gap: 4px;
 
-  padding:
-    6px;
+  padding: 6px;
 
   border:
     1px solid var(--border);
 
-  border-radius:
-    12px;
+  border-radius: 12px;
 
   background:
     rgba(5,9,7,.96);
@@ -1383,8 +1155,7 @@ input[type="range"] {
 
 body.editing #draw-toolbar {
 
-  display:
-    flex;
+  display: flex;
 
 }
 
@@ -1415,23 +1186,17 @@ body.layers-open {
 
 .draw-tool {
 
-  width:
-    76px;
+  width: 76px;
 
-  min-height:
-    54px;
+  min-height: 54px;
 
-  display:
-    flex;
+  display: flex;
 
-  flex-direction:
-    column;
+  flex-direction: column;
 
-  gap:
-    4px;
+  gap: 4px;
 
-  padding:
-    6px;
+  padding: 6px;
 
   border:
     1px solid transparent;
@@ -1447,11 +1212,8 @@ body.layers-open {
 
 .draw-tool svg {
 
-  width:
-    18px;
-
-  height:
-    18px;
+  width: 18px;
+  height: 18px;
 
 }
 
@@ -1464,8 +1226,7 @@ body.layers-open {
   background:
     rgba(63,94,75,.1);
 
-  color:
-    white;
+  color: white;
 
 }
 
@@ -1486,22 +1247,18 @@ body.layers-open {
 
 .draw-label {
 
-  font-size:
-    8px;
+  font-size: 8px;
 
-  font-weight:
-    800;
+  font-weight: 800;
 
-  letter-spacing:
-    .5px;
+  letter-spacing: .5px;
 
 }
 
 
 .toolbar-separator {
 
-  width:
-    1px;
+  width: 1px;
 
   margin:
     7px 4px;
@@ -1514,7 +1271,7 @@ body.layers-open {
 
 
 /* =========================================================
-   ZOOM CONTROL SAFE AREA
+   ZOOM
 ========================================================= */
 
 .leaflet-bottom.leaflet-right {
@@ -1525,16 +1282,14 @@ body.layers-open {
       + 14px
     );
 
-  bottom:
-    14px;
+  bottom: 14px;
 
 }
 
 
 .leaflet-control-zoom {
 
-  overflow:
-    hidden;
+  overflow: hidden;
 
   border:
     1px solid var(--border) !important;
@@ -1571,17 +1326,9 @@ body.layers-open {
 }
 
 
-.leaflet-control-zoom a:hover {
-
-  background:
-    #15221b !important;
-
-}
-
-
 
 /* =========================================================
-   LOGIN MODAL
+   LOGIN
 ========================================================= */
 
 #login-overlay {
@@ -1590,20 +1337,15 @@ body.layers-open {
 
   inset: 0;
 
-  z-index:
-    12000;
+  z-index: 12000;
 
-  display:
-    none;
+  display: none;
 
-  align-items:
-    center;
+  align-items: center;
 
-  justify-content:
-    center;
+  justify-content: center;
 
-  padding:
-    20px;
+  padding: 20px;
 
   background:
     rgba(0,0,0,.78);
@@ -1616,28 +1358,23 @@ body.layers-open {
 
 #login-overlay.visible {
 
-  display:
-    flex;
+  display: flex;
 
 }
 
 
 .login-box {
 
-  width:
-    410px;
+  width: 410px;
 
-  max-width:
-    100%;
+  max-width: 100%;
 
-  overflow:
-    hidden;
+  overflow: hidden;
 
   border:
     1px solid var(--border);
 
-  border-radius:
-    14px;
+  border-radius: 14px;
 
   background:
     linear-gradient(
@@ -1654,8 +1391,7 @@ body.layers-open {
 
 .login-head {
 
-  padding:
-    22px;
+  padding: 22px;
 
   border-bottom:
     1px solid var(--border);
@@ -1665,20 +1401,16 @@ body.layers-open {
 
 .login-kicker {
 
-  margin-bottom:
-    7px;
+  margin-bottom: 7px;
 
   color:
     var(--green);
 
-  font-size:
-    8px;
+  font-size: 8px;
 
-  font-weight:
-    900;
+  font-weight: 900;
 
-  letter-spacing:
-    2px;
+  letter-spacing: 2px;
 
 }
 
@@ -1687,8 +1419,7 @@ body.layers-open {
 
   margin: 0;
 
-  font-size:
-    21px;
+  font-size: 21px;
 
 }
 
@@ -1701,8 +1432,7 @@ body.layers-open {
   color:
     var(--muted);
 
-  font-size:
-    10px;
+  font-size: 10px;
 
 }
 
@@ -1717,14 +1447,12 @@ body.layers-open {
 
 #login-error {
 
-  margin-top:
-    12px;
+  margin-top: 12px;
 
   color:
     #d6bd68;
 
-  font-size:
-    10px;
+  font-size: 10px;
 
 }
 
@@ -1739,17 +1467,12 @@ body.layers-open {
   border:
     1px solid var(--border);
 
-  border-radius:
-    10px;
+  border-radius: 10px;
 
   background:
     rgba(6,11,8,.97);
 
-  color:
-    white;
-
-  box-shadow:
-    0 20px 50px rgba(0,0,0,.5);
+  color: white;
 
 }
 
@@ -1764,23 +1487,18 @@ body.layers-open {
 
 .zone-category {
 
-  margin-bottom:
-    5px;
+  margin-bottom: 5px;
 
   color:
     var(--green);
 
-  font-size:
-    7px;
+  font-size: 7px;
 
-  font-weight:
-    900;
+  font-weight: 900;
 
-  letter-spacing:
-    1.6px;
+  letter-spacing: 1.6px;
 
-  text-transform:
-    uppercase;
+  text-transform: uppercase;
 
 }
 
@@ -1790,8 +1508,7 @@ body.layers-open {
   margin:
     0 0 5px;
 
-  font-size:
-    15px;
+  font-size: 15px;
 
 }
 
@@ -1803,8 +1520,7 @@ body.layers-open {
   color:
     var(--muted);
 
-  font-size:
-    10px;
+  font-size: 10px;
 
 }
 
@@ -1823,11 +1539,9 @@ body.layers-open {
 
   }
 
-
   .main-nav {
 
-    display:
-      none;
+    display: none;
 
   }
 
@@ -1854,8 +1568,7 @@ body.layers-open {
 
   .brand-name {
 
-    font-size:
-      10px;
+    font-size: 10px;
 
   }
 
@@ -1863,133 +1576,81 @@ body.layers-open {
   .brand-sub,
   #admin-email {
 
-    display:
-      none;
+    display: none;
 
   }
 
 
   .brand-emblem {
 
-    width:
-      32px;
-
-    height:
-      32px;
-
-  }
-
-
-  .account-area button {
-
-    min-height:
-      34px;
-
-    padding:
-      6px 8px;
+    width: 32px;
+    height: 32px;
 
   }
 
 
   #layers-panel {
 
-    top:
-      74px;
+    top: 74px;
 
-    right:
-      8px;
+    right: 8px;
 
-    width:
-      245px;
+    width: 245px;
 
-    max-height:
-      44vh;
+    max-height: 44vh;
 
   }
 
 
   #editor-panel {
 
-    top:
-      auto;
+    top: auto;
 
-    left:
-      8px;
+    left: 8px;
+    right: 8px;
 
-    right:
-      8px;
+    bottom: 78px;
 
-    bottom:
-      78px;
+    width: auto;
 
-    width:
-      auto;
-
-    max-height:
-      50vh;
-
-  }
-
-
-  #editor-panel .panel-scroll {
-
-    max-height:
-      calc(50vh - 56px);
+    max-height: 50vh;
 
   }
 
 
   #draw-toolbar {
 
-    left:
-      8px !important;
+    left: 8px !important;
+    right: 8px;
 
-    right:
-      8px;
+    bottom: 8px;
 
-    bottom:
-      8px;
+    transform: none;
 
-    transform:
-      none;
-
-    overflow-x:
-      auto;
-
-  }
-
-
-  .draw-tool {
-
-    flex:
-      0 0 68px;
+    overflow-x: auto;
 
   }
 
 
   body.editing {
 
-    --left-safe:
-      0px;
+    --left-safe: 0px;
 
   }
 
 
   body.layers-open {
 
-    --right-safe:
-      0px;
+    --right-safe: 0px;
 
   }
 
 
   .leaflet-bottom.leaflet-right {
 
-    right:
-      8px;
+    right: 8px;
 
-    bottom:
-      78px;
+    bottom: 78px;
 
   }
 
@@ -2004,20 +1665,15 @@ body.layers-open {
 <body class="layers-open">
 
 
-<!-- ======================================================
-     MAP
-====================================================== -->
+<!-- MAP -->
 
 <div id="map"></div>
 
 
 
-<!-- ======================================================
-     HEADER
-====================================================== -->
+<!-- HEADER -->
 
 <header id="topbar">
-
 
   <div class="brand">
 
@@ -2126,9 +1782,7 @@ body.layers-open {
 
 
 
-<!-- ======================================================
-     LAYERS PANEL
-====================================================== -->
+<!-- LAYERS -->
 
 <aside
   id="layers-panel"
@@ -2171,9 +1825,7 @@ body.layers-open {
 
 
 
-<!-- ======================================================
-     EDITOR
-====================================================== -->
+<!-- EDITOR -->
 
 <aside
   id="editor-panel"
@@ -2209,8 +1861,6 @@ body.layers-open {
   <div class="panel-scroll">
 
 
-    <!-- STATUS -->
-
     <section class="editor-section">
 
       <div class="section-head">
@@ -2229,8 +1879,6 @@ body.layers-open {
     </section>
 
 
-
-    <!-- SELECTED ELEMENT -->
 
     <section class="editor-section">
 
@@ -2391,8 +2039,6 @@ body.layers-open {
 
 
 
-    <!-- CREATE LAYER -->
-
     <section class="editor-section">
 
       <div class="section-head">
@@ -2504,9 +2150,7 @@ body.layers-open {
 
 
 
-<!-- ======================================================
-     DRAW TOOLBAR
-====================================================== -->
+<!-- TOOLBAR -->
 
 <div id="draw-toolbar">
 
@@ -2573,9 +2217,7 @@ body.layers-open {
 
 
 
-<!-- ======================================================
-     LOGIN MODAL
-====================================================== -->
+<!-- LOGIN -->
 
 <div id="login-overlay">
 
@@ -2666,9 +2308,7 @@ body.layers-open {
 
 
 
-<!-- ======================================================
-     JS LIBRARIES
-====================================================== -->
+<!-- LIBRARIES -->
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
@@ -2701,72 +2341,129 @@ lucide.createIcons();
 ========================================================= */
 
 const layersPanel =
-  document.getElementById("layers-panel");
+  document.getElementById(
+    "layers-panel"
+  );
+
 
 const layersList =
-  document.getElementById("layers-list");
+  document.getElementById(
+    "layers-list"
+  );
 
-const editorPanel =
-  document.getElementById("editor-panel");
 
 const status =
-  document.getElementById("status");
+  document.getElementById(
+    "status"
+  );
+
 
 const loginOverlay =
-  document.getElementById("login-overlay");
+  document.getElementById(
+    "login-overlay"
+  );
+
 
 const loginForm =
-  document.getElementById("login-form");
+  document.getElementById(
+    "login-form"
+  );
+
 
 const loginError =
-  document.getElementById("login-error");
+  document.getElementById(
+    "login-error"
+  );
+
 
 const loginButton =
-  document.getElementById("login-button");
+  document.getElementById(
+    "login-button"
+  );
+
 
 const logoutButton =
-  document.getElementById("logout-button");
+  document.getElementById(
+    "logout-button"
+  );
+
 
 const editModeButton =
-  document.getElementById("edit-mode-button");
+  document.getElementById(
+    "edit-mode-button"
+  );
+
 
 const adminEmail =
-  document.getElementById("admin-email");
+  document.getElementById(
+    "admin-email"
+  );
 
 
 const shapeLayerInput =
-  document.getElementById("shape-layer");
+  document.getElementById(
+    "shape-layer"
+  );
+
 
 const shapeNameInput =
-  document.getElementById("shape-name");
+  document.getElementById(
+    "shape-name"
+  );
+
 
 const shapeDescriptionInput =
-  document.getElementById("shape-description");
+  document.getElementById(
+    "shape-description"
+  );
+
 
 const shapeColorInput =
-  document.getElementById("shape-color");
+  document.getElementById(
+    "shape-color"
+  );
+
 
 const shapeOpacityInput =
-  document.getElementById("shape-opacity");
+  document.getElementById(
+    "shape-opacity"
+  );
+
 
 const shapePublishedInput =
-  document.getElementById("shape-published");
+  document.getElementById(
+    "shape-published"
+  );
 
 
 const saveShapeButton =
-  document.getElementById("save-shape");
+  document.getElementById(
+    "save-shape"
+  );
+
 
 const editShapeButton =
-  document.getElementById("edit-shape");
+  document.getElementById(
+    "edit-shape"
+  );
+
 
 const finishEditButton =
-  document.getElementById("finish-edit");
+  document.getElementById(
+    "finish-edit"
+  );
+
 
 const cancelSelectionButton =
-  document.getElementById("cancel-selection");
+  document.getElementById(
+    "cancel-selection"
+  );
+
 
 const deleteShapeButton =
-  document.getElementById("delete-shape");
+  document.getElementById(
+    "delete-shape"
+  );
 
 
 
@@ -2778,25 +2475,43 @@ let map;
 
 let initialBounds;
 
-let currentUser = null;
+let currentUser =
+  null;
 
-let admin = false;
 
-let editMode = false;
+let admin =
+  false;
 
-let mapLayers = [];
 
-let mapShapes = [];
+let editMode =
+  false;
 
-let layerGroups = {};
 
-let selectedLeafletLayer = null;
+let mapLayers =
+  [];
 
-let selectedShapeRecord = null;
 
-let temporaryLayer = null;
+let mapShapes =
+  [];
 
-let layerVisibility =
+
+let layerGroups =
+  {};
+
+
+let selectedLeafletLayer =
+  null;
+
+
+let selectedShapeRecord =
+  null;
+
+
+let temporaryLayer =
+  null;
+
+
+const layerVisibility =
   new Map();
 
 
@@ -2804,12 +2519,16 @@ let layerVisibility =
 /* =========================================================
    INNER OUTLINE SYSTEM
 
-   Leaflet dessine normalement le trait moitié
-   dedans / moitié dehors.
+   Le stroke Leaflet est normalement centré.
 
-   Ici on crée un clip SVG identique au polygone.
-   Le stroke est donc coupé à la frontière :
-   seule sa moitié intérieure reste visible.
+   Ici on crée un masque SVG identique au polygone.
+   Tout ce qui dépasse à l'extérieur est coupé.
+
+   Ça fonctionne :
+   - sur les zones sauvegardées
+   - pendant la création
+   - pendant un snap
+   - pendant la modification des sommets
 ========================================================= */
 
 const SVG_NS =
@@ -2824,12 +2543,56 @@ let innerClipId =
   0;
 
 
+let globalClipFrame =
+  null;
 
-function clearInnerClips() {
 
-  for (
-    const record
-    of innerClipRegistry.values()
+
+function isAreaLayer(
+  layer
+) {
+
+  return (
+    layer instanceof L.Polygon
+  );
+
+}
+
+
+
+/* =========================================================
+   DESTROY CLIP
+========================================================= */
+
+function destroyInnerOutline(
+  layer
+) {
+
+  const record =
+    innerClipRegistry.get(
+      layer
+    );
+
+
+  if (!record) {
+    return;
+  }
+
+
+  if (
+    record.path
+  ) {
+
+    record.path.removeAttribute(
+      "clip-path"
+    );
+
+  }
+
+
+  if (
+    record.clipPath &&
+    record.clipPath.isConnected
   ) {
 
     record.clipPath.remove();
@@ -2837,20 +2600,26 @@ function clearInnerClips() {
   }
 
 
-  innerClipRegistry.clear();
+  innerClipRegistry.delete(
+    layer
+  );
 
 }
 
 
 
-function enableInnerOutline(
+/* =========================================================
+   INSTALL CLIP
+========================================================= */
+
+function installInnerOutline(
   layer
 ) {
 
   if (
-    !layer ||
-    !layer._path ||
-    !(layer instanceof L.Polygon)
+    !isAreaLayer(
+      layer
+    )
   ) {
     return;
   }
@@ -2860,42 +2629,16 @@ function enableInnerOutline(
     layer._path;
 
 
-  const svg =
-    path.ownerSVGElement;
-
-
-  if (!svg) {
+  if (
+    !path ||
+    !path.ownerSVGElement
+  ) {
     return;
   }
 
 
-  let defs =
-    svg.querySelector(
-      "defs[data-gta-map='true']"
-    );
-
-
-  if (!defs) {
-
-    defs =
-      document.createElementNS(
-        SVG_NS,
-        "defs"
-      );
-
-
-    defs.setAttribute(
-      "data-gta-map",
-      "true"
-    );
-
-
-    svg.insertBefore(
-      defs,
-      svg.firstChild
-    );
-
-  }
+  const svg =
+    path.ownerSVGElement;
 
 
   let record =
@@ -2904,10 +2647,61 @@ function enableInnerOutline(
     );
 
 
+  /*
+    Leaflet / Geoman peut remplacer
+    complètement le PATH SVG.
+  */
+
+  if (
+    record &&
+    record.path !== path
+  ) {
+
+    destroyInnerOutline(
+      layer
+    );
+
+
+    record =
+      null;
+
+  }
+
+
   if (!record) {
 
+
+    let defs =
+      svg.querySelector(
+        "defs[data-gta-inner-outline='true']"
+      );
+
+
+    if (!defs) {
+
+      defs =
+        document.createElementNS(
+          SVG_NS,
+          "defs"
+        );
+
+
+      defs.setAttribute(
+        "data-gta-inner-outline",
+        "true"
+      );
+
+
+      svg.insertBefore(
+        defs,
+        svg.firstChild
+      );
+
+    }
+
+
     const id =
-      "gta-inner-outline-" +
+      "gta-inner-" +
       (++innerClipId);
 
 
@@ -2924,6 +2718,12 @@ function enableInnerOutline(
     );
 
 
+    clipPath.setAttribute(
+      "clipPathUnits",
+      "userSpaceOnUse"
+    );
+
+
     const clipShape =
       document.createElementNS(
         SVG_NS,
@@ -2933,7 +2733,7 @@ function enableInnerOutline(
 
     clipShape.setAttribute(
       "fill",
-      "#fff"
+      "#ffffff"
     );
 
 
@@ -2949,6 +2749,12 @@ function enableInnerOutline(
     );
 
 
+    clipShape.setAttribute(
+      "clip-rule",
+      "evenodd"
+    );
+
+
     clipPath.appendChild(
       clipShape
     );
@@ -2959,14 +2765,10 @@ function enableInnerOutline(
     );
 
 
-    path.setAttribute(
-      "clip-path",
-      `url(#${id})`
-    );
-
-
     record = {
 
+      id,
+      path,
       clipPath,
       clipShape
 
@@ -2981,6 +2783,12 @@ function enableInnerOutline(
   }
 
 
+  path.setAttribute(
+    "clip-path",
+    `url(#${record.id})`
+  );
+
+
   syncInnerOutline(
     layer
   );
@@ -2989,11 +2797,33 @@ function enableInnerOutline(
 
 
 
+/* =========================================================
+   SYNC ONE CLIP
+========================================================= */
+
 function syncInnerOutline(
   layer
 ) {
 
-  const record =
+  if (
+    !isAreaLayer(
+      layer
+    )
+  ) {
+    return;
+  }
+
+
+  const path =
+    layer._path;
+
+
+  if (!path) {
+    return;
+  }
+
+
+  let record =
     innerClipRegistry.get(
       layer
     );
@@ -3001,49 +2831,221 @@ function syncInnerOutline(
 
   if (
     !record ||
-    !layer._path
+    record.path !== path
   ) {
+
+    installInnerOutline(
+      layer
+    );
+
+
+    record =
+      innerClipRegistry.get(
+        layer
+      );
+
+  }
+
+
+  if (!record) {
     return;
   }
 
 
   const d =
-    layer._path.getAttribute(
+    path.getAttribute(
       "d"
     );
 
 
-  if (d) {
-
-    record.clipShape.setAttribute(
-      "d",
-      d
-    );
-
+  if (!d) {
+    return;
   }
+
+
+  record.clipShape.setAttribute(
+    "d",
+    d
+  );
+
+
+  /*
+    Geoman peut retirer l'attribut,
+    on le réapplique systématiquement.
+  */
+
+  path.setAttribute(
+    "clip-path",
+    `url(#${record.id})`
+  );
+
+
+  path.setAttribute(
+    "stroke-linejoin",
+    "round"
+  );
+
+
+  path.setAttribute(
+    "stroke-linecap",
+    "round"
+  );
 
 }
 
 
 
-function syncAllInnerOutlines() {
+/* =========================================================
+   SCHEDULE CLIP
+
+   Plusieurs passages car Geoman effectue parfois
+   plusieurs redraws après un événement.
+========================================================= */
+
+function scheduleInnerOutline(
+  layer
+) {
+
+  if (
+    !isAreaLayer(
+      layer
+    )
+  ) {
+    return;
+  }
+
 
   requestAnimationFrame(
     () => {
 
-      for (
-        const layer
-        of innerClipRegistry.keys()
-      ) {
+      installInnerOutline(
+        layer
+      );
 
-        syncInnerOutline(
-          layer
-        );
 
-      }
+      syncInnerOutline(
+        layer
+      );
 
     }
   );
+
+
+  setTimeout(
+    () => {
+
+      installInnerOutline(
+        layer
+      );
+
+
+      syncInnerOutline(
+        layer
+      );
+
+    },
+    35
+  );
+
+
+  setTimeout(
+    () => {
+
+      installInnerOutline(
+        layer
+      );
+
+
+      syncInnerOutline(
+        layer
+      );
+
+    },
+    100
+  );
+
+
+  setTimeout(
+    () => {
+
+      installInnerOutline(
+        layer
+      );
+
+
+      syncInnerOutline(
+        layer
+      );
+
+    },
+    220
+  );
+
+}
+
+
+
+/* =========================================================
+   SYNC ALL
+========================================================= */
+
+function syncAllInnerOutlines() {
+
+  if (
+    globalClipFrame
+  ) {
+    return;
+  }
+
+
+  globalClipFrame =
+    requestAnimationFrame(
+      () => {
+
+        globalClipFrame =
+          null;
+
+
+        for (
+          const layer
+          of innerClipRegistry.keys()
+        ) {
+
+          syncInnerOutline(
+            layer
+          );
+
+        }
+
+      }
+    );
+
+}
+
+
+
+/* =========================================================
+   CLEAR CLIPS
+========================================================= */
+
+function clearInnerClips() {
+
+  const layers =
+    Array.from(
+      innerClipRegistry.keys()
+    );
+
+
+  for (
+    const layer
+    of layers
+  ) {
+
+    destroyInnerOutline(
+      layer
+    );
+
+  }
 
 }
 
@@ -3062,7 +3064,10 @@ function loadImageSize(
 ) {
 
   return new Promise(
-    (resolve, reject) => {
+    (
+      resolve,
+      reject
+    ) => {
 
       const image =
         new Image();
@@ -3097,7 +3102,7 @@ function loadImageSize(
 
 
       image.src =
-        src + "?v=80";
+        src + "?v=100";
 
     }
   );
@@ -3169,7 +3174,7 @@ L.control
 
 L.imageOverlay(
 
-  MAP_IMAGE + "?v=80",
+  MAP_IMAGE + "?v=100",
 
   initialBounds,
 
@@ -3212,12 +3217,31 @@ map.setMaxBounds(
 
 
 /* =========================================================
-   UPDATE INNER OUTLINES WHEN MAP MOVES
+   MAP REDRAW
 ========================================================= */
 
 map.on(
-  "zoomend moveend resize viewreset",
+  "zoom move resize viewreset",
   syncAllInnerOutlines
+);
+
+
+map.on(
+  "zoomend moveend",
+  () => {
+
+    for (
+      const layer
+      of innerClipRegistry.keys()
+    ) {
+
+      scheduleInnerOutline(
+        layer
+      );
+
+    }
+
+  }
 );
 
 
@@ -3251,6 +3275,86 @@ map.pm.setGlobalOptions({
 
 
 /* =========================================================
+   CRITICAL FIX:
+   INNER OUTLINE WHILE DRAWING
+
+   Geoman utilise un workingLayer temporaire.
+   C'était lui qui remettait le contour centré.
+========================================================= */
+
+map.on(
+  "pm:drawstart",
+  event => {
+
+    const workingLayer =
+      event.workingLayer;
+
+
+    if (
+      !isAreaLayer(
+        workingLayer
+      )
+    ) {
+      return;
+    }
+
+
+    const refresh =
+      () => {
+
+        scheduleInnerOutline(
+          workingLayer
+        );
+
+      };
+
+
+    requestAnimationFrame(
+      refresh
+    );
+
+
+    workingLayer.on(
+      "add",
+      refresh
+    );
+
+
+    workingLayer.on(
+      "pm:vertexadded",
+      refresh
+    );
+
+
+    workingLayer.on(
+      "pm:change",
+      refresh
+    );
+
+
+    workingLayer.on(
+      "pm:snap",
+      refresh
+    );
+
+
+    workingLayer.on(
+      "pm:unsnap",
+      refresh
+    );
+
+
+    workingLayer.on(
+      "pm:markerdrag",
+      refresh
+    );
+
+  }
+);
+
+
+
+/* =========================================================
    RESET MAP
 ========================================================= */
 
@@ -3272,7 +3376,7 @@ document
 
 
 /* =========================================================
-   LAYER PANEL
+   LAYERS PANEL
 ========================================================= */
 
 function setLayersOpen(
@@ -3289,16 +3393,6 @@ function setLayersOpen(
     "closed",
     !open
   );
-
-
-  document
-    .getElementById(
-      "nav-layers"
-    )
-    .classList.toggle(
-      "active",
-      open
-    );
 
 }
 
@@ -3361,7 +3455,9 @@ async function refreshAuth() {
     false;
 
 
-  if (currentUser) {
+  if (
+    currentUser
+  ) {
 
     const {
       data: isAdmin
@@ -3387,7 +3483,9 @@ async function refreshAuth() {
         : "none";
 
 
-  if (admin) {
+  if (
+    admin
+  ) {
 
     loginButton.style.display =
       "none";
@@ -3402,7 +3500,8 @@ async function refreshAuth() {
 
 
     adminEmail.textContent =
-      currentUser.email || "";
+      currentUser.email ||
+      "";
 
   }
   else {
@@ -3423,7 +3522,9 @@ async function refreshAuth() {
       "";
 
 
-    if (editMode) {
+    if (
+      editMode
+    ) {
 
       disableEditMode();
 
@@ -3533,7 +3634,9 @@ loginForm.addEventListener(
         });
 
 
-    if (error) {
+    if (
+      error
+    ) {
 
       loginError.textContent =
         error.message;
@@ -3546,7 +3649,9 @@ loginForm.addEventListener(
     await refreshAuth();
 
 
-    if (!admin) {
+    if (
+      !admin
+    ) {
 
       await db.auth.signOut();
 
@@ -3601,7 +3706,9 @@ logoutButton.addEventListener(
 
 function enableEditMode() {
 
-  if (!admin) {
+  if (
+    !admin
+  ) {
     return;
   }
 
@@ -3626,17 +3733,8 @@ function enableEditMode() {
   `;
 
 
-  document
-    .getElementById(
-      "nav-editor"
-    )
-    .classList.add(
-      "active"
-    );
-
-
   status.textContent =
-    "Mode édition actif. Les sommets et segments existants sont aimantés.";
+    "Mode édition actif. Snap sommets + segments activé.";
 
 
   lucide.createIcons();
@@ -3676,15 +3774,6 @@ function disableEditMode() {
   `;
 
 
-  document
-    .getElementById(
-      "nav-editor"
-    )
-    .classList.remove(
-      "active"
-    );
-
-
   lucide.createIcons();
 
 
@@ -3698,7 +3787,9 @@ editModeButton.addEventListener(
   "click",
   () => {
 
-    if (editMode) {
+    if (
+      editMode
+    ) {
 
       disableEditMode();
 
@@ -3721,19 +3812,17 @@ document
     "click",
     () => {
 
-      if (!admin) {
-        return;
-      }
-
-
-      if (!editMode) {
+      if (
+        admin &&
+        !editMode
+      ) {
 
         enableEditMode();
 
       }
 
-  }
-);
+    }
+  );
 
 
 
@@ -3777,7 +3866,9 @@ function startDrawing(
   button
 ) {
 
-  if (!editMode) {
+  if (
+    !editMode
+  ) {
     return;
   }
 
@@ -3788,6 +3879,11 @@ function startDrawing(
   button.classList.add(
     "active"
   );
+
+
+  const isArea =
+    type === "Polygon" ||
+    type === "Rectangle";
 
 
   map.pm.enableDraw(
@@ -3808,8 +3904,12 @@ function startDrawing(
       snapSegment:
         true,
 
+      snapMiddle:
+        false,
+
       allowSelfIntersection:
         false,
+
 
       templineStyle: {
 
@@ -3817,19 +3917,27 @@ function startDrawing(
           "#86ad96",
 
         weight:
-          2
+          2,
+
+        dashArray:
+          "4,5"
 
       },
+
 
       hintlineStyle: {
 
         color:
           "#86ad96",
 
+        weight:
+          2,
+
         dashArray:
-          "5,6"
+          "4,5"
 
       },
+
 
       pathOptions: {
 
@@ -3840,10 +3948,26 @@ function startDrawing(
           "#86ad96",
 
         fillOpacity:
-          .25,
+          isArea
+            ? .25
+            : 0,
+
+        /*
+          6px total.
+          Avec le masque, environ 3px restent visibles
+          À L'INTÉRIEUR.
+        */
 
         weight:
-          5
+          isArea
+            ? 6
+            : 3,
+
+        lineJoin:
+          "round",
+
+        lineCap:
+          "round"
 
       }
 
@@ -3918,7 +4042,7 @@ document
 
 
 /* =========================================================
-   LOAD DATABASE
+   DATABASE
 ========================================================= */
 
 async function loadDatabase() {
@@ -3975,20 +4099,27 @@ async function loadDatabase() {
   ] =
     await Promise.all(
       [
+
         layersQuery,
+
         shapesQuery
+
       ]
     );
 
 
-  if (layersResponse.error) {
+  if (
+    layersResponse.error
+  ) {
 
     console.error(
       layersResponse.error
     );
 
 
-    if (editMode) {
+    if (
+      editMode
+    ) {
 
       status.textContent =
         "Erreur couches : " +
@@ -3996,19 +4127,24 @@ async function loadDatabase() {
 
     }
 
+
     return;
 
   }
 
 
-  if (shapesResponse.error) {
+  if (
+    shapesResponse.error
+  ) {
 
     console.error(
       shapesResponse.error
     );
 
 
-    if (editMode) {
+    if (
+      editMode
+    ) {
 
       status.textContent =
         "Erreur zones : " +
@@ -4016,17 +4152,20 @@ async function loadDatabase() {
 
     }
 
+
     return;
 
   }
 
 
   mapLayers =
-    layersResponse.data || [];
+    layersResponse.data ||
+    [];
 
 
   mapShapes =
-    shapesResponse.data || [];
+    shapesResponse.data ||
+    [];
 
 
   renderLayers();
@@ -4038,7 +4177,9 @@ async function loadDatabase() {
   updateShapeLayerSelect();
 
 
-  if (editMode) {
+  if (
+    editMode
+  ) {
 
     status.textContent =
       `${mapLayers.length} couche(s) • ${mapShapes.length} élément(s)`;
@@ -4106,16 +4247,15 @@ function renderLayers() {
 
     layersList.innerHTML =
       `
-        <div
-          style="
-            color:#68736d;
-            font-size:10px;
-            padding:10px;
-          "
-        >
+        <div style="
+          color:#68736d;
+          font-size:10px;
+          padding:10px;
+        ">
           Aucune couche disponible.
         </div>
       `;
+
 
     return;
 
@@ -4126,6 +4266,7 @@ function renderLayers() {
     const layer
     of mapLayers
   ) {
+
 
     const group =
       L.layerGroup();
@@ -4147,7 +4288,9 @@ function renderLayers() {
         : true;
 
 
-    if (previousVisible) {
+    if (
+      previousVisible
+    ) {
 
       group.addTo(
         map
@@ -4252,6 +4395,12 @@ function renderLayers() {
 
           group.addTo(
             map
+          );
+
+
+          setTimeout(
+            syncAllInnerOutlines,
+            30
           );
 
         }
@@ -4371,7 +4520,7 @@ function buildPopup(
 
 
 /* =========================================================
-   BIND SHAPE INTERACTIONS
+   CONFIGURE SHAPE
 ========================================================= */
 
 function configureShapeLayer(
@@ -4398,7 +4547,9 @@ function configureShapeLayer(
     "click",
     event => {
 
-      if (!editMode) {
+      if (
+        !editMode
+      ) {
         return;
       }
 
@@ -4417,69 +4568,66 @@ function configureShapeLayer(
   );
 
 
-  /*
-    Update clip while editing vertices.
-  */
-
-  const updateClip =
+  const refreshClip =
     () => {
 
-      requestAnimationFrame(
-        () => {
-
-          syncInnerOutline(
-            leafletLayer
-          );
-
-        }
+      scheduleInnerOutline(
+        leafletLayer
       );
 
     };
 
 
   leafletLayer.on(
+    "add",
+    refreshClip
+  );
+
+
+  leafletLayer.on(
     "pm:edit",
-    updateClip
+    refreshClip
   );
 
 
   leafletLayer.on(
     "pm:change",
-    updateClip
+    refreshClip
   );
 
 
   leafletLayer.on(
     "pm:markerdrag",
-    updateClip
+    refreshClip
   );
 
 
   leafletLayer.on(
     "pm:vertexadded",
-    updateClip
+    refreshClip
   );
 
 
   leafletLayer.on(
     "pm:vertexremoved",
-    updateClip
+    refreshClip
   );
 
 
-  /*
-    IMPORTANT:
-    active uniquement pour Polygon/Rectangle.
-  */
+  leafletLayer.on(
+    "pm:snap",
+    refreshClip
+  );
 
-  requestAnimationFrame(
-    () => {
 
-      enableInnerOutline(
-        leafletLayer
-      );
+  leafletLayer.on(
+    "pm:unsnap",
+    refreshClip
+  );
 
-    }
+
+  scheduleInnerOutline(
+    leafletLayer
   );
 
 }
@@ -4496,6 +4644,7 @@ function renderShapes() {
     const shape
     of mapShapes
   ) {
+
 
     const parentLayer =
       mapLayers.find(
@@ -4525,19 +4674,15 @@ function renderShapes() {
       .30;
 
 
-    /*
-      Comme le stroke est découpé en deux,
-      weight = 6 donne environ 3px visibles
-      À L'INTÉRIEUR.
-    */
-
     const geometryType =
       shape.geometry.type;
 
 
     const polygon =
-      geometryType === "Polygon" ||
-      geometryType === "MultiPolygon";
+      geometryType ===
+        "Polygon" ||
+      geometryType ===
+        "MultiPolygon";
 
 
     const geo =
@@ -4567,6 +4712,11 @@ function renderShapes() {
               polygon
                 ? opacity
                 : 0,
+
+            /*
+              On FORCE 6px pour les zones.
+              Le clip en garde environ 3px à l'intérieur.
+            */
 
             weight:
               polygon
@@ -4602,7 +4752,9 @@ function renderShapes() {
           ];
 
 
-        if (group) {
+        if (
+          group
+        ) {
 
           leafletLayer.addTo(
             group
@@ -4616,14 +4768,17 @@ function renderShapes() {
   }
 
 
-  syncAllInnerOutlines();
+  setTimeout(
+    syncAllInnerOutlines,
+    50
+  );
 
 }
 
 
 
 /* =========================================================
-   LAYER SELECT
+   UPDATE LAYER SELECT
 ========================================================= */
 
 function updateShapeLayerSelect() {
@@ -4690,18 +4845,21 @@ function updateShapeLayerSelect() {
 
 
 /* =========================================================
-   CREATE SHAPE
+   NEW SHAPE
 ========================================================= */
 
 map.on(
   "pm:create",
   event => {
 
-    if (!editMode) {
+    if (
+      !editMode
+    ) {
 
       map.removeLayer(
         event.layer
       );
+
 
       return;
 
@@ -4762,19 +4920,58 @@ map.on(
     applyShapePreview();
 
 
-    requestAnimationFrame(
-      () => {
+    /*
+      Réapplication agressive après pm:create.
+      C'est ici que Geoman refaisait parfois le PATH.
+    */
 
-        enableInnerOutline(
-          selectedLeafletLayer
-        );
+    if (
+      isAreaLayer(
+        selectedLeafletLayer
+      )
+    ) {
 
-      }
-    );
+      const refresh =
+        () => {
+
+          scheduleInnerOutline(
+            selectedLeafletLayer
+          );
+
+        };
+
+
+      selectedLeafletLayer.on(
+        "add",
+        refresh
+      );
+
+
+      selectedLeafletLayer.on(
+        "pm:change",
+        refresh
+      );
+
+
+      selectedLeafletLayer.on(
+        "pm:edit",
+        refresh
+      );
+
+
+      selectedLeafletLayer.on(
+        "pm:snap",
+        refresh
+      );
+
+
+      refresh();
+
+    }
 
 
     status.textContent =
-      "Nouvel élément créé. Renseigne ses informations puis enregistre.";
+      "Nouvel élément créé. Le contour est conservé à l'intérieur de la zone.";
 
 
     updateButtons();
@@ -4785,7 +4982,7 @@ map.on(
 
 
 /* =========================================================
-   SELECT EXISTING SHAPE
+   SELECT SHAPE
 ========================================================= */
 
 function selectExistingShape(
@@ -4819,11 +5016,13 @@ function selectExistingShape(
 
 
   shapeNameInput.value =
-    shape.name || "";
+    shape.name ||
+    "";
 
 
   shapeDescriptionInput.value =
-    shape.description || "";
+    shape.description ||
+    "";
 
 
   shapeColorInput.value =
@@ -4837,7 +5036,8 @@ function selectExistingShape(
 
 
   shapePublishedInput.checked =
-    shape.published === true;
+    shape.published ===
+    true;
 
 
   status.textContent =
@@ -4848,6 +5048,11 @@ function selectExistingShape(
     );
 
 
+  scheduleInnerOutline(
+    selectedLeafletLayer
+  );
+
+
   updateButtons();
 
 }
@@ -4855,7 +5060,7 @@ function selectExistingShape(
 
 
 /* =========================================================
-   PREVIEW STYLE
+   STYLE PREVIEW
 ========================================================= */
 
 function applyShapePreview() {
@@ -4870,15 +5075,17 @@ function applyShapePreview() {
   }
 
 
-  const geo =
+  const geometry =
     selectedLeafletLayer
       .toGeoJSON()
       .geometry;
 
 
-  const polygon =
-    geo.type === "Polygon" ||
-    geo.type === "MultiPolygon";
+  const isArea =
+    geometry.type ===
+      "Polygon" ||
+    geometry.type ===
+      "MultiPolygon";
 
 
   selectedLeafletLayer.setStyle({
@@ -4890,14 +5097,14 @@ function applyShapePreview() {
       shapeColorInput.value,
 
     fillOpacity:
-      polygon
+      isArea
         ? Number(
             shapeOpacityInput.value
           )
         : 0,
 
     weight:
-      polygon
+      isArea
         ? 6
         : 3,
 
@@ -4910,11 +5117,20 @@ function applyShapePreview() {
   });
 
 
-  syncInnerOutline(
-    selectedLeafletLayer
-  );
+  if (
+    isAreaLayer(
+      selectedLeafletLayer
+    )
+  ) {
+
+    scheduleInnerOutline(
+      selectedLeafletLayer
+    );
+
+  }
 
 }
+
 
 
 shapeColorInput.addEventListener(
@@ -4962,6 +5178,19 @@ saveShapeButton.addEventListener(
       ?.disable();
 
 
+    const geometry =
+      selectedLeafletLayer
+        .toGeoJSON()
+        .geometry;
+
+
+    const area =
+      geometry.type ===
+        "Polygon" ||
+      geometry.type ===
+        "MultiPolygon";
+
+
     const payload = {
 
       layer_id:
@@ -4979,9 +5208,7 @@ saveShapeButton.addEventListener(
           .trim(),
 
       geometry:
-        selectedLeafletLayer
-          .toGeoJSON()
-          .geometry,
+        geometry,
 
       style: {
 
@@ -4994,7 +5221,9 @@ saveShapeButton.addEventListener(
           ),
 
         weight:
-          6
+          area
+            ? 6
+            : 3
 
       },
 
@@ -5131,14 +5360,45 @@ editShapeButton.addEventListener(
       snapSegment:
         true,
 
+      snapMiddle:
+        false,
+
       allowSelfIntersection:
         false
 
     });
 
 
+    const refresh =
+      () => {
+
+        scheduleInnerOutline(
+          selectedLeafletLayer
+        );
+
+      };
+
+
+    selectedLeafletLayer.on(
+      "pm:change",
+      refresh
+    );
+
+
+    selectedLeafletLayer.on(
+      "pm:markerdrag",
+      refresh
+    );
+
+
+    selectedLeafletLayer.on(
+      "pm:snap",
+      refresh
+    );
+
+
     status.textContent =
-      "Modification active. Les points s'accrochent automatiquement aux sommets et aux lignes existantes.";
+      "Modification active. Les points s'accrochent aux sommets et segments existants.";
 
 
     updateButtons();
@@ -5157,13 +5417,19 @@ finishEditButton.addEventListener(
       ?.disable();
 
 
-    syncInnerOutline(
+    if (
       selectedLeafletLayer
-    );
+    ) {
+
+      scheduleInnerOutline(
+        selectedLeafletLayer
+      );
+
+    }
 
 
     status.textContent =
-      "Modification terminée. Clique sur Enregistrer pour valider.";
+      "Modification terminée. Clique sur Enregistrer.";
 
 
     updateButtons();
@@ -5277,7 +5543,9 @@ deleteShapeButton.addEventListener(
         );
 
 
-    if (error) {
+    if (
+      error
+    ) {
 
       status.textContent =
         "Erreur : " +
@@ -5324,7 +5592,9 @@ document
           .trim();
 
 
-      if (!name) {
+      if (
+        !name
+      ) {
 
         status.textContent =
           "Entre un nom pour la couche.";
@@ -5343,9 +5613,12 @@ document
           )
           .insert({
 
-            name,
+            name:
+
+              name,
 
             kind:
+
               document
                 .getElementById(
                   "new-layer-kind"
@@ -5353,6 +5626,7 @@ document
                 .value,
 
             color:
+
               document
                 .getElementById(
                   "new-layer-color"
@@ -5360,6 +5634,7 @@ document
                 .value,
 
             opacity:
+
               Number(
                 document
                   .getElementById(
@@ -5369,12 +5644,15 @@ document
               ),
 
             visible:
+
               true
 
           });
 
 
-      if (error) {
+      if (
+        error
+      ) {
 
         status.textContent =
           "Erreur : " +
