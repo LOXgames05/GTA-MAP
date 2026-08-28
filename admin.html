@@ -1,39 +1,57 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
   <title>Éditeur GTA MAP</title>
 
+
+  <!-- LEAFLET -->
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
   >
 
+
+  <!-- LEAFLET GEOMAN -->
   <link
     rel="stylesheet"
     href="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css"
   >
 
+
   <style>
+
     * {
       box-sizing: border-box;
     }
 
+
     html,
     body {
       margin: 0;
+
       width: 100%;
       height: 100%;
-      font-family: Arial, sans-serif;
+
+      overflow: hidden;
+
       background: #0d1117;
       color: white;
+
+      font-family: Arial, sans-serif;
     }
 
-    body {
-      overflow: hidden;
-    }
+
+    /* =========================
+       TOP BAR
+    ========================= */
 
     #topbar {
       height: 60px;
@@ -42,104 +60,101 @@
       align-items: center;
       justify-content: space-between;
 
-      padding: 0 18px;
+      padding: 0 16px;
 
       background: #161b22;
-      border-bottom: 1px solid #30363d;
+
+      border-bottom:
+        1px solid #30363d;
     }
+
 
     #topbar h1 {
       margin: 0;
+
       font-size: 19px;
     }
+
 
     #topbar-right {
       display: flex;
       align-items: center;
+
       gap: 10px;
     }
 
+
     #admin-email {
       color: #8b949e;
+
       font-size: 14px;
     }
 
-    button,
-    select,
-    input,
-    textarea {
-      font-family: inherit;
-    }
 
-    button {
-      border: 0;
-      border-radius: 6px;
-
-      padding: 10px 13px;
-
-      cursor: pointer;
-
-      background: #21262d;
-      color: white;
-    }
-
-    button:hover {
-      background: #30363d;
-    }
-
-    button.green {
-      background: #238636;
-    }
-
-    button.green:hover {
-      background: #2ea043;
-    }
-
-    button.red {
-      background: #da3633;
-    }
-
-    button:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-    }
+    /* =========================
+       APP
+    ========================= */
 
     #app {
-      height: calc(100vh - 60px);
+      height:
+        calc(100vh - 60px);
 
       display: grid;
-      grid-template-columns: 330px 1fr;
+
+      grid-template-columns:
+        330px 1fr;
     }
+
+
+    /* =========================
+       SIDEBAR
+    ========================= */
 
     #sidebar {
       overflow-y: auto;
 
-      padding: 16px;
+      padding: 14px;
 
       background: #161b22;
-      border-right: 1px solid #30363d;
+
+      border-right:
+        1px solid #30363d;
     }
 
+
     #sidebar h2 {
-      margin: 4px 0 12px;
+      margin:
+        4px 0 12px;
+
       font-size: 16px;
     }
 
+
     .section {
       padding-bottom: 18px;
+
       margin-bottom: 18px;
 
-      border-bottom: 1px solid #30363d;
+      border-bottom:
+        1px solid #30363d;
     }
+
+
+    /* =========================
+       FORM
+    ========================= */
 
     label {
       display: block;
 
-      margin: 12px 0 5px;
+      margin:
+        12px 0 5px;
 
       font-size: 13px;
+
       font-weight: bold;
     }
+
 
     input,
     select,
@@ -148,50 +163,118 @@
 
       padding: 9px;
 
-      border: 1px solid #30363d;
-      border-radius: 6px;
-
       background: #0d1117;
+
       color: white;
+
+      border:
+        1px solid #30363d;
+
+      border-radius: 6px;
     }
+
 
     textarea {
       resize: vertical;
     }
 
+
     input[type="color"] {
       height: 42px;
+
       padding: 3px;
     }
+
 
     input[type="range"] {
       padding: 0;
     }
 
+
     .row {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+
+      grid-template-columns:
+        1fr 1fr;
+
       gap: 10px;
     }
 
-    .buttons {
-      display: grid;
-      gap: 8px;
-
-      margin-top: 15px;
-    }
 
     .checkbox {
       display: flex;
+
       align-items: center;
+
       gap: 8px;
 
       font-weight: normal;
     }
 
+
     .checkbox input {
       width: auto;
     }
+
+
+    /* =========================
+       BUTTONS
+    ========================= */
+
+    button {
+      border: 0;
+
+      border-radius: 6px;
+
+      padding: 10px 13px;
+
+      cursor: pointer;
+
+      background: #21262d;
+
+      color: white;
+    }
+
+
+    button:hover {
+      background: #30363d;
+    }
+
+
+    button.green {
+      background: #238636;
+    }
+
+
+    button.green:hover {
+      background: #2ea043;
+    }
+
+
+    button.red {
+      background: #da3633;
+    }
+
+
+    button:disabled {
+      opacity: 0.45;
+
+      cursor: not-allowed;
+    }
+
+
+    .buttons {
+      display: grid;
+
+      gap: 8px;
+
+      margin-top: 15px;
+    }
+
+
+    /* =========================
+       STATUS
+    ========================= */
 
     #status {
       margin-top: 10px;
@@ -199,13 +282,31 @@
       padding: 10px;
 
       background: #0d1117;
-      border: 1px solid #30363d;
+
+      border:
+        1px solid #30363d;
+
       border-radius: 6px;
 
       color: #f2cc60;
 
       font-size: 13px;
+
+      word-break:
+        break-word;
     }
+
+
+    /* =========================
+       MAP
+    ========================= */
+
+    main {
+      min-width: 0;
+
+      min-height: 0;
+    }
+
 
     #map {
       width: 100%;
@@ -214,632 +315,1162 @@
       background: #111;
     }
 
-    .leaflet-control-layers {
-      color: #111;
+
+    .leaflet-container {
+      background: #111;
     }
 
-    @media (max-width: 800px) {
+
+    .leaflet-control-layers {
+      color: black;
+    }
+
+
+    @media
+      (max-width: 800px) {
+
       #app {
-        grid-template-columns: 1fr;
+        grid-template-columns:
+          1fr;
       }
+
 
       #sidebar {
         display: none;
       }
+
     }
+
   </style>
+
 </head>
+
+
 
 <body>
 
-<header id="topbar">
 
-  <h1>Éditeur GTA MAP</h1>
+  <!-- =========================
+       TOP BAR
+  ========================== -->
 
-  <div id="topbar-right">
+  <header id="topbar">
 
-    <span id="admin-email"></span>
+    <h1>
+      Éditeur GTA MAP
+    </h1>
 
-    <button id="public-map">
-      Carte publique
-    </button>
 
-    <button id="logout" class="red">
-      Déconnexion
-    </button>
+    <div id="topbar-right">
+
+      <span id="admin-email">
+      </span>
+
+
+      <button id="public-map">
+
+        Carte publique
+
+      </button>
+
+
+      <button
+        id="logout"
+        class="red"
+      >
+
+        Déconnexion
+
+      </button>
+
+    </div>
+
+  </header>
+
+
+
+  <!-- =========================
+       APP
+  ========================== -->
+
+  <div id="app">
+
+
+    <!-- SIDEBAR -->
+
+    <aside id="sidebar">
+
+
+      <!-- DRAW -->
+
+      <div class="section">
+
+        <h2>
+          Outils de dessin
+        </h2>
+
+
+        <div id="status">
+
+          Initialisation...
+
+        </div>
+
+
+        <p
+          style="
+            font-size:13px;
+            color:#8b949e;
+          "
+        >
+
+          Utilise les boutons
+          directement sur la carte
+          pour dessiner un polygone,
+          un rectangle ou une frontière.
+
+        </p>
+
+      </div>
+
+
+
+      <!-- SELECTED SHAPE -->
+
+      <div class="section">
+
+        <h2>
+          Zone sélectionnée
+        </h2>
+
+
+        <label for="shape-layer">
+
+          Couche
+
+        </label>
+
+
+        <select id="shape-layer">
+        </select>
+
+
+
+        <label for="shape-name">
+
+          Nom
+
+        </label>
+
+
+        <input
+          id="shape-name"
+          type="text"
+          placeholder="Ex. Ballas, Strawberry..."
+        >
+
+
+
+        <label for="shape-description">
+
+          Description
+
+        </label>
+
+
+        <textarea
+          id="shape-description"
+          rows="3"
+          placeholder="Description optionnelle"
+        ></textarea>
+
+
+
+        <div class="row">
+
+
+          <div>
+
+            <label for="shape-color">
+
+              Couleur
+
+            </label>
+
+
+            <input
+              id="shape-color"
+              type="color"
+              value="#8a3ffc"
+            >
+
+          </div>
+
+
+
+          <div>
+
+            <label for="shape-opacity">
+
+              Opacité
+
+            </label>
+
+
+            <input
+              id="shape-opacity"
+              type="range"
+              min="0"
+              max="0.8"
+              step="0.05"
+              value="0.35"
+            >
+
+          </div>
+
+
+        </div>
+
+
+
+        <label class="checkbox">
+
+          <input
+            id="shape-published"
+            type="checkbox"
+            checked
+          >
+
+          Visible publiquement
+
+        </label>
+
+
+
+        <div class="buttons">
+
+
+          <button
+            id="save-shape"
+            class="green"
+            disabled
+          >
+
+            Enregistrer la zone
+
+          </button>
+
+
+          <button
+            id="edit-shape"
+            disabled
+          >
+
+            Modifier les points
+
+          </button>
+
+
+          <button
+            id="finish-edit"
+            disabled
+          >
+
+            Terminer modification
+
+          </button>
+
+
+          <button
+            id="delete-shape"
+            class="red"
+            disabled
+          >
+
+            Supprimer
+
+          </button>
+
+
+        </div>
+
+      </div>
+
+
+
+      <!-- CREATE LAYER -->
+
+      <div class="section">
+
+        <h2>
+          Créer une couche
+        </h2>
+
+
+        <label for="layer-name">
+
+          Nom
+
+        </label>
+
+
+        <input
+          id="layer-name"
+          type="text"
+          placeholder="Ex. Factions"
+        >
+
+
+
+        <label for="layer-kind">
+
+          Type
+
+        </label>
+
+
+        <select id="layer-kind">
+
+          <option value="faction">
+            Factions
+          </option>
+
+          <option value="quartier">
+            Quartiers
+          </option>
+
+          <option value="frontiere">
+            Frontières
+          </option>
+
+          <option value="autre">
+            Autre
+          </option>
+
+        </select>
+
+
+
+        <div class="row">
+
+
+          <div>
+
+            <label for="layer-color">
+
+              Couleur
+
+            </label>
+
+
+            <input
+              id="layer-color"
+              type="color"
+              value="#8a3ffc"
+            >
+
+          </div>
+
+
+
+          <div>
+
+            <label for="layer-opacity">
+
+              Opacité
+
+            </label>
+
+
+            <input
+              id="layer-opacity"
+              type="range"
+              min="0"
+              max="0.8"
+              step="0.05"
+              value="0.35"
+            >
+
+          </div>
+
+
+        </div>
+
+
+
+        <div class="buttons">
+
+          <button
+            id="create-layer"
+            class="green"
+          >
+
+            + Créer la couche
+
+          </button>
+
+        </div>
+
+
+      </div>
+
+
+    </aside>
+
+
+
+    <!-- MAP -->
+
+    <main>
+
+      <div id="map">
+      </div>
+
+    </main>
+
 
   </div>
 
-</header>
 
 
-<div id="app">
+  <!-- =========================
+       LIBRARIES
+  ========================== -->
 
-  <aside id="sidebar">
 
-    <div class="section">
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  ></script>
 
-      <h2>Outils de dessin</h2>
 
-      <div id="status">
-        Chargement...
-      </div>
+  <script
+    src="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.js"
+  ></script>
 
-      <p style="font-size:13px;color:#8b949e;">
-        Utilise les boutons directement sur la carte pour dessiner
-        un polygone, un rectangle ou une frontière.
-      </p>
 
-    </div>
+  <script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+  ></script>
 
 
-    <div class="section">
+  <script
+    src="js/config.js"
+  ></script>
 
-      <h2>Zone sélectionnée</h2>
 
-      <label for="shape-layer">
-        Couche
-      </label>
+  <script
+    src="js/supabase-client.js"
+  ></script>
 
-      <select id="shape-layer"></select>
-
-
-      <label for="shape-name">
-        Nom
-      </label>
-
-      <input
-        id="shape-name"
-        type="text"
-        placeholder="Ex. Ballas, Strawberry..."
-      >
-
-
-      <label for="shape-description">
-        Description
-      </label>
-
-      <textarea
-        id="shape-description"
-        rows="3"
-        placeholder="Description optionnelle"
-      ></textarea>
-
-
-      <div class="row">
-
-        <div>
-
-          <label for="shape-color">
-            Couleur
-          </label>
-
-          <input
-            id="shape-color"
-            type="color"
-            value="#8a3ffc"
-          >
-
-        </div>
-
-        <div>
-
-          <label for="shape-opacity">
-            Opacité
-          </label>
-
-          <input
-            id="shape-opacity"
-            type="range"
-            min="0"
-            max="0.8"
-            step="0.05"
-            value="0.35"
-          >
-
-        </div>
-
-      </div>
-
-
-      <label class="checkbox">
-
-        <input
-          id="shape-published"
-          type="checkbox"
-          checked
-        >
-
-        Visible publiquement
-
-      </label>
-
-
-      <div class="buttons">
-
-        <button
-          id="save-shape"
-          class="green"
-          disabled
-        >
-          Enregistrer la zone
-        </button>
-
-        <button
-          id="edit-shape"
-          disabled
-        >
-          Modifier les points
-        </button>
-
-        <button
-          id="finish-edit"
-          disabled
-        >
-          Terminer modification
-        </button>
-
-        <button
-          id="delete-shape"
-          class="red"
-          disabled
-        >
-          Supprimer
-        </button>
-
-      </div>
-
-    </div>
-
-
-    <div class="section">
-
-      <h2>Créer une couche</h2>
-
-      <label for="layer-name">
-        Nom
-      </label>
-
-      <input
-        id="layer-name"
-        type="text"
-        placeholder="Ex. Factions"
-      >
-
-
-      <label for="layer-kind">
-        Type
-      </label>
-
-      <select id="layer-kind">
-
-        <option value="faction">
-          Factions
-        </option>
-
-        <option value="quartier">
-          Quartiers
-        </option>
-
-        <option value="frontiere">
-          Frontières
-        </option>
-
-        <option value="autre">
-          Autre
-        </option>
-
-      </select>
-
-
-      <div class="row">
-
-        <div>
-
-          <label for="layer-color">
-            Couleur
-          </label>
-
-          <input
-            id="layer-color"
-            type="color"
-            value="#8a3ffc"
-          >
-
-        </div>
-
-        <div>
-
-          <label for="layer-opacity">
-            Opacité
-          </label>
-
-          <input
-            id="layer-opacity"
-            type="range"
-            min="0"
-            max="0.8"
-            step="0.05"
-            value="0.35"
-          >
-
-        </div>
-
-      </div>
-
-
-      <div class="buttons">
-
-        <button
-          id="create-layer"
-          class="green"
-        >
-          + Créer la couche
-        </button>
-
-      </div>
-
-    </div>
-
-  </aside>
-
-
-  <main>
-    <div id="map"></div>
-  </main>
-
-</div>
-
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-<script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.js"></script>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script src="js/config.js"></script>
-
-<script src="js/supabase-client.js"></script>
 
 
 <script>
 
+
 (async function () {
 
+
+  /* =========================
+     ELEMENTS
+  ========================= */
+
+
   const status =
-    document.getElementById("status");
+    document.getElementById(
+      "status"
+    );
+
 
   const adminEmail =
-    document.getElementById("admin-email");
+    document.getElementById(
+      "admin-email"
+    );
 
 
   const shapeLayer =
-    document.getElementById("shape-layer");
+    document.getElementById(
+      "shape-layer"
+    );
+
 
   const shapeName =
-    document.getElementById("shape-name");
+    document.getElementById(
+      "shape-name"
+    );
+
 
   const shapeDescription =
-    document.getElementById("shape-description");
+    document.getElementById(
+      "shape-description"
+    );
+
 
   const shapeColor =
-    document.getElementById("shape-color");
+    document.getElementById(
+      "shape-color"
+    );
+
 
   const shapeOpacity =
-    document.getElementById("shape-opacity");
+    document.getElementById(
+      "shape-opacity"
+    );
+
 
   const shapePublished =
-    document.getElementById("shape-published");
+    document.getElementById(
+      "shape-published"
+    );
 
 
   const saveShapeButton =
-    document.getElementById("save-shape");
+    document.getElementById(
+      "save-shape"
+    );
+
 
   const editShapeButton =
-    document.getElementById("edit-shape");
+    document.getElementById(
+      "edit-shape"
+    );
+
 
   const finishEditButton =
-    document.getElementById("finish-edit");
+    document.getElementById(
+      "finish-edit"
+    );
+
 
   const deleteShapeButton =
-    document.getElementById("delete-shape");
+    document.getElementById(
+      "delete-shape"
+    );
 
 
-  let map;
+
+  /* =========================
+     VARIABLES
+  ========================= */
+
+
+  let map = null;
+
 
   let mapLayers = [];
 
+
   let layerGroups = {};
+
 
   let selectedLayer = null;
 
-  let selectedDatabaseShape = null;
 
-  let temporaryLayer = null;
-
-
-  /*
-  ================================
-  AUTH
-  ================================
-  */
-
-  status.textContent =
-    "Vérification du compte admin...";
+  let selectedDatabaseShape =
+    null;
 
 
-  const {
-    data: { user }
-  } =
-    await db.auth.getUser();
+  let temporaryLayer =
+    null;
 
 
-  if (!user) {
 
-    window.location.href =
-      "login.html";
+  /* =========================
+     AUTH
+  ========================= */
+
+
+  try {
+
+
+    status.textContent =
+      "Vérification du compte admin...";
+
+
+    const {
+      data:
+      {
+        user
+      }
+    } =
+      await db.auth.getUser();
+
+
+    if (!user) {
+
+      location.href =
+        "login.html";
+
+      return;
+
+    }
+
+
+    const {
+      data: isAdmin,
+      error: adminError
+    } =
+      await db.rpc(
+        "is_admin"
+      );
+
+
+    if (
+      adminError ||
+      !isAdmin
+    ) {
+
+      console.error(
+        adminError
+      );
+
+
+      await db.auth.signOut();
+
+
+      location.href =
+        "login.html";
+
+      return;
+
+    }
+
+
+    adminEmail.textContent =
+      user.email || "";
+
+
+  }
+  catch (error) {
+
+
+    console.error(
+      error
+    );
+
+
+    status.textContent =
+      "Erreur Auth : " +
+      error.message;
+
 
     return;
 
   }
 
 
-  const {
-    data: isAdmin,
-    error: adminError
-  } =
-    await db.rpc("is_admin");
 
+  /* =========================
+     LOGOUT
+  ========================= */
 
-  if (
-    adminError ||
-    !isAdmin
-  ) {
-
-    await db.auth.signOut();
-
-    window.location.href =
-      "login.html";
-
-    return;
-
-  }
-
-
-  adminEmail.textContent =
-    user.email || "";
-
-
-  /*
-  ================================
-  LOGOUT
-  ================================
-  */
 
   document
-    .getElementById("logout")
+    .getElementById(
+      "logout"
+    )
     .addEventListener(
       "click",
       async () => {
 
+
         await db.auth.signOut();
 
-        window.location.href =
+
+        location.href =
           "login.html";
+
 
       }
     );
 
 
+
   document
-    .getElementById("public-map")
+    .getElementById(
+      "public-map"
+    )
     .addEventListener(
       "click",
       () => {
+
 
         window.open(
           "index.html",
           "_blank"
         );
 
+
       }
     );
 
 
-  /*
-  ================================
-  IMAGE SIZE
-  ================================
-  */
 
-  function loadImageSize(src) {
+  /* =========================
+     MAP IMAGE
+  ========================= */
+
+
+  const MAP_IMAGE_URL =
+    "https://loxgames05.github.io/GTA-MAP/images/map.png?v=10";
+
+
+  console.log(
+    "Image de carte :",
+    MAP_IMAGE_URL
+  );
+
+
+
+  function loadImageSize(
+    src
+  ) {
+
 
     return new Promise(
-      (resolve, reject) => {
+      (
+        resolve,
+        reject
+      ) => {
+
 
         const image =
           new Image();
 
+
+        let finished =
+          false;
+
+
+
+        const timeout =
+          setTimeout(
+            () => {
+
+
+              if (
+                finished
+              ) {
+                return;
+              }
+
+
+              finished =
+                true;
+
+
+              reject(
+                new Error(
+                  "Temps de chargement dépassé pour la carte."
+                )
+              );
+
+
+            },
+            30000
+          );
+
+
+
         image.onload =
           () => {
 
-            resolve({
-              width: image.naturalWidth,
-              height: image.naturalHeight
-            });
+
+            if (
+              finished
+            ) {
+              return;
+            }
+
+
+            finished =
+              true;
+
+
+            clearTimeout(
+              timeout
+            );
+
+
+            console.log(
+              "Image chargée :",
+              image.naturalWidth,
+              "x",
+              image.naturalHeight
+            );
+
+
+            if (
+              !image.naturalWidth ||
+              !image.naturalHeight
+            ) {
+
+
+              reject(
+                new Error(
+                  "Dimensions de l'image invalides."
+                )
+              );
+
+
+              return;
+
+            }
+
+
+            resolve(
+              {
+
+                width:
+                  image.naturalWidth,
+
+                height:
+                  image.naturalHeight
+
+              }
+            );
+
 
           };
 
+
+
         image.onerror =
-          reject;
+          () => {
+
+
+            if (
+              finished
+            ) {
+              return;
+            }
+
+
+            finished =
+              true;
+
+
+            clearTimeout(
+              timeout
+            );
+
+
+            reject(
+              new Error(
+                "Impossible de charger : " +
+                src
+              )
+            );
+
+
+          };
+
 
         image.src =
           src;
 
+
       }
     );
+
 
   }
 
 
-  status.textContent =
-    "Chargement de la carte...";
+
+  /* =========================
+     CREATE MAP
+  ========================= */
 
 
-  const mapImage =
-    "https://loxgames05.github.io/GTA-MAP/images/map.png";
+  try {
 
 
-  const imageSize =
-    await loadImageSize(
-      mapImage
+    status.textContent =
+      "Chargement de l'image de la carte...";
+
+
+    const imageSize =
+      await loadImageSize(
+        MAP_IMAGE_URL
+      );
+
+
+    status.textContent =
+      "Image trouvée : " +
+      imageSize.width +
+      " × " +
+      imageSize.height +
+      " px";
+
+
+    console.log(
+      "Dimensions :",
+      imageSize
     );
 
 
-  /*
-  ================================
-  MAP
-  ================================
-  */
 
-  const bounds = [
+    const bounds =
+      [
 
-    [0, 0],
+        [
+          0,
+          0
+        ],
 
-    [
-      imageSize.height,
-      imageSize.width
-    ]
+        [
+          imageSize.height,
+          imageSize.width
+        ]
 
-  ];
+      ];
 
 
-  map =
-    L.map(
-      "map",
+
+    map =
+      L.map(
+        "map",
+        {
+
+          crs:
+            L.CRS.Simple,
+
+          minZoom:
+            -6,
+
+          maxZoom:
+            5,
+
+          zoomSnap:
+            0.25,
+
+          attributionControl:
+            false
+
+        }
+      );
+
+
+
+    const overlay =
+      L.imageOverlay(
+        MAP_IMAGE_URL,
+        bounds,
+        {
+
+          interactive:
+            false,
+
+          opacity:
+            1,
+
+          pmIgnore:
+            true
+
+        }
+      );
+
+
+    overlay.addTo(
+      map
+    );
+
+
+
+    map.fitBounds(
+      bounds,
       {
 
-        crs:
-          L.CRS.Simple,
-
-        minZoom:
-          -6,
-
-        maxZoom:
-          4,
-
-        zoomSnap:
-          0.25,
-
-        attributionControl:
-          false
+        padding:
+          [
+            10,
+            10
+          ]
 
       }
     );
 
 
-  L.imageOverlay(
-    mapImage,
-    bounds,
+
+    map.setMaxBounds(
+      [
+
+        [
+          -imageSize.height,
+          -imageSize.width
+        ],
+
+        [
+          imageSize.height * 2,
+          imageSize.width * 2
+        ]
+
+      ]
+    );
+
+
+
+    setTimeout(
+      () => {
+
+
+        map.invalidateSize();
+
+
+        map.fitBounds(
+          bounds
+        );
+
+
+      },
+      500
+    );
+
+
+  }
+  catch (error) {
+
+
+    console.error(
+      "Erreur carte :",
+      error
+    );
+
+
+    status.textContent =
+      "ERREUR CARTE : " +
+      error.message;
+
+
+    return;
+
+  }
+
+
+
+  /* =========================
+     GEOMAN
+  ========================= */
+
+
+  if (
+    !map.pm
+  ) {
+
+
+    status.textContent =
+      "Erreur : Leaflet Geoman n'est pas chargé.";
+
+
+    return;
+
+  }
+
+
+
+  map.pm.addControls(
     {
-      pmIgnore: true
+
+      position:
+        "topleft",
+
+      drawMarker:
+        false,
+
+      drawCircleMarker:
+        false,
+
+      drawCircle:
+        false,
+
+      drawText:
+        false,
+
+      drawPolygon:
+        true,
+
+      drawRectangle:
+        true,
+
+      drawPolyline:
+        true,
+
+      editMode:
+        false,
+
+      dragMode:
+        false,
+
+      cutPolygon:
+        false,
+
+      removalMode:
+        false,
+
+      rotateMode:
+        false
+
     }
-  ).addTo(map);
-
-
-  map.fitBounds(
-    bounds
   );
 
 
-  /*
-  ================================
-  GEOMAN
-  ================================
-  */
 
-  map.pm.addControls({
+  map.pm.setGlobalOptions(
+    {
 
-    position:
-      "topleft",
+      allowSelfIntersection:
+        false,
 
-    drawMarker:
-      false,
+      snappable:
+        true,
 
-    drawCircleMarker:
-      false,
+      snapDistance:
+        15
 
-    drawCircle:
-      false,
-
-    drawText:
-      false,
-
-    drawPolygon:
-      true,
-
-    drawRectangle:
-      true,
-
-    drawPolyline:
-      true,
-
-    editMode:
-      false,
-
-    dragMode:
-      false,
-
-    cutPolygon:
-      false,
-
-    removalMode:
-      false,
-
-    rotateMode:
-      false
-
-  });
+    }
+  );
 
 
-  map.pm.setGlobalOptions({
 
-    allowSelfIntersection:
-      false,
+  /* =========================
+     LOAD MAP LAYERS
+  ========================= */
 
-    snappable:
-      true,
-
-    snapDistance:
-      15
-
-  });
-
-
-  /*
-  ================================
-  COUCHES
-  ================================
-  */
 
   async function loadLayers() {
+
 
     const {
       data,
       error
     } =
       await db
-        .from("map_layers")
-        .select("*")
-        .order("sort_order")
-        .order("name");
+        .from(
+          "map_layers"
+        )
+        .select(
+          "*"
+        )
+        .order(
+          "sort_order"
+        )
+        .order(
+          "name"
+        );
 
 
     if (error) {
 
+
+      console.error(
+        error
+      );
+
+
       status.textContent =
         "Erreur couches : " +
         error.message;
+
 
       return;
 
@@ -854,37 +1485,76 @@
       "";
 
 
-    for (
-      const layer of mapLayers
+
+    if (
+      mapLayers.length === 0
     ) {
+
 
       const option =
         document.createElement(
           "option"
         );
 
-      option.value =
-        layer.id;
 
       option.textContent =
-        layer.name;
+        "Aucune couche";
+
+
+      option.value =
+        "";
+
 
       shapeLayer.appendChild(
         option
       );
 
+
+      return;
+
     }
+
+
+
+    for (
+      const layer
+      of mapLayers
+    ) {
+
+
+      const option =
+        document.createElement(
+          "option"
+        );
+
+
+      option.value =
+        layer.id;
+
+
+      option.textContent =
+        layer.name;
+
+
+      shapeLayer.appendChild(
+        option
+      );
+
+
+    }
+
 
   }
 
 
-  /*
-  ================================
-  FORMES
-  ================================
-  */
+
+  /* =========================
+     LOAD SHAPES
+  ========================= */
+
 
   async function loadShapes() {
+
 
     for (
       const group
@@ -893,9 +1563,11 @@
       )
     ) {
 
+
       map.removeLayer(
         group
       );
+
 
     }
 
@@ -904,18 +1576,24 @@
       {};
 
 
+
     for (
       const layer
       of mapLayers
     ) {
 
+
       layerGroups[
         layer.id
       ] =
         L.layerGroup()
-          .addTo(map);
+          .addTo(
+            map
+          );
+
 
     }
+
 
 
     const {
@@ -923,20 +1601,34 @@
       error
     } =
       await db
-        .from("map_shapes")
-        .select("*")
-        .order("created_at");
+        .from(
+          "map_shapes"
+        )
+        .select(
+          "*"
+        )
+        .order(
+          "created_at"
+        );
 
 
     if (error) {
+
+
+      console.error(
+        error
+      );
+
 
       status.textContent =
         "Erreur zones : " +
         error.message;
 
+
       return;
 
     }
+
 
 
     for (
@@ -944,41 +1636,37 @@
       of data || []
     ) {
 
+
       const parentLayer =
         mapLayers.find(
-          item =>
-            item.id ===
+          layer =>
+            layer.id ===
             shape.layer_id
         );
 
 
-      if (!parentLayer) {
+      if (
+        !parentLayer
+      ) {
         continue;
       }
 
 
-      const style =
-        {
 
-          color:
-            shape.style?.color ||
-            parentLayer.color,
-
-          fillColor:
-            shape.style?.color ||
-            parentLayer.color,
-
-          fillOpacity:
-            shape.style?.opacity ??
-            parentLayer.opacity,
-
-          weight:
-            3
-
-        };
+      const color =
+        shape.style?.color ||
+        parentLayer.color ||
+        "#8a3ffc";
 
 
-      const geo =
+      const opacity =
+        shape.style?.opacity ??
+        parentLayer.opacity ??
+        0.35;
+
+
+
+      const geoJsonLayer =
         L.geoJSON(
           {
 
@@ -995,34 +1683,55 @@
           {
 
             style:
-              () => style
+              {
+
+                color:
+                  color,
+
+                fillColor:
+                  color,
+
+                fillOpacity:
+                  opacity,
+
+                weight:
+                  3
+
+              }
 
           }
         );
 
 
-      geo.eachLayer(
+
+      geoJsonLayer.eachLayer(
         leafletLayer => {
+
 
           leafletLayer.databaseShape =
             shape;
+
 
 
           leafletLayer.on(
             "click",
             event => {
 
+
               L.DomEvent.stopPropagation(
                 event
               );
+
 
               selectExistingShape(
                 leafletLayer,
                 shape
               );
 
+
             }
           );
+
 
 
           leafletLayer.addTo(
@@ -1031,152 +1740,177 @@
             ]
           );
 
+
         }
       );
 
+
     }
+
 
 
     status.textContent =
       "Éditeur prêt.";
 
+
   }
 
 
-  /*
-  ================================
-  SELECTION
-  ================================
-  */
+
+  /* =========================
+     SELECT SHAPE
+  ========================= */
+
 
   function selectExistingShape(
     leafletLayer,
     shape
   ) {
 
+
     selectedLayer =
       leafletLayer;
 
+
     selectedDatabaseShape =
       shape;
+
 
     temporaryLayer =
       null;
 
 
+
     shapeLayer.value =
       shape.layer_id;
+
 
     shapeName.value =
       shape.name || "";
 
+
     shapeDescription.value =
       shape.description || "";
 
+
     shapePublished.checked =
       shape.published;
+
 
 
     shapeColor.value =
       shape.style?.color ||
       "#8a3ffc";
 
+
     shapeOpacity.value =
       shape.style?.opacity ??
       0.35;
 
 
+
     status.textContent =
       "Zone sélectionnée : " +
-      shape.name;
+      (
+        shape.name ||
+        "Sans nom"
+      );
 
 
     updateButtons();
 
+
   }
 
 
-  /*
-  ================================
-  NOUVELLE FORME
-  ================================
-  */
+
+  /* =========================
+     CREATE SHAPE
+  ========================= */
+
 
   map.on(
     "pm:create",
     event => {
 
+
       selectedLayer =
         event.layer;
 
+
       temporaryLayer =
         event.layer;
+
 
       selectedDatabaseShape =
         null;
 
 
+
       shapeName.value =
         "";
 
+
       shapeDescription.value =
         "";
+
 
       shapePublished.checked =
         true;
 
 
+
       if (
-        mapLayers.length > 0
+        mapLayers.length
+        > 0
       ) {
+
 
         shapeLayer.value =
           mapLayers[0].id;
 
+
         shapeColor.value =
-          mapLayers[0].color;
+          mapLayers[0].color ||
+          "#8a3ffc";
+
 
         shapeOpacity.value =
-          mapLayers[0].opacity;
+          mapLayers[0].opacity ??
+          0.35;
+
 
       }
+
 
 
       applyPreviewStyle();
 
 
-      selectedLayer.on(
-        "click",
-        () => {
-
-          selectedLayer =
-            event.layer;
-
-          updateButtons();
-
-        }
-      );
-
 
       status.textContent =
-        "Nouvelle forme dessinée. Donne-lui un nom puis enregistre.";
+        "Nouvelle zone dessinée. Donne-lui un nom puis enregistre.";
 
 
       updateButtons();
+
 
     }
   );
 
 
-  /*
-  ================================
-  STYLE
-  ================================
-  */
+
+  /* =========================
+     PREVIEW STYLE
+  ========================= */
+
 
   function applyPreviewStyle() {
 
-    if (!selectedLayer) {
+
+    if (
+      !selectedLayer
+    ) {
       return;
     }
 
@@ -1184,31 +1918,36 @@
     if (
       typeof
       selectedLayer.setStyle
-      !== "function"
+      !==
+      "function"
     ) {
       return;
     }
 
 
-    selectedLayer.setStyle({
+    selectedLayer.setStyle(
+      {
 
-      color:
-        shapeColor.value,
+        color:
+          shapeColor.value,
 
-      fillColor:
-        shapeColor.value,
+        fillColor:
+          shapeColor.value,
 
-      fillOpacity:
-        Number(
-          shapeOpacity.value
-        ),
+        fillOpacity:
+          Number(
+            shapeOpacity.value
+          ),
 
-      weight:
-        3
+        weight:
+          3
 
-    });
+      }
+    );
+
 
   }
+
 
 
   shapeColor.addEventListener(
@@ -1223,29 +1962,44 @@
   );
 
 
-  /*
-  ================================
-  SAVE SHAPE
-  ================================
-  */
+
+  /* =========================
+     SAVE SHAPE
+  ========================= */
+
 
   saveShapeButton.addEventListener(
     "click",
     async () => {
 
-      if (!selectedLayer) {
+
+      if (
+        !selectedLayer
+      ) {
         return;
       }
 
 
-      if (!shapeLayer.value) {
+      if (
+        !shapeLayer.value
+      ) {
+
 
         status.textContent =
           "Crée d'abord une couche.";
 
+
         return;
 
       }
+
+
+
+      const geometry =
+        selectedLayer
+          .toGeoJSON()
+          .geometry;
+
 
 
       const payload =
@@ -1256,15 +2010,14 @@
 
           name:
             shapeName.value.trim()
-            || "Zone sans nom",
+            ||
+            "Zone sans nom",
 
           description:
             shapeDescription.value.trim(),
 
           geometry:
-            selectedLayer
-              .toGeoJSON()
-              .geometry,
+            geometry,
 
           style:
             {
@@ -1288,41 +2041,71 @@
         };
 
 
+
+      status.textContent =
+        "Enregistrement...";
+
+
       let result;
+
 
 
       if (
         selectedDatabaseShape
       ) {
 
+
         result =
           await db
-            .from("map_shapes")
-            .update(payload)
+            .from(
+              "map_shapes"
+            )
+            .update(
+              payload
+            )
             .eq(
               "id",
               selectedDatabaseShape.id
             );
 
-      } else {
+
+      }
+      else {
+
 
         result =
           await db
-            .from("map_shapes")
-            .insert(payload);
+            .from(
+              "map_shapes"
+            )
+            .insert(
+              payload
+            );
+
 
       }
 
 
-      if (result.error) {
+
+      if (
+        result.error
+      ) {
+
+
+        console.error(
+          result.error
+        );
+
 
         status.textContent =
           "Erreur : " +
           result.error.message;
 
+
         return;
 
       }
+
 
 
       if (
@@ -1332,45 +2115,55 @@
         )
       ) {
 
+
         map.removeLayer(
           temporaryLayer
         );
 
+
       }
+
 
 
       selectedLayer =
         null;
 
+
       selectedDatabaseShape =
         null;
+
 
       temporaryLayer =
         null;
 
 
+
       await loadShapes();
+
 
 
       updateButtons();
 
 
+
       status.textContent =
         "Zone enregistrée.";
+
 
     }
   );
 
 
-  /*
-  ================================
-  EDIT SHAPE
-  ================================
-  */
+
+  /* =========================
+     EDIT SHAPE
+  ========================= */
+
 
   editShapeButton.addEventListener(
     "click",
     () => {
+
 
       if (
         !selectedLayer ||
@@ -1380,31 +2173,39 @@
       }
 
 
-      selectedLayer.pm.enable({
 
-        allowSelfIntersection:
-          false,
+      selectedLayer.pm.enable(
+        {
 
-        snappable:
-          true
+          allowSelfIntersection:
+            false,
 
-      });
+          snappable:
+            true
+
+        }
+      );
+
 
 
       status.textContent =
-        "Déplace les points de la zone puis clique sur Terminer modification.";
+        "Déplace les points puis clique sur Terminer modification.";
+
 
 
       updateButtons();
 
+
     }
   );
+
 
 
   finishEditButton.addEventListener(
     "click",
     () => {
 
+
       if (
         !selectedLayer ||
         !selectedLayer.pm
@@ -1413,28 +2214,33 @@
       }
 
 
+
       selectedLayer.pm.disable();
+
 
 
       status.textContent =
         "Modification terminée. Clique sur Enregistrer la zone.";
 
 
+
       updateButtons();
+
 
     }
   );
 
 
-  /*
-  ================================
-  DELETE
-  ================================
-  */
+
+  /* =========================
+     DELETE SHAPE
+  ========================= */
+
 
   deleteShapeButton.addEventListener(
     "click",
     async () => {
+
 
       if (
         !selectedDatabaseShape
@@ -1443,22 +2249,24 @@
       }
 
 
-      const confirmation =
-        confirm(
+
+      if (
+        !confirm(
           "Supprimer cette zone ?"
-        );
-
-
-      if (!confirmation) {
+        )
+      ) {
         return;
       }
+
 
 
       const {
         error
       } =
         await db
-          .from("map_shapes")
+          .from(
+            "map_shapes"
+          )
           .delete()
           .eq(
             "id",
@@ -1466,42 +2274,53 @@
           );
 
 
-      if (error) {
+
+      if (
+        error
+      ) {
+
 
         status.textContent =
           "Erreur suppression : " +
           error.message;
+
 
         return;
 
       }
 
 
+
       selectedLayer =
         null;
+
 
       selectedDatabaseShape =
         null;
 
 
+
       await loadShapes();
+
 
 
       updateButtons();
 
 
+
       status.textContent =
         "Zone supprimée.";
+
 
     }
   );
 
 
-  /*
-  ================================
-  CREATE LAYER
-  ================================
-  */
+
+  /* =========================
+     CREATE MAP LAYER
+  ========================= */
+
 
   document
     .getElementById(
@@ -1510,6 +2329,7 @@
     .addEventListener(
       "click",
       async () => {
+
 
         const name =
           document
@@ -1520,64 +2340,90 @@
             .trim();
 
 
-        if (!name) {
+
+        if (
+          !name
+        ) {
+
 
           status.textContent =
             "Entre un nom de couche.";
 
+
           return;
 
         }
+
+
+
+        status.textContent =
+          "Création de la couche...";
+
 
 
         const {
           error
         } =
           await db
-            .from("map_layers")
-            .insert({
+            .from(
+              "map_layers"
+            )
+            .insert(
+              {
 
-              name:
-                name,
+                name:
+                  name,
 
-              kind:
-                document
-                  .getElementById(
-                    "layer-kind"
-                  )
-                  .value,
-
-              color:
-                document
-                  .getElementById(
-                    "layer-color"
-                  )
-                  .value,
-
-              opacity:
-                Number(
+                kind:
                   document
                     .getElementById(
-                      "layer-opacity"
+                      "layer-kind"
                     )
-                    .value
-                ),
+                    .value,
 
-              visible:
-                true
+                color:
+                  document
+                    .getElementById(
+                      "layer-color"
+                    )
+                    .value,
 
-            });
+                opacity:
+                  Number(
+                    document
+                      .getElementById(
+                        "layer-opacity"
+                      )
+                      .value
+                  ),
+
+                visible:
+                  true
+
+              }
+            );
 
 
-        if (error) {
+
+        if (
+          error
+        ) {
+
+
+          console.error(
+            error
+          );
+
 
           status.textContent =
-            "Erreur : " +
+            "Erreur couche : " +
             error.message;
+
 
           return;
 
         }
+
 
 
         document
@@ -1588,34 +2434,42 @@
             "";
 
 
+
         await loadLayers();
 
+
         await loadShapes();
+
 
 
         status.textContent =
           "Couche créée.";
 
+
       }
     );
 
 
-  /*
-  ================================
-  BUTTON STATES
-  ================================
-  */
+
+  /* =========================
+     BUTTON STATES
+  ========================= */
+
 
   function updateButtons() {
+
 
     saveShapeButton.disabled =
       !selectedLayer;
 
+
     editShapeButton.disabled =
-      !selectedLayer;
+      !selectedDatabaseShape;
+
 
     deleteShapeButton.disabled =
       !selectedDatabaseShape;
+
 
 
     finishEditButton.disabled =
@@ -1625,24 +2479,54 @@
         selectedLayer.pm.enabled()
       );
 
+
   }
 
 
-  /*
-  ================================
-  START
-  ================================
-  */
 
-  await loadLayers();
+  /* =========================
+     START
+  ========================= */
 
-  await loadShapes();
 
-  updateButtons();
+  try {
+
+
+    await loadLayers();
+
+
+    await loadShapes();
+
+
+    updateButtons();
+
+
+    map.invalidateSize();
+
+
+  }
+  catch (error) {
+
+
+    console.error(
+      error
+    );
+
+
+    status.textContent =
+      "Erreur initialisation : " +
+      error.message;
+
+
+  }
+
 
 })();
 
+
 </script>
 
+
 </body>
+
 </html>
