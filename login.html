@@ -1,1 +1,167 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <title>Connexion admin - GTA MAP</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background: #0d1117;
+      color: #ffffff;
+
+      font-family: Arial, sans-serif;
+    }
+
+    .login-box {
+      width: 420px;
+      max-width: 92%;
+
+      background: #161b22;
+
+      border: 1px solid #30363d;
+      border-radius: 12px;
+
+      padding: 30px;
+    }
+
+    h1 {
+      margin-top: 0;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: #8b949e;
+      margin-bottom: 24px;
+    }
+
+    label {
+      display: block;
+
+      margin-top: 16px;
+      margin-bottom: 6px;
+
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+
+      padding: 12px;
+
+      background: #0d1117;
+      color: white;
+
+      border: 1px solid #30363d;
+      border-radius: 7px;
+
+      font-size: 16px;
+    }
+
+    input:focus {
+      outline: 2px solid #238636;
+      border-color: #238636;
+    }
+
+    button {
+      width: 100%;
+
+      margin-top: 22px;
+      padding: 13px;
+
+      border: 0;
+      border-radius: 7px;
+
+      background: #238636;
+      color: white;
+
+      font-size: 16px;
+      font-weight: bold;
+
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #2ea043;
+    }
+
+    #login-message {
+      min-height: 22px;
+      margin-top: 16px;
+
+      color: #f2cc60;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="login-box">
+
+    <h1>Administration GTA MAP</h1>
+
+    <div class="subtitle">
+      Connexion réservée aux administrateurs.
+    </div>
+
+    <form id="login-form">
+
+      <label for="email">
+        Email
+      </label>
+
+      <input
+        id="email"
+        type="email"
+        autocomplete="username"
+        required
+      >
+
+      <label for="password">
+        Mot de passe
+      </label>
+
+      <input
+        id="password"
+        type="password"
+        autocomplete="current-password"
+        required
+      >
+
+      <button type="submit">
+        Se connecter
+      </button>
+
+      <div id="login-message"></div>
+
+    </form>
+
+  </div>
+
+
+  <!-- Librairie Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Configuration -->
+  <script src="js/config.js"></script>
+
+  <!-- Création du client Supabase -->
+  <script src="js/supabase-client.js"></script>
+
+  <!-- Gestion de la connexion -->
+  <script src="js/login.js"></script>
+
+</body>
+</html>
