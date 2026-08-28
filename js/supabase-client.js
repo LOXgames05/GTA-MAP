@@ -1,17 +1,24 @@
 (() => {
-  const cfg = window.APP_CONFIG || {};
+
+  const config = window.APP_CONFIG;
+
+  if (!config) {
+    console.error("APP_CONFIG introuvable");
+    alert("Erreur : config.js n'est pas chargé.");
+    return;
+  }
 
   if (!window.supabase) {
-    throw new Error("La librairie Supabase n'est pas chargée.");
+    console.error("Supabase JS introuvable");
+    alert("Erreur : la librairie Supabase n'est pas chargée.");
+    return;
   }
 
-  if (!cfg.SUPABASE_URL || !cfg.SUPABASE_PUBLISHABLE_KEY) {
-    throw new Error("Configuration Supabase manquante dans js/config.js.");
-  }
+  console.log("Connexion Supabase vers :", config.SUPABASE_URL);
 
   window.db = window.supabase.createClient(
-    cfg.SUPABASE_URL,
-    cfg.SUPABASE_PUBLISHABLE_KEY,
+    config.SUPABASE_URL,
+    config.SUPABASE_PUBLISHABLE_KEY,
     {
       auth: {
         persistSession: true,
@@ -20,4 +27,5 @@
       }
     }
   );
+
 })();
