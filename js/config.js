@@ -1,5 +1,5 @@
 window.APP_CONFIG = {
-  SUPABASE_URL: "COLLE_ICI_TON_PROJECT_URL",
-  SUPABASE_PUBLISHABLE_KEY: "COLLE_ICI_TA_PUBLISHABLE_KEY",
+  SUPABASE_URL: "https://kfheltqapgdoxazgjqe.supabase.co",
+  SUPABASE_PUBLISHABLE_KEY: "sb_publishable_ITXLQeaPTXhjfr2qA0iLaA_VY_cM5NI",
   MAP_IMAGE: "images/map.png"
 };
