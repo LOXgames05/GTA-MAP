@@ -1,43 +1,29 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+<title>GTA MAP</title>
 
-    <title>GTA MAP</title>
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
 
-    <link
-        rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    >
+<style>
+html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    background: #111;
+}
 
-    <style>
-        html,
-        body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background: #111;
-        }
-
-        #map {
-            width: 100vw;
-            height: 100vh;
-            background: #111;
-        }
-
-        .leaflet-control-layers {
-            font-family: Arial, sans-serif;
-            font-size: 16px;
-        }
-    </style>
+#map {
+    width: 100%;
+    height: 100vh;
+}
+</style>
 </head>
 
 <body>
@@ -48,170 +34,40 @@
 
 <script>
 
-    // ==========================================
-    // CONFIGURATION
-    // ==========================================
+const map = L.map("map", {
+    crs: L.CRS.Simple,
+    minZoom: -5,
+    maxZoom: 3,
+    attributionControl: false
+});
 
-    const TILE_SIZE = 2000;
 
-    const COLONNES = 3;
-    const LIGNES = 4;
+// Ta map fait 6000 × 8000
 
-    const LARGEUR_TOTALE = COLONNES * TILE_SIZE;
-    const HAUTEUR_TOTALE = LIGNES * TILE_SIZE;
+const bounds = [
+    [0, 0],
+    [8000, 6000]
+];
 
 
-    // ==========================================
-    // CRÉATION DE LA CARTE
-    // ==========================================
+// Ton image
 
-    const map = L.map("map", {
+const carte = L.imageOverlay(
+    "images/map.png",
+    bounds
+).addTo(map);
 
-        crs: L.CRS.Simple,
 
-        minZoom: -5,
-        maxZoom: 2,
+// Affichage initial
 
-        zoomSnap: 0.25,
-        zoomDelta: 0.5,
+map.fitBounds(bounds);
 
-        attributionControl: false,
 
-        maxBoundsViscosity: 1.0
+// Limites
 
-    });
-
-
-    // ==========================================
-    // COUCHE PRINCIPALE
-    // ==========================================
-
-    const cartePrincipale = L.layerGroup();
-
-
-    // ==========================================
-    // CHARGEMENT DES 12 IMAGES
-    //
-    // 1-1  1-2  1-3
-    // 2-1  2-2  2-3
-    // 3-1  3-2  3-3
-    // 4-1  4-2  4-3
-    // ==========================================
-
-    for (let ligne = 0; ligne < LIGNES; ligne++) {
-
-        for (let colonne = 0; colonne < COLONNES; colonne++) {
-
-            const nomFichier =
-                `images/${ligne + 1}-${colonne + 1}.png`;
-
-
-            // position horizontale
-
-            const x1 =
-                colonne * TILE_SIZE;
-
-            const x2 =
-                x1 + TILE_SIZE;
-
-
-            // position verticale
-            // inversion nécessaire pour Leaflet
-
-            const y1 =
-                HAUTEUR_TOTALE - ((ligne + 1) * TILE_SIZE);
-
-            const y2 =
-                HAUTEUR_TOTALE - (ligne * TILE_SIZE);
-
-
-            const limitesImage = [
-
-                [y1, x1],
-
-                [y2, x2]
-
-            ];
-
-
-            // ajout de l'image
-
-            L.imageOverlay(
-
-                nomFichier,
-
-                limitesImage,
-
-                {
-                    opacity: 1
-                }
-
-            ).addTo(cartePrincipale);
-
-        }
-
-    }
-
-
-    // ==========================================
-    // AFFICHAGE DE LA CARTE
-    // ==========================================
-
-    cartePrincipale.addTo(map);
-
-
-    // ==========================================
-    // MENU DES COUCHES
-    // ==========================================
-
-    L.control.layers(
-
-        {},
-
-        {
-            "🗺️ Carte principale": cartePrincipale
-        },
-
-        {
-            collapsed: false
-        }
-
-    ).addTo(map);
-
-
-    // ==========================================
-    // LIMITES DE LA CARTE
-    // ==========================================
-
-    const limitesCarte = [
-
-        [0, 0],
-
-        [HAUTEUR_TOTALE, LARGEUR_TOTALE]
-
-    ];
-
-
-    // Affiche toute la carte au démarrage
-
-    map.fitBounds(limitesCarte);
-
-
-    // Empêche de partir dans le néant cosmique
-
-    map.setMaxBounds([
-
-        [-1000, -1000],
-
-        [
-            HAUTEUR_TOTALE + 1000,
-            LARGEUR_TOTALE + 1000
-        ]
-
-    ]);
+map.setMaxBounds(bounds);
 
 </script>
 
 </body>
-
 </html>
