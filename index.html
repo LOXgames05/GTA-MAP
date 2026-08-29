@@ -2025,45 +2025,36 @@ body.painting .overlay-toggle {
   transform: translate(-50%, -50%);
 
   /*
-    Box adaptative : le JS calcule sa taille à partir du plus grand
-    espace libre autour du pôle d'inaccessibilité du quartier.
+    La "box" sert uniquement de zone de calcul invisible.
+    Visuellement, seul le texte du quartier est affiché.
   */
-  width: var(--quartier-label-width, 120px);
+  display: inline-block;
+  width: max-content;
   max-width: none;
+  padding: 0;
+  margin: 0;
 
-  padding:
-    var(--quartier-label-padding-y, 3px)
-    var(--quartier-label-padding-x, 6px);
-
-  border:
-    var(--quartier-label-border, 1px)
-    solid rgba(255,255,255,.15);
-
-  border-radius:
-    var(--quartier-label-radius, 6px);
-
-  background:
-    rgba(4,8,6,.72);
-
-  box-shadow:
-    0 3px 10px rgba(0,0,0,.34),
-    inset 0 0 0 1px rgba(0,0,0,.18);
-
-  backdrop-filter: blur(2px);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
 
   color: rgba(255,255,255,.96);
   font-size: var(--quartier-label-size, 8px);
   font-weight: 900;
-  letter-spacing: var(--quartier-label-letter-spacing, .55px);
-  line-height: var(--quartier-label-line-height, 1.04);
+  letter-spacing: var(--quartier-label-letter-spacing, .35px);
+  line-height: var(--quartier-label-line-height, 1.02);
   text-align: center;
   text-transform: uppercase;
   white-space: nowrap;
-  overflow: hidden;
+  overflow: visible;
   text-overflow: clip;
 
+  /* Lisibilité sans boîte visible. */
   text-shadow:
-    0 1px 2px rgba(0,0,0,.92);
+    0 1px 2px rgba(0,0,0,.98),
+    0 0 5px rgba(0,0,0,.90);
 
   pointer-events: none;
   transform-origin: center center;
@@ -2145,8 +2136,9 @@ body.painting .overlay-toggle {
 }
 
 body.painting .zone-map-label {
-  border-color: rgba(198,164,67,.32);
-  background: rgba(12,10,4,.84);
+  border: 0;
+  background: transparent;
+  box-shadow: none;
   color: #f4df91;
 }
 
@@ -7100,6 +7092,10 @@ function updateQuartierLabelMarker(
       [pole.y + pole.radius, pole.x]
     );
 
+  /*
+    Rayon disponible en pixels autour du pôle d'inaccessibilité.
+    Ce cercle est garanti à l'intérieur du quartier.
+  */
   const radiusPx = Math.max(
     1,
     Math.min(
@@ -7108,38 +7104,39 @@ function updateQuartierLabelMarker(
     )
   );
 
+  const usableRadius =
+    radiusPx * .82;
+
+  if (usableRadius < 5) {
+    label.style.display = "none";
+    return;
+  }
+
   const name =
     String(
       record.name ||
       "Quartier"
     ).trim();
 
-  /*
-    Le pôle d'inaccessibilité fournit le point le plus éloigné de toutes
-    les frontières. Le rayon associé correspond au plus grand cercle
-    libre autour de ce point. La box entière, pas seulement le texte,
-    est dimensionnée pour rester dans ce cercle avec une marge de sécurité.
-  */
-  const usableRadius =
-    radiusPx * .86;
-
-  if (usableRadius < 6) {
-    label.style.display = "none";
-    return;
-  }
-
-  label.style.display = "block";
-
   const layouts =
-    quartierLabelLayouts(name);
-
-  let best = null;
+    quartierLabelLayouts(
+      name
+    );
 
   if (quartierLabelMeasureContext) {
     quartierLabelMeasureContext.font =
       '900 100px Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
   }
 
+  let best = null;
+
+  /*
+    On mesure chaque découpage à une police virtuelle de 100px.
+    La taille finale est ensuite calculée pour que le RECTANGLE du texte
+    reste entièrement dans le cercle libre du quartier.
+
+    La boîte n'est jamais dessinée. Elle ne sert qu'aux maths.
+  */
   for (const lines of layouts) {
     let maxWidthAt100 = 0;
 
@@ -7149,44 +7146,49 @@ function updateQuartierLabelMarker(
           ? quartierLabelMeasureContext.measureText(line).width
           : line.length * 55;
 
+      /*
+        On ajoute aussi l'espacement des lettres au calcul.
+        C'était la principale raison pour laquelle certaines lettres
+        pouvaient dépasser de la box précédente.
+      */
+      const letterSpacingAt100 =
+        Math.max(
+          0,
+          line.length - 1
+        ) * 3.2;
+
       maxWidthAt100 = Math.max(
         maxWidthAt100,
-        measured
+        measured + letterSpacingAt100
       );
     }
 
-    /*
-      Dimensions normalisées à 100px de police. Padding et hauteur suivent
-      donc naturellement le scale du texte.
-    */
-    const normalizedPaddingX = 52;
-    const normalizedPaddingY = 28;
-    const normalizedLineHeight = 104;
+    const lineHeightAt100 =
+      102;
 
-    const normalizedBoxWidth =
-      maxWidthAt100 +
-      normalizedPaddingX * 2 +
-      2;
+    const textHeightAt100 =
+      lines.length *
+      lineHeightAt100;
 
-    const normalizedBoxHeight =
-      lines.length * normalizedLineHeight +
-      normalizedPaddingY * 2 +
-      2;
-
-    const normalizedHalfDiagonal =
+    const halfDiagonalAt100 =
       Math.hypot(
-        normalizedBoxWidth,
-        normalizedBoxHeight
+        maxWidthAt100,
+        textHeightAt100
       ) / 2;
 
-    if (normalizedHalfDiagonal <= 0) {
+    if (
+      halfDiagonalAt100 <= 0
+    ) {
       continue;
     }
 
-    const fontSize = Math.min(
-      22,
-      100 * usableRadius / normalizedHalfDiagonal
-    );
+    const fontSize =
+      Math.min(
+        26,
+        100 *
+        usableRadius /
+        halfDiagonalAt100
+      );
 
     if (
       !best ||
@@ -7194,165 +7196,111 @@ function updateQuartierLabelMarker(
     ) {
       best = {
         lines,
-        fontSize,
-        maxWidthAt100
+        fontSize
       };
     }
   }
 
-  if (!best || best.fontSize < 4.5) {
-    label.style.display = "none";
-    return;
-  }
-
-  let finalFontSize =
-    best.fontSize;
-
-  const computeBox =
-    fontSize => {
-      const scale =
-        fontSize / 100;
-
-      const textWidth =
-        best.maxWidthAt100 * scale;
-
-      const paddingX = Math.max(
-        3,
-        Math.min(
-          10,
-          fontSize * .52
-        )
-      );
-
-      const paddingY = Math.max(
-        2,
-        Math.min(
-          6,
-          fontSize * .28
-        )
-      );
-
-      const border =
-        fontSize >= 8
-          ? 1
-          : .75;
-
-      const lineHeight = 1.04;
-
-      const width =
-        textWidth +
-        paddingX * 2 +
-        border * 2;
-
-      const height =
-        best.lines.length *
-          fontSize *
-          lineHeight +
-        paddingY * 2 +
-        border * 2;
-
-      return {
-        width,
-        height,
-        paddingX,
-        paddingY,
-        border,
-        lineHeight,
-        halfDiagonal:
-          Math.hypot(
-            width,
-            height
-          ) / 2
-      };
-    };
-
-  let box =
-    computeBox(
-      finalFontSize
-    );
-
-  /*
-    Sécurité finale pour les noms atypiquement larges.
-  */
   if (
-    box.halfDiagonal >
-    usableRadius
+    !best ||
+    best.fontSize < 4.5
   ) {
-    finalFontSize *=
-      usableRadius /
-      box.halfDiagonal;
-
-    box =
-      computeBox(
-        finalFontSize
-      );
-  }
-
-  if (finalFontSize < 4.5) {
     label.style.display = "none";
     return;
   }
+
+  label.style.display =
+    "inline-block";
+
+  label.style.visibility =
+    "hidden";
 
   label.innerHTML =
     best.lines
       .map(escapeHtml)
       .join("<br>");
 
-  label.style.setProperty(
-    "--quartier-label-size",
-    `${finalFontSize.toFixed(2)}px`
+  let finalFontSize =
+    best.fontSize;
+
+  const applyFont =
+    fontSize => {
+      const letterSpacing =
+        Math.max(
+          .08,
+          Math.min(
+            .65,
+            fontSize * .032
+          )
+        );
+
+      label.style.setProperty(
+        "--quartier-label-size",
+        `${fontSize.toFixed(2)}px`
+      );
+
+      label.style.setProperty(
+        "--quartier-label-letter-spacing",
+        `${letterSpacing.toFixed(2)}px`
+      );
+
+      label.style.setProperty(
+        "--quartier-label-line-height",
+        "1.02"
+      );
+    };
+
+  applyFont(
+    finalFontSize
   );
 
-  label.style.setProperty(
-    "--quartier-label-width",
-    `${box.width.toFixed(1)}px`
-  );
+  /*
+    Deuxième sécurité basée sur la taille RÉELLE du texte dans le navigateur.
+    Canvas et CSS ne mesurent pas toujours exactement la même chose selon
+    la police installée. On mesure donc le résultat final et on le réduit
+    jusqu'à ce qu'il tienne réellement dans la zone sûre.
+  */
+  for (
+    let attempt = 0;
+    attempt < 4;
+    attempt++
+  ) {
+    const rect =
+      label.getBoundingClientRect();
 
-  label.style.setProperty(
-    "--quartier-label-padding-x",
-    `${box.paddingX.toFixed(1)}px`
-  );
+    const halfDiagonal =
+      Math.hypot(
+        rect.width,
+        rect.height
+      ) / 2;
 
-  label.style.setProperty(
-    "--quartier-label-padding-y",
-    `${box.paddingY.toFixed(1)}px`
-  );
+    if (
+      halfDiagonal <= usableRadius ||
+      halfDiagonal <= 0
+    ) {
+      break;
+    }
 
-  label.style.setProperty(
-    "--quartier-label-border",
-    `${box.border.toFixed(2)}px`
-  );
+    finalFontSize *=
+      usableRadius /
+      halfDiagonal * .97;
 
-  label.style.setProperty(
-    "--quartier-label-radius",
-    `${Math.max(
-      3,
-      Math.min(
-        8,
-        finalFontSize * .42
-      )
-    ).toFixed(1)}px`
-  );
+    applyFont(
+      finalFontSize
+    );
+  }
 
-  label.style.setProperty(
-    "--quartier-label-letter-spacing",
-    `${Math.max(
-      .15,
-      Math.min(
-        .7,
-        finalFontSize * .04
-      )
-    ).toFixed(2)}px`
-  );
+  if (
+    finalFontSize < 4.5
+  ) {
+    label.style.display = "none";
+    label.style.visibility = "";
+    return;
+  }
 
-  label.style.setProperty(
-    "--quartier-label-line-height",
-    String(
-      box.lineHeight
-    )
-  );
+  label.style.visibility =
+    "visible";
 }
-
 
 function refreshQuartierLabels() {
   for (
