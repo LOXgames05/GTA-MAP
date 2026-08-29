@@ -1,54 +1,111 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+>
+
 <title>GTA MAP</title>
 
+
+<!-- LEAFLET -->
 <link
   rel="stylesheet"
   href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
 >
 
+
+<!-- LEAFLET GEOMAN -->
 <link
   rel="stylesheet"
   href="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css"
 >
 
+
+<!-- ICONES -->
 <script src="https://unpkg.com/lucide@latest"></script>
 
+
 <style>
+
+/* =========================================================
+   ROOT
+========================================================= */
 
 * {
   box-sizing: border-box;
 }
 
 :root {
+
   --bg: #050807;
-  --panel: rgba(8,13,11,.95);
-  --border: rgba(140,177,155,.13);
-  --border-strong: rgba(140,177,155,.28);
-  --green: #86ad96;
-  --green-light: #a7c4b2;
-  --gold: #c6a443;
-  --gold-light: #e3c868;
-  --red: #c95a5a;
-  --text: #edf2ef;
-  --muted: #87928c;
-  --top-height: 72px;
-  --left-panel: 366px;
-  --right-panel: 320px;
-  --panel-gap: 18px;
+
+  --panel:
+    rgba(8, 13, 11, .94);
+
+  --border:
+    rgba(140, 177, 155, .13);
+
+  --border-strong:
+    rgba(140, 177, 155, .25);
+
+  --green:
+    #86ad96;
+
+  --green-light:
+    #a7c4b2;
+
+  --gold:
+    #c6a443;
+
+  --gold-light:
+    #e3c868;
+
+  --red:
+    #c95a5a;
+
+  --text:
+    #edf2ef;
+
+  --muted:
+    #87928c;
+
+  --top-height:
+    72px;
+
+  --left-panel:
+    366px;
+
+  --right-panel:
+    320px;
+
+  --panel-gap:
+    18px;
+
 }
+
 
 html,
 body {
+
   width: 100%;
   height: 100%;
+
   margin: 0;
+
   overflow: hidden;
-  background: var(--bg);
-  color: var(--text);
+
+  background:
+    var(--bg);
+
+  color:
+    var(--text);
+
   font-family:
     Inter,
     system-ui,
@@ -56,27 +113,38 @@ body {
     BlinkMacSystemFont,
     "Segoe UI",
     sans-serif;
+
 }
 
+
 body::before {
+
   content: "";
+
   position: fixed;
+
   inset: 0;
+
   z-index: 0;
+
   pointer-events: none;
 
   background:
+
     radial-gradient(
       circle at 65% 10%,
-      rgba(41,92,69,.15),
+      rgba(41, 92, 69, .15),
       transparent 35%
     ),
+
     radial-gradient(
       circle at 15% 85%,
-      rgba(26,75,53,.12),
+      rgba(26, 75, 53, .12),
       transparent 35%
     );
+
 }
+
 
 
 /* =========================================================
@@ -84,15 +152,26 @@ body::before {
 ========================================================= */
 
 #map {
+
   position: fixed;
+
   inset: 0;
+
   z-index: 1;
-  background: #070a09;
+
+  background:
+    #070a09;
+
 }
 
+
 .leaflet-container {
-  background: #070a09;
+
+  background:
+    #070a09;
+
 }
+
 
 
 /* =========================================================
@@ -100,40 +179,42 @@ body::before {
 ========================================================= */
 
 #topbar {
+
   position: fixed;
+
   top: 0;
   left: 0;
   right: 0;
 
   z-index: 9000;
 
-  height: var(--top-height);
+  height:
+    var(--top-height);
 
   display: grid;
 
   grid-template-columns:
-    290px
-    1fr
-    auto;
+    290px 1fr auto;
 
   align-items: center;
 
   padding:
-    0
-    22px;
+    0 22px;
 
   border-bottom:
     1px solid var(--border);
 
   background:
-    rgba(3,6,5,.96);
+    rgba(3, 6, 5, .96);
 
   backdrop-filter:
     blur(18px);
 
   box-shadow:
     0 10px 40px rgba(0,0,0,.3);
+
 }
+
 
 
 /* =========================================================
@@ -141,16 +222,23 @@ body::before {
 ========================================================= */
 
 .brand {
+
   display: flex;
+
   align-items: center;
+
   gap: 13px;
+
 }
 
+
 .brand-emblem {
+
   width: 38px;
   height: 38px;
 
   display: grid;
+
   place-items: center;
 
   border:
@@ -168,25 +256,42 @@ body::before {
       rgba(198,164,67,.12),
       rgba(198,164,67,.02)
     );
+
 }
+
 
 .brand-emblem svg {
+
   width: 19px;
   height: 19px;
+
 }
+
 
 .brand-name {
+
   font-size: 13px;
+
   font-weight: 800;
+
   letter-spacing: 3px;
+
 }
 
+
 .brand-sub {
+
   margin-top: 2px;
-  color: var(--muted);
+
+  color:
+    var(--muted);
+
   font-size: 9px;
+
   letter-spacing: 1px;
+
 }
+
 
 
 /* =========================================================
@@ -194,41 +299,63 @@ body::before {
 ========================================================= */
 
 .main-nav {
+
   height: 100%;
+
   display: flex;
+
   align-items: center;
+
   justify-content: center;
+
   gap: 28px;
+
 }
 
+
 .nav-item {
+
   position: relative;
 
   height: 100%;
 
   display: flex;
+
   align-items: center;
 
-  color: #89908d;
+  color:
+    #89908d;
 
   font-size: 10px;
+
   font-weight: 800;
+
   letter-spacing: 2px;
 
   cursor: pointer;
+
   user-select: none;
+
 }
+
 
 .nav-item:hover {
-  color: #fff;
+
+  color: white;
+
 }
+
 
 .nav-item.active {
+
   color:
     var(--green-light);
+
 }
 
+
 .nav-item.active::after {
+
   content: "";
 
   position: absolute;
@@ -241,7 +368,9 @@ body::before {
 
   background:
     var(--green);
+
 }
+
 
 
 /* =========================================================
@@ -249,28 +378,35 @@ body::before {
 ========================================================= */
 
 .account-area {
+
   display: flex;
+
   align-items: center;
+
   justify-content: flex-end;
+
   gap: 8px;
+
 }
 
+
 #admin-email {
+
   max-width: 170px;
 
   overflow: hidden;
 
-  text-overflow:
-    ellipsis;
+  text-overflow: ellipsis;
 
-  white-space:
-    nowrap;
+  white-space: nowrap;
 
   color:
     var(--muted);
 
   font-size: 10px;
+
 }
+
 
 
 /* =========================================================
@@ -278,6 +414,7 @@ body::before {
 ========================================================= */
 
 button {
+
   appearance: none;
 
   min-height: 38px;
@@ -285,17 +422,13 @@ button {
   border:
     1px solid var(--border);
 
-  border-radius:
-    9px;
+  border-radius: 9px;
 
-  display:
-    inline-flex;
+  display: inline-flex;
 
-  align-items:
-    center;
+  align-items: center;
 
-  justify-content:
-    center;
+  justify-content: center;
 
   gap: 7px;
 
@@ -303,93 +436,111 @@ button {
     8px 12px;
 
   background:
-    rgba(20,28,24,.9);
+    rgba(20, 28, 24, .9);
 
   color:
     #dce5e0;
 
-  font-family:
-    inherit;
+  font-family: inherit;
 
-  font-size:
-    10px;
+  font-size: 10px;
 
-  font-weight:
-    750;
+  font-weight: 750;
 
-  cursor:
-    pointer;
+  cursor: pointer;
 
   transition:
     .15s ease;
+
 }
+
 
 button svg {
+
   width: 15px;
   height: 15px;
+
 }
 
+
 button:hover {
+
   border-color:
     var(--border-strong);
 
   background:
-    rgba(33,46,39,.96);
+    rgba(33, 46, 39, .96);
 
-  color:
-    #fff;
+  color: white;
+
 }
+
 
 button:active {
+
   transform:
     scale(.975);
+
 }
 
+
 button.primary {
+
   background:
-    rgba(43,77,59,.9);
+    rgba(43, 77, 59, .9);
 
   border-color:
     rgba(134,173,150,.3);
 
   color:
     #c9ded1;
+
 }
 
+
 button.gold {
+
   background:
-    rgba(117,92,26,.19);
+    rgba(117, 92, 26, .19);
 
   border-color:
     rgba(198,164,67,.38);
 
   color:
     var(--gold-light);
+
 }
 
+
 button.danger {
+
   background:
-    rgba(112,34,34,.12);
+    rgba(112, 34, 34, .12);
 
   border-color:
     rgba(201,90,90,.25);
 
   color:
     #e88484;
+
 }
 
+
 button.active {
+
   border-color:
     rgba(134,173,150,.55);
 
   background:
     rgba(43,77,59,.95);
 
-  color:
-    #fff;
+  color: white;
+
 }
 
+
 button:disabled {
+
   opacity: .32;
 
   cursor:
@@ -397,7 +548,9 @@ button:disabled {
 
   transform:
     none;
+
 }
+
 
 
 /* =========================================================
@@ -405,6 +558,7 @@ button:disabled {
 ========================================================= */
 
 .panel {
+
   position: fixed;
 
   z-index: 6000;
@@ -414,8 +568,7 @@ button:disabled {
   border:
     1px solid var(--border);
 
-  border-radius:
-    13px;
+  border-radius: 13px;
 
   background:
     linear-gradient(
@@ -429,27 +582,31 @@ button:disabled {
 
   box-shadow:
     0 22px 65px rgba(0,0,0,.46);
+
 }
 
+
 .panel-header {
+
   min-height: 56px;
 
   display: flex;
 
-  align-items:
-    center;
+  align-items: center;
 
-  justify-content:
-    space-between;
+  justify-content: space-between;
 
   padding:
     0 16px;
 
   border-bottom:
     1px solid var(--border);
+
 }
 
+
 .panel-kicker {
+
   color:
     var(--muted);
 
@@ -457,33 +614,45 @@ button:disabled {
 
   font-weight: 800;
 
-  letter-spacing:
-    2px;
+  letter-spacing: 2px;
+
 }
 
+
 .panel-title {
+
   margin-top: 3px;
 
   font-size: 15px;
 
   font-weight: 750;
+
 }
+
 
 .panel-scroll {
+
   overflow-y: auto;
+
 }
+
 
 .panel-scroll::-webkit-scrollbar {
+
   width: 5px;
+
 }
 
+
 .panel-scroll::-webkit-scrollbar-thumb {
-  border-radius:
-    999px;
+
+  border-radius: 999px;
 
   background:
     rgba(134,173,150,.2);
+
 }
+
 
 
 /* =========================================================
@@ -491,6 +660,7 @@ button:disabled {
 ========================================================= */
 
 #layers-panel {
+
   top:
     calc(var(--top-height) + 18px);
 
@@ -501,33 +671,51 @@ button:disabled {
     var(--right-panel);
 
   max-height:
-    255px;
+    calc(
+      100vh
+      - var(--top-height)
+      - 36px
+    );
+
 }
+
 
 #layers-panel.closed {
+
   display: none;
+
 }
+
 
 #layers-panel .panel-scroll {
-  max-height: 190px;
 
-  padding:
-    12px;
+  max-height:
+    calc(
+      100vh
+      - var(--top-height)
+      - 108px
+    );
+
+  padding: 12px;
+
 }
+
 
 #layers-list {
+
   display: grid;
+
   gap: 7px;
+
 }
 
+
 .layer-item {
+
   display: grid;
 
   grid-template-columns:
-    18px
-    10px
-    1fr
-    auto;
+    18px 10px 1fr auto;
 
   align-items: center;
 
@@ -538,30 +726,29 @@ button:disabled {
   padding:
     8px 11px;
 
-  margin: 0;
-
   border:
     1px solid rgba(255,255,255,.045);
 
-  border-radius:
-    9px;
+  border-radius: 9px;
 
   background:
     rgba(255,255,255,.018);
 
-  cursor:
-    pointer;
+  cursor: pointer;
 
-  text-transform:
-    none;
 }
+
 
 .layer-item:hover {
+
   background:
     rgba(81,118,96,.08);
+
 }
 
+
 .layer-item input {
+
   width: 15px;
   height: 15px;
 
@@ -569,41 +756,46 @@ button:disabled {
 
   accent-color:
     var(--green);
+
 }
 
+
 .layer-swatch {
+
   width: 9px;
   height: 9px;
 
-  border-radius:
-    50%;
+  border-radius: 50%;
 
   box-shadow:
     0 0 7px currentColor;
+
 }
 
+
 .layer-name {
+
   overflow: hidden;
 
-  white-space:
-    nowrap;
+  white-space: nowrap;
 
-  text-overflow:
-    ellipsis;
+  text-overflow: ellipsis;
 
   font-size: 11px;
 
   font-weight: 650;
+
 }
 
+
 .layer-count {
+
   min-width: 24px;
 
   padding:
     3px 6px;
 
-  border-radius:
-    999px;
+  border-radius: 999px;
 
   background:
     rgba(255,255,255,.035);
@@ -611,12 +803,12 @@ button:disabled {
   color:
     var(--muted);
 
-  text-align:
-    center;
+  text-align: center;
 
-  font-size:
-    9px;
+  font-size: 9px;
+
 }
+
 
 
 /* =========================================================
@@ -624,6 +816,7 @@ button:disabled {
 ========================================================= */
 
 #editor-panel {
+
   top:
     calc(var(--top-height) + 18px);
 
@@ -640,16 +833,20 @@ button:disabled {
       - 36px
     );
 
-  display:
-    none;
+  display: none;
+
 }
+
 
 body.editing #editor-panel {
-  display:
-    block;
+
+  display: block;
+
 }
 
+
 #editor-panel .panel-scroll {
+
   max-height:
     calc(
       100vh
@@ -657,39 +854,47 @@ body.editing #editor-panel {
       - 108px
     );
 
-  padding:
-    16px;
+  padding: 16px;
+
 }
 
+
 .editor-section {
+
   padding-bottom: 18px;
 
   margin-bottom: 18px;
 
   border-bottom:
     1px solid var(--border);
+
 }
 
+
 .editor-section:last-child {
+
   margin-bottom: 0;
 
   border-bottom: 0;
+
 }
+
 
 .section-head {
+
   display: flex;
 
-  align-items:
-    center;
+  align-items: center;
 
-  justify-content:
-    space-between;
+  justify-content: space-between;
 
-  margin-bottom:
-    12px;
+  margin-bottom: 12px;
+
 }
 
+
 .section-name {
+
   color:
     #b8c5be;
 
@@ -697,9 +902,10 @@ body.editing #editor-panel {
 
   font-weight: 800;
 
-  letter-spacing:
-    2px;
+  letter-spacing: 2px;
+
 }
+
 
 
 /* =========================================================
@@ -707,14 +913,14 @@ body.editing #editor-panel {
 ========================================================= */
 
 #status {
+
   padding:
     11px 12px;
 
   border:
     1px solid rgba(134,173,150,.14);
 
-  border-radius:
-    9px;
+  border-radius: 9px;
 
   background:
     rgba(48,81,62,.09);
@@ -724,9 +930,10 @@ body.editing #editor-panel {
 
   font-size: 10px;
 
-  line-height:
-    1.5;
+  line-height: 1.5;
+
 }
+
 
 
 /* =========================================================
@@ -734,6 +941,7 @@ body.editing #editor-panel {
 ========================================================= */
 
 label {
+
   display: block;
 
   margin:
@@ -746,16 +954,17 @@ label {
 
   font-weight: 800;
 
-  letter-spacing:
-    1.4px;
+  letter-spacing: 1.4px;
 
-  text-transform:
-    uppercase;
+  text-transform: uppercase;
+
 }
+
 
 input,
 select,
 textarea {
+
   width: 100%;
 
   min-height: 40px;
@@ -766,11 +975,9 @@ textarea {
   border:
     1px solid var(--border);
 
-  border-radius:
-    8px;
+  border-radius: 8px;
 
-  outline:
-    none;
+  outline: none;
 
   background:
     rgba(4,8,6,.88);
@@ -778,84 +985,102 @@ textarea {
   color:
     #e5ece8;
 
-  font-family:
-    inherit;
+  font-family: inherit;
 
-  font-size:
-    11px;
+  font-size: 11px;
+
 }
+
 
 input:focus,
 select:focus,
 textarea:focus {
+
   border-color:
     rgba(134,173,150,.42);
+
 }
+
 
 textarea {
+
   min-height: 74px;
 
-  resize:
-    vertical;
+  resize: vertical;
+
 }
+
 
 input[type="color"] {
+
   height: 40px;
 
-  padding:
-    4px;
+  padding: 4px;
+
 }
 
+
 input[type="range"] {
+
   min-height: 30px;
 
   padding: 0;
 
   accent-color:
     var(--green);
+
 }
 
+
 .form-grid {
+
   display: grid;
 
   grid-template-columns:
     1fr 1fr;
 
   gap: 10px;
+
 }
 
+
 .check-row {
+
   display: flex;
 
-  align-items:
-    center;
+  align-items: center;
 
   gap: 8px;
 
-  margin-top:
-    12px;
+  margin-top: 12px;
 
   color:
     #a4afa9;
 
-  font-size:
-    10px;
+  font-size: 10px;
 
-  text-transform:
-    none;
 }
 
+
 .check-row input {
+
   width: 15px;
 
-  min-height:
-    15px;
+  min-height: 15px;
 
   accent-color:
     var(--green);
+
 }
 
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
 .action-grid {
+
   display: grid;
 
   grid-template-columns:
@@ -863,14 +1088,18 @@ input[type="range"] {
 
   gap: 7px;
 
-  margin-top:
-    13px;
+  margin-top: 13px;
+
 }
 
+
 .action-grid .wide {
+
   grid-column:
     1 / -1;
+
 }
+
 
 
 /* =========================================================
@@ -878,6 +1107,7 @@ input[type="range"] {
 ========================================================= */
 
 #draw-toolbar {
+
   position: fixed;
 
   z-index: 8000;
@@ -898,22 +1128,18 @@ input[type="range"] {
   transform:
     translateX(-50%);
 
-  display:
-    none;
+  display: none;
 
-  align-items:
-    stretch;
+  align-items: stretch;
 
   gap: 4px;
 
-  padding:
-    6px;
+  padding: 6px;
 
   border:
     1px solid var(--border);
 
-  border-radius:
-    12px;
+  border-radius: 12px;
 
   background:
     rgba(5,9,7,.96);
@@ -923,45 +1149,54 @@ input[type="range"] {
 
   box-shadow:
     0 18px 50px rgba(0,0,0,.55);
+
 }
+
 
 body.editing #draw-toolbar {
-  display:
-    flex;
+
+  display: flex;
+
 }
 
+
 body.editing {
+
   --left-safe:
     calc(
       var(--left-panel)
       + var(--panel-gap)
       + 18px
     );
+
 }
 
+
 body.layers-open {
+
   --right-safe:
     calc(
       var(--right-panel)
       + var(--panel-gap)
       + 18px
     );
+
 }
 
+
 .draw-tool {
+
   width: 76px;
 
   min-height: 54px;
 
   display: flex;
 
-  flex-direction:
-    column;
+  flex-direction: column;
 
   gap: 4px;
 
-  padding:
-    6px;
+  padding: 6px;
 
   border:
     1px solid transparent;
@@ -971,25 +1206,33 @@ body.layers-open {
 
   color:
     #909b95;
+
 }
+
 
 .draw-tool svg {
+
   width: 18px;
   height: 18px;
+
 }
 
+
 .draw-tool:hover {
+
   border-color:
     var(--border);
 
   background:
     rgba(63,94,75,.1);
 
-  color:
-    #fff;
+  color: white;
+
 }
 
+
 .draw-tool.active {
+
   border-color:
     rgba(134,173,150,.3);
 
@@ -998,18 +1241,23 @@ body.layers-open {
 
   color:
     var(--green-light);
+
 }
 
+
 .draw-label {
+
   font-size: 8px;
 
   font-weight: 800;
 
-  letter-spacing:
-    .5px;
+  letter-spacing: .5px;
+
 }
 
+
 .toolbar-separator {
+
   width: 1px;
 
   margin:
@@ -1017,7 +1265,9 @@ body.layers-open {
 
   background:
     var(--border);
+
 }
+
 
 
 /* =========================================================
@@ -1025,6 +1275,7 @@ body.layers-open {
 ========================================================= */
 
 .leaflet-bottom.leaflet-right {
+
   right:
     calc(
       var(--right-safe, 0px)
@@ -1032,9 +1283,12 @@ body.layers-open {
     );
 
   bottom: 14px;
+
 }
 
+
 .leaflet-control-zoom {
+
   overflow: hidden;
 
   border:
@@ -1045,9 +1299,12 @@ body.layers-open {
 
   box-shadow:
     0 12px 35px rgba(0,0,0,.42) !important;
+
 }
 
+
 .leaflet-control-zoom a {
+
   width:
     38px !important;
 
@@ -1065,7 +1322,9 @@ body.layers-open {
 
   color:
     var(--green-light) !important;
+
 }
+
 
 
 /* =========================================================
@@ -1073,6 +1332,7 @@ body.layers-open {
 ========================================================= */
 
 #login-overlay {
+
   position: fixed;
 
   inset: 0;
@@ -1081,11 +1341,9 @@ body.layers-open {
 
   display: none;
 
-  align-items:
-    center;
+  align-items: center;
 
-  justify-content:
-    center;
+  justify-content: center;
 
   padding: 20px;
 
@@ -1094,27 +1352,29 @@ body.layers-open {
 
   backdrop-filter:
     blur(12px);
+
 }
+
 
 #login-overlay.visible {
-  display:
-    flex;
+
+  display: flex;
+
 }
 
+
 .login-box {
+
   width: 410px;
 
-  max-width:
-    100%;
+  max-width: 100%;
 
-  overflow:
-    hidden;
+  overflow: hidden;
 
   border:
     1px solid var(--border);
 
-  border-radius:
-    14px;
+  border-radius: 14px;
 
   background:
     linear-gradient(
@@ -1125,16 +1385,22 @@ body.layers-open {
 
   box-shadow:
     0 35px 100px rgba(0,0,0,.7);
+
 }
 
+
 .login-head {
+
   padding: 22px;
 
   border-bottom:
     1px solid var(--border);
+
 }
 
+
 .login-kicker {
+
   margin-bottom: 7px;
 
   color:
@@ -1144,41 +1410,52 @@ body.layers-open {
 
   font-weight: 900;
 
-  letter-spacing:
-    2px;
+  letter-spacing: 2px;
+
 }
 
+
 .login-title {
+
   margin: 0;
 
   font-size: 21px;
+
 }
 
+
 .login-sub {
+
   margin:
     6px 0 0;
 
   color:
     var(--muted);
 
-  font-size:
-    10px;
+  font-size: 10px;
+
 }
+
 
 .login-body {
+
   padding:
     20px 22px 22px;
+
 }
 
+
 #login-error {
+
   margin-top: 12px;
 
   color:
     #d6bd68;
 
-  font-size:
-    10px;
+  font-size: 10px;
+
 }
+
 
 
 /* =========================================================
@@ -1186,25 +1463,30 @@ body.layers-open {
 ========================================================= */
 
 .leaflet-popup-content-wrapper {
+
   border:
     1px solid var(--border);
 
-  border-radius:
-    10px;
+  border-radius: 10px;
 
   background:
     rgba(6,11,8,.97);
 
-  color:
-    #fff;
+  color: white;
+
 }
+
 
 .leaflet-popup-tip {
+
   background:
     rgba(6,11,8,.97);
+
 }
 
+
 .zone-category {
+
   margin-bottom: 5px;
 
   color:
@@ -1214,39 +1496,66 @@ body.layers-open {
 
   font-weight: 900;
 
-  letter-spacing:
-    1.6px;
+  letter-spacing: 1.6px;
 
-  text-transform:
-    uppercase;
+  text-transform: uppercase;
+
 }
 
+
 .zone-title {
+
   margin:
     0 0 5px;
 
-  font-size:
-    15px;
+  font-size: 15px;
+
 }
 
+
 .zone-description {
+
   margin: 0;
 
   color:
     var(--muted);
 
-  font-size:
-    10px;
+  font-size: 10px;
+
 }
 
 
+
+
+
 /* =========================================================
-   FACTIONS
+   FACTIONS PANEL
 ========================================================= */
 
+#layers-panel {
+
+  max-height:
+    255px;
+
+}
+
+
+#layers-panel .panel-scroll {
+
+  max-height:
+    190px;
+
+}
+
+
 #factions-panel {
+
   top:
-    calc(var(--top-height) + 283px);
+    calc(
+      var(--top-height)
+      + 18px
+      + 265px
+    );
 
   right:
     var(--panel-gap);
@@ -1259,14 +1568,20 @@ body.layers-open {
 
   display:
     none;
+
 }
+
 
 body.editing #factions-panel {
+
   display:
     block;
+
 }
 
+
 #factions-panel .panel-scroll {
+
   max-height:
     calc(
       100vh
@@ -1276,28 +1591,37 @@ body.editing #factions-panel {
 
   padding:
     12px;
+
 }
+
 
 #faction-list {
-  display: grid;
 
-  gap: 7px;
+  display:
+    grid;
+
+  gap:
+    7px;
+
 }
 
-.faction-item {
-  width: 100%;
 
-  display: grid;
+.faction-item {
+
+  width:
+    100%;
+
+  display:
+    grid;
 
   grid-template-columns:
-    11px
-    1fr
-    auto;
+    11px 1fr auto;
 
   align-items:
     center;
 
-  gap: 9px;
+  gap:
+    9px;
 
   min-height:
     44px;
@@ -1316,34 +1640,50 @@ body.editing #factions-panel {
 
   cursor:
     pointer;
+
 }
 
+
 .faction-item:hover {
+
   border-color:
     var(--border-strong);
 
   background:
     rgba(81,118,96,.08);
+
 }
 
+
 .faction-item.active {
+
   border-color:
     rgba(198,164,67,.42);
 
   background:
     rgba(198,164,67,.08);
+
 }
 
+
 .faction-dot {
-  width: 10px;
-  height: 10px;
+
+  width:
+    10px;
+
+  height:
+    10px;
 
   border-radius:
     50%;
+
 }
 
+
 .faction-name {
-  overflow: hidden;
+
+  overflow:
+    hidden;
 
   text-overflow:
     ellipsis;
@@ -1356,27 +1696,39 @@ body.editing #factions-panel {
 
   font-weight:
     700;
+
 }
 
+
 .faction-count {
+
   color:
     var(--muted);
 
   font-size:
     9px;
+
 }
 
-.faction-form {
-  margin-top: 15px;
 
-  padding-top: 15px;
+.faction-form {
+
+  margin-top:
+    15px;
+
+  padding-top:
+    15px;
 
   border-top:
     1px solid var(--border);
+
 }
 
+
 #paint-info {
-  display: none;
+
+  display:
+    none;
 
   margin-top:
     12px;
@@ -1401,65 +1753,55 @@ body.editing #factions-panel {
 
   line-height:
     1.5;
+
 }
+
 
 #paint-info.visible {
+
   display:
     block;
+
 }
 
-
-/* =========================================================
-   PAINT MODE
-========================================================= */
 
 body.painting #map {
+
   cursor:
     crosshair;
+
 }
+
 
 body.painting #draw-toolbar {
+
   display:
     none;
+
 }
 
+
 body.painting #editor-panel {
+
   opacity:
     .45;
 
   pointer-events:
     none;
+
 }
+
 
 body.painting .leaflet-interactive {
+
   cursor:
     crosshair !important;
-}
 
-body.painting .faction-item.active {
-  border-color:
-    rgba(198,164,67,.72);
-
-  background:
-    rgba(198,164,67,.14);
-
-  box-shadow:
-    0 0 0 1px rgba(198,164,67,.12);
-}
-
-body.painting #factions-panel {
-  border-color:
-    rgba(198,164,67,.28);
-}
-
-body.painting #layers-panel {
-  opacity:
-    .82;
 }
 
 
 /* =========================================================
-   TERRITOIRES PUBLICS
+   MAP VISUAL IMPROVEMENTS
 ========================================================= */
 
 .leaflet-interactive {
@@ -1470,304 +1812,474 @@ body.painting #layers-panel {
 }
 
 .faction-map-badge {
-  transform:
-    translate(-50%, -50%);
-
-  display:
-    flex;
-
-  flex-direction:
-    column;
-
-  align-items:
-    center;
-
-  gap:
-    5px;
-
-  pointer-events:
-    none;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  pointer-events: none;
 }
 
 .faction-map-logo {
   width: 44px;
   height: 44px;
-
   display: grid;
-
-  place-items:
-    center;
-
-  overflow:
-    hidden;
-
-  border:
-    2px solid currentColor;
-
-  border-radius:
-    50%;
-
-  background:
-    rgba(4,8,6,.90);
-
-  box-shadow:
-    0 8px 25px rgba(0,0,0,.55);
-
-  font-size:
-    16px;
-
-  font-weight:
-    900;
+  place-items: center;
+  overflow: hidden;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  background: rgba(4,8,6,.90);
+  box-shadow: 0 8px 25px rgba(0,0,0,.55);
+  font-size: 16px;
+  font-weight: 900;
 }
 
 .faction-map-logo img {
   width: 100%;
   height: 100%;
-
-  object-fit:
-    cover;
+  object-fit: cover;
 }
 
 .faction-map-name {
-  max-width:
-    140px;
-
-  overflow:
-    hidden;
-
-  padding:
-    4px 8px;
-
-  border:
-    1px solid rgba(255,255,255,.08);
-
-  border-radius:
-    999px;
-
-  background:
-    rgba(4,8,6,.86);
-
-  box-shadow:
-    0 5px 15px rgba(0,0,0,.35);
-
-  color:
-    #fff;
-
-  font-size:
-    8px;
-
-  font-weight:
-    900;
-
-  letter-spacing:
-    .8px;
-
-  text-overflow:
-    ellipsis;
-
-  white-space:
-    nowrap;
-
-  text-transform:
-    uppercase;
+  max-width: 140px;
+  overflow: hidden;
+  padding: 4px 8px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 999px;
+  background: rgba(4,8,6,.86);
+  box-shadow: 0 5px 15px rgba(0,0,0,.35);
+  color: #ffffff;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: .8px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-transform: uppercase;
 }
 
+body.painting .faction-item.active {
+  border-color: rgba(198,164,67,.72);
+  background: rgba(198,164,67,.14);
+  box-shadow: 0 0 0 1px rgba(198,164,67,.12);
+}
+
+body.painting #factions-panel {
+  border-color: rgba(198,164,67,.28);
+}
+
+body.painting #layers-panel {
+  opacity: .82;
+}
 
 /* =========================================================
-   REPÈRES / BÂTIMENTS
+   AFFICHAGE CARTE / LABELS / LOGOS
 ========================================================= */
 
-.map-repere {
-  width: 28px;
-  height: 28px;
-
-  display: grid;
-
-  place-items:
-    center;
-
-  border:
-    1px solid rgba(255,255,255,.65);
-
-  border-radius:
-    50%;
-
-  background:
-    rgba(5,9,7,.9);
-
-  color:
-    #fff;
-
-  box-shadow:
-    0 5px 15px rgba(0,0,0,.42);
-
-  font-size:
-    12px;
+#layers-panel {
+  max-height: 330px;
 }
 
-.map-building {
-  min-width: 28px;
-
-  height: 26px;
-
-  display: grid;
-
-  place-items:
-    center;
-
-  padding:
-    0 6px;
-
-  border:
-    1px solid rgba(255,255,255,.65);
-
-  border-radius:
-    6px;
-
-  background:
-    rgba(5,9,7,.92);
-
-  color:
-    #fff;
-
-  box-shadow:
-    0 5px 15px rgba(0,0,0,.42);
-
-  font-size:
-    9px;
-
-  font-weight:
-    900;
+#layers-panel .panel-scroll {
+  max-height: 270px;
+  padding: 14px;
 }
 
+.display-panel-scroll {
+  display: grid;
+  gap: 14px;
+}
+
+.display-section {
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.display-section:last-of-type {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.display-section-title {
+  margin-bottom: 9px;
+  color: #9da9a2;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 1.7px;
+}
+
+.map-mode-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+}
+
+.map-mode-button {
+  min-height: 48px;
+  flex-direction: column;
+  gap: 4px;
+  background: rgba(255,255,255,.018);
+}
+
+.map-mode-button svg {
+  width: 17px;
+  height: 17px;
+}
+
+.map-mode-button.active {
+  border-color: rgba(134,173,150,.48);
+  background: rgba(49,84,64,.30);
+  color: #d9e9df;
+  box-shadow: inset 0 0 0 1px rgba(134,173,150,.06);
+}
+
+.overlay-toggle {
+  display: grid;
+  grid-template-columns: 16px 32px 1fr;
+  align-items: center;
+  gap: 9px;
+  min-height: 48px;
+  margin: 7px 0 0;
+  padding: 8px 9px;
+  border: 1px solid rgba(255,255,255,.045);
+  border-radius: 9px;
+  background: rgba(255,255,255,.018);
+  cursor: pointer;
+  text-transform: none;
+}
+
+.overlay-toggle:hover {
+  background: rgba(81,118,96,.08);
+}
+
+.overlay-toggle input {
+  width: 15px;
+  min-height: 15px;
+  margin: 0;
+  accent-color: var(--green);
+}
+
+.overlay-icon {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(4,8,6,.55);
+  color: var(--green-light);
+}
+
+.overlay-icon svg {
+  width: 15px;
+  height: 15px;
+}
+
+.overlay-copy {
+  min-width: 0;
+}
+
+.overlay-copy strong,
+.overlay-copy small {
+  display: block;
+}
+
+.overlay-copy strong {
+  color: #dce5e0;
+  font-size: 10px;
+  letter-spacing: .2px;
+}
+
+.overlay-copy small {
+  margin-top: 2px;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 8px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.display-note {
+  padding: 9px 10px;
+  border: 1px solid rgba(134,173,150,.10);
+  border-radius: 8px;
+  background: rgba(48,81,62,.06);
+  color: #829087;
+  font-size: 8px;
+  line-height: 1.45;
+}
+
+body.painting .map-mode-button,
+body.painting .overlay-toggle {
+  opacity: .45;
+  pointer-events: none;
+}
+
+#factions-panel {
+  top: calc(var(--top-height) + 18px + 340px);
+}
+
+#factions-panel .panel-scroll {
+  max-height: calc(100vh - var(--top-height) - 445px);
+}
+
+.marker-fields {
+  margin-top: 12px;
+  padding: 11px;
+  border: 1px solid rgba(198,164,67,.16);
+  border-radius: 9px;
+  background: rgba(198,164,67,.035);
+}
+
+.field-help {
+  margin-top: 5px;
+  color: #68736d;
+  font-size: 8px;
+  line-height: 1.45;
+}
+
+.zone-map-label {
+  transform: translate(-50%, -50%);
+  max-width: 155px;
+  padding: 4px 7px;
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 7px;
+  background: rgba(3,7,5,.72);
+  box-shadow: 0 4px 15px rgba(0,0,0,.28);
+  color: rgba(255,255,255,.93);
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: .8px;
+  line-height: 1.15;
+  text-align: center;
+  text-transform: uppercase;
+  white-space: normal;
+  pointer-events: none;
+}
+
+.map-point-wrap {
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  pointer-events: auto;
+}
+
+.map-point-logo {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.48);
+  border-radius: 50%;
+  background: rgba(4,8,6,.92);
+  box-shadow: 0 6px 18px rgba(0,0,0,.48);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.map-point-wrap.building .map-point-logo {
+  border-radius: 8px;
+  border-color: rgba(198,164,67,.46);
+}
+
+.map-point-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.map-point-name {
+  max-width: 140px;
+  padding: 3px 6px;
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 6px;
+  background: rgba(3,7,5,.82);
+  box-shadow: 0 4px 12px rgba(0,0,0,.28);
+  color: #f0f4f2;
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1.1;
+  text-align: center;
+  white-space: nowrap;
+}
+
+body.painting .zone-map-label {
+  border-color: rgba(198,164,67,.32);
+  background: rgba(12,10,4,.84);
+  color: #f4df91;
+}
 
 /* =========================================================
    RESPONSIVE
 ========================================================= */
 
-@media(max-width: 1000px) {
+@media (max-width: 1000px) {
 
   #topbar {
+
     grid-template-columns:
       1fr auto;
+
   }
 
   .main-nav {
-    display:
-      none;
+
+    display: none;
+
   }
 
 }
 
 
-@media(max-width: 760px) {
+@media (max-width: 760px) {
 
   :root {
+
     --top-height:
       62px;
+
   }
+
 
   #topbar {
+
     padding:
       0 10px;
+
   }
 
+
   .brand-name {
-    font-size:
-      10px;
+
+    font-size: 10px;
+
   }
+
 
   .brand-sub,
   #admin-email {
-    display:
-      none;
+
+    display: none;
+
   }
+
 
   .brand-emblem {
+
     width: 32px;
     height: 32px;
+
   }
 
+
   #layers-panel {
+
     top: 74px;
 
     right: 8px;
 
-    width:
-      245px;
+    width: 245px;
 
-    max-height:
-      235px;
+    max-height: 44vh;
+
+  }
+
+
+  #editor-panel {
+
+    top: auto;
+
+    left: 8px;
+    right: 8px;
+
+    bottom: 78px;
+
+    width: auto;
+
+    max-height: 50vh;
+
+  }
+
+
+  #draw-toolbar {
+
+    left: 8px !important;
+    right: 8px;
+
+    bottom: 8px;
+
+    transform: none;
+
+    overflow-x: auto;
+
+  }
+
+
+  body.editing {
+
+    --left-safe: 0px;
+
+  }
+
+
+  body.layers-open {
+
+    --right-safe: 0px;
+
+  }
+
+
+  .leaflet-bottom.leaflet-right {
+
+    right: 8px;
+
+    bottom: 78px;
+
+  }
+
+
+  #factions-panel {
+
+    top: 330px;
+
+    right: 8px;
+
+    width: 245px;
+
+    bottom: 80px;
+
+  }
+
+}
+
+
+/* Derniers ajustements responsive */
+@media (max-width: 760px) {
+  #layers-panel {
+    max-height: 300px;
+  }
+
+  #layers-panel .panel-scroll {
+    max-height: 240px;
   }
 
   #factions-panel {
-    top:
-      320px;
-
-    right:
-      8px;
-
-    width:
-      245px;
-
-    bottom:
-      80px;
+    top: 385px;
   }
 
-  #editor-panel {
-    top:
-      auto;
-
-    left:
-      8px;
-
-    right:
-      8px;
-
-    bottom:
-      78px;
-
-    width:
-      auto;
-
-    max-height:
-      50vh;
+  .zone-map-label {
+    font-size: 7px;
+    max-width: 110px;
   }
 
-  #draw-toolbar {
-    left:
-      8px !important;
-
-    right:
-      8px;
-
-    bottom:
-      8px;
-
-    transform:
-      none;
-
-    overflow-x:
-      auto;
+  .map-point-name {
+    max-width: 100px;
+    font-size: 7px;
   }
-
-  body.editing {
-    --left-safe:
-      0px;
-  }
-
-  body.layers-open {
-    --right-safe:
-      0px;
-  }
-
-  .leaflet-bottom.leaflet-right {
-    right: 8px;
-
-    bottom:
-      78px;
-  }
-
 }
 
 </style>
@@ -1775,23 +2287,28 @@ body.painting #layers-panel {
 </head>
 
 
+
 <body class="layers-open">
 
+
+<!-- MAP -->
 
 <div id="map"></div>
 
 
-<!-- =========================================================
-     HEADER
-========================================================= -->
+
+<!-- HEADER -->
 
 <header id="topbar">
 
   <div class="brand">
 
     <div class="brand-emblem">
+
       <i data-lucide="compass"></i>
+
     </div>
+
 
     <div>
 
@@ -1808,6 +2325,7 @@ body.painting #layers-panel {
   </div>
 
 
+
   <nav class="main-nav">
 
     <div
@@ -1817,22 +2335,25 @@ body.painting #layers-panel {
       CARTE
     </div>
 
+
     <div
       id="nav-layers"
       class="nav-item"
     >
-      COUCHES
+      AFFICHAGE
     </div>
+
 
     <div
       id="nav-editor"
       class="nav-item"
-      style="display:none"
+      style="display:none;"
     >
       ÉDITION
     </div>
 
   </nav>
+
 
 
   <div class="account-area">
@@ -1861,7 +2382,7 @@ body.painting #layers-panel {
     <button
       id="edit-mode-button"
       class="primary"
-      style="display:none"
+      style="display:none;"
     >
 
       <i data-lucide="pen-tool"></i>
@@ -1874,7 +2395,7 @@ body.painting #layers-panel {
     <button
       id="logout-button"
       class="danger"
-      style="display:none"
+      style="display:none;"
     >
 
       <i data-lucide="log-out"></i>
@@ -1887,9 +2408,7 @@ body.painting #layers-panel {
 
 
 
-<!-- =========================================================
-     COUCHES
-========================================================= -->
+<!-- AFFICHAGE -->
 
 <aside
   id="layers-panel"
@@ -1901,29 +2420,93 @@ body.painting #layers-panel {
     <div>
 
       <div class="panel-kicker">
-        AFFICHAGE
+        CARTE
       </div>
 
       <div class="panel-title">
-        Couches cartographiques
+        Affichage de la carte
       </div>
 
     </div>
 
-
     <button id="close-layers">
-
       <i data-lucide="x"></i>
-
     </button>
 
   </div>
 
+  <div class="panel-scroll display-panel-scroll">
 
-  <div class="panel-scroll">
+    <section class="display-section">
 
-    <div id="layers-list">
-      Chargement...
+      <div class="display-section-title">
+        CARTE PRINCIPALE
+      </div>
+
+      <div class="map-mode-grid">
+
+        <button
+          id="view-quartiers"
+          class="map-mode-button active"
+          type="button"
+        >
+          <i data-lucide="map"></i>
+          <span>Quartiers</span>
+        </button>
+
+        <button
+          id="view-factions"
+          class="map-mode-button"
+          type="button"
+        >
+          <i data-lucide="shield"></i>
+          <span>Factions</span>
+        </button>
+
+      </div>
+
+    </section>
+
+    <section class="display-section">
+
+      <div class="display-section-title">
+        SUPERPOSITIONS
+      </div>
+
+      <label class="overlay-toggle">
+        <input
+          id="toggle-reperes"
+          type="checkbox"
+          checked
+        >
+        <span class="overlay-icon">
+          <i data-lucide="map-pin"></i>
+        </span>
+        <span class="overlay-copy">
+          <strong>Repères</strong>
+          <small>Icônes et noms sur la carte</small>
+        </span>
+      </label>
+
+      <label class="overlay-toggle">
+        <input
+          id="toggle-batiments"
+          type="checkbox"
+          checked
+        >
+        <span class="overlay-icon">
+          <i data-lucide="building-2"></i>
+        </span>
+        <span class="overlay-copy">
+          <strong>Bâtiments</strong>
+          <small>Logos et noms des lieux</small>
+        </span>
+      </label>
+
+    </section>
+
+    <div id="display-note" class="display-note">
+      Vue Quartiers : chaque zone reste individuelle et son nom est affiché.
     </div>
 
   </div>
@@ -1931,10 +2514,7 @@ body.painting #layers-panel {
 </aside>
 
 
-
-<!-- =========================================================
-     FACTIONS
-========================================================= -->
+<!-- FACTIONS -->
 
 <aside
   id="factions-panel"
@@ -1987,7 +2567,7 @@ body.painting #layers-panel {
 
     <div
       class="action-grid"
-      style="margin-top:12px"
+      style="margin-top:12px;"
     >
 
       <button
@@ -2030,7 +2610,6 @@ body.painting #layers-panel {
 
       <div class="form-grid">
 
-
         <div>
 
           <label>
@@ -2066,7 +2645,6 @@ body.painting #layers-panel {
 
         </div>
 
-
       </div>
 
 
@@ -2077,7 +2655,7 @@ body.painting #layers-panel {
       <input
         id="faction-logo"
         type="url"
-        placeholder="https://.../logo.png"
+        placeholder="images/factions/ballas.png"
       >
 
 
@@ -2121,7 +2699,6 @@ body.painting #layers-panel {
 
         </button>
 
-
       </div>
 
 
@@ -2133,7 +2710,8 @@ body.painting #layers-panel {
 
         <br><br>
 
-        Clique directement sur les quartiers pour les attribuer à cette faction.
+        Clique directement sur les quartiers
+        pour les attribuer à cette faction.
 
         <br>
 
@@ -2141,11 +2719,10 @@ body.painting #layers-panel {
 
         <br><br>
 
-
         <button
           id="stop-paint"
           class="danger"
-          style="width:100%"
+          style="width:100%;"
         >
 
           <i data-lucide="x"></i>
@@ -2164,10 +2741,7 @@ body.painting #layers-panel {
 </aside>
 
 
-
-<!-- =========================================================
-     EDITOR
-========================================================= -->
+<!-- EDITOR -->
 
 <aside
   id="editor-panel"
@@ -2234,7 +2808,7 @@ body.painting #layers-panel {
 
 
       <label>
-        Couche
+        Type d’élément
       </label>
 
       <select id="shape-layer"></select>
@@ -2261,8 +2835,41 @@ body.painting #layers-panel {
       ></textarea>
 
 
-      <div class="form-grid">
+      <div
+        id="shape-marker-fields"
+        class="marker-fields"
+        style="display:none;"
+      >
 
+        <label>
+          Logo / image
+        </label>
+
+        <input
+          id="shape-logo"
+          type="text"
+          placeholder="images/reperes/police.png"
+        >
+
+        <div class="field-help">
+          Tu peux utiliser un chemin GitHub comme images/reperes/police.png ou une URL d’image.
+        </div>
+
+        <label>
+          Symbole de secours
+        </label>
+
+        <input
+          id="shape-icon"
+          type="text"
+          maxlength="8"
+          placeholder="◆"
+        >
+
+      </div>
+
+
+      <div class="form-grid">
 
         <div>
 
@@ -2295,7 +2902,6 @@ body.painting #layers-panel {
           >
 
         </div>
-
 
       </div>
 
@@ -2377,91 +2983,65 @@ body.painting #layers-panel {
 
         </button>
 
-
       </div>
 
     </section>
-
-
   </div>
 
 </aside>
 
 
 
-<!-- =========================================================
-     TOOLBAR
-========================================================= -->
+<!-- TOOLBAR -->
 
 <div id="draw-toolbar">
-
 
   <button
     id="draw-polygon"
     class="draw-tool"
   >
-
     <i data-lucide="pentagon"></i>
-
-    <span class="draw-label">
-      POLYGONE
-    </span>
-
+    <span class="draw-label">QUARTIER</span>
   </button>
-
 
   <button
     id="draw-rectangle"
     class="draw-tool"
   >
-
     <i data-lucide="square"></i>
-
-    <span class="draw-label">
-      RECTANGLE
-    </span>
-
+    <span class="draw-label">RECTANGLE</span>
   </button>
-
 
   <button
-    id="draw-line"
+    id="draw-marker-repere"
     class="draw-tool"
   >
-
-    <i data-lucide="route"></i>
-
-    <span class="draw-label">
-      FRONTIÈRE
-    </span>
-
+    <i data-lucide="map-pin"></i>
+    <span class="draw-label">REPÈRE</span>
   </button>
 
+  <button
+    id="draw-marker-batiment"
+    class="draw-tool"
+  >
+    <i data-lucide="building-2"></i>
+    <span class="draw-label">BÂTIMENT</span>
+  </button>
 
   <div class="toolbar-separator"></div>
-
 
   <button
     id="stop-drawing"
     class="draw-tool"
   >
-
     <i data-lucide="mouse-pointer-2"></i>
-
-    <span class="draw-label">
-      SÉLECTION
-    </span>
-
+    <span class="draw-label">SÉLECTION</span>
   </button>
-
 
 </div>
 
 
-
-<!-- =========================================================
-     LOGIN
-========================================================= -->
+<!-- LOGIN -->
 
 <div id="login-overlay">
 
@@ -2514,7 +3094,7 @@ body.painting #layers-panel {
 
         <div
           class="action-grid"
-          style="margin-top:17px"
+          style="margin-top:17px;"
         >
 
           <button
@@ -2534,16 +3114,13 @@ body.painting #layers-panel {
             type="button"
             class="wide"
           >
-
             Annuler
-
           </button>
 
         </div>
 
 
         <div id="login-error"></div>
-
 
       </form>
 
@@ -2555,9 +3132,7 @@ body.painting #layers-panel {
 
 
 
-<!-- =========================================================
-     LIBRARIES
-========================================================= -->
+<!-- LIBRARIES -->
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
@@ -2572,21 +3147,16 @@ body.painting #layers-panel {
 <script src="js/supabase-client.js"></script>
 
 
+
 <script>
 
 (async function () {
 
 
+
 /* =========================================================
-   RACCOURCI DOM
+   ICONS
 ========================================================= */
-
-const $ =
-  id =>
-    document.getElementById(
-      id
-    );
-
 
 lucide.createIcons();
 
@@ -2597,95 +3167,171 @@ lucide.createIcons();
 ========================================================= */
 
 const layersPanel =
-  $("layers-panel");
+  document.getElementById(
+    "layers-panel"
+  );
 
-const layersList =
-  $("layers-list");
+
+const viewQuartiersButton =
+  document.getElementById(
+    "view-quartiers"
+  );
+
+
+const viewFactionsButton =
+  document.getElementById(
+    "view-factions"
+  );
+
+
+const toggleReperesInput =
+  document.getElementById(
+    "toggle-reperes"
+  );
+
+
+const toggleBatimentsInput =
+  document.getElementById(
+    "toggle-batiments"
+  );
+
+
+const displayNote =
+  document.getElementById(
+    "display-note"
+  );
+
 
 const status =
-  $("status");
+  document.getElementById(
+    "status"
+  );
+
 
 const loginOverlay =
-  $("login-overlay");
+  document.getElementById(
+    "login-overlay"
+  );
+
 
 const loginForm =
-  $("login-form");
+  document.getElementById(
+    "login-form"
+  );
+
 
 const loginError =
-  $("login-error");
+  document.getElementById(
+    "login-error"
+  );
+
 
 const loginButton =
-  $("login-button");
+  document.getElementById(
+    "login-button"
+  );
+
 
 const logoutButton =
-  $("logout-button");
+  document.getElementById(
+    "logout-button"
+  );
+
 
 const editModeButton =
-  $("edit-mode-button");
+  document.getElementById(
+    "edit-mode-button"
+  );
+
 
 const adminEmail =
-  $("admin-email");
+  document.getElementById(
+    "admin-email"
+  );
+
 
 const shapeLayerInput =
-  $("shape-layer");
+  document.getElementById(
+    "shape-layer"
+  );
+
 
 const shapeNameInput =
-  $("shape-name");
+  document.getElementById(
+    "shape-name"
+  );
+
 
 const shapeDescriptionInput =
-  $("shape-description");
+  document.getElementById(
+    "shape-description"
+  );
+
+
+const shapeMarkerFields =
+  document.getElementById(
+    "shape-marker-fields"
+  );
+
+
+const shapeLogoInput =
+  document.getElementById(
+    "shape-logo"
+  );
+
+
+const shapeIconInput =
+  document.getElementById(
+    "shape-icon"
+  );
+
 
 const shapeColorInput =
-  $("shape-color");
+  document.getElementById(
+    "shape-color"
+  );
+
 
 const shapeOpacityInput =
-  $("shape-opacity");
+  document.getElementById(
+    "shape-opacity"
+  );
+
 
 const shapePublishedInput =
-  $("shape-published");
+  document.getElementById(
+    "shape-published"
+  );
+
 
 const saveShapeButton =
-  $("save-shape");
+  document.getElementById(
+    "save-shape"
+  );
+
 
 const editShapeButton =
-  $("edit-shape");
+  document.getElementById(
+    "edit-shape"
+  );
+
 
 const finishEditButton =
-  $("finish-edit");
+  document.getElementById(
+    "finish-edit"
+  );
+
 
 const cancelSelectionButton =
-  $("cancel-selection");
+  document.getElementById(
+    "cancel-selection"
+  );
+
 
 const deleteShapeButton =
-  $("delete-shape");
-
-
-const factionList =
-  $("faction-list");
-
-const factionNameInput =
-  $("faction-name");
-
-const factionDescriptionInput =
-  $("faction-description");
-
-const factionColorInput =
-  $("faction-color");
-
-const factionLogoInput =
-  $("faction-logo");
-
-const factionVisibleInput =
-  $("faction-visible");
-
-const paintFactionButton =
-  $("paint-faction");
-
-const deleteFactionButton =
-  $("delete-faction");
-
-const paintInfo =
-  $("paint-info");
+  document.getElementById(
+    "delete-shape"
+  );
 
 
 
@@ -2700,35 +3346,68 @@ let initialBounds;
 let currentUser =
   null;
 
+
 let admin =
   false;
+
 
 let editMode =
   false;
 
+
 let mapLayers =
   [];
+
 
 let mapShapes =
   [];
 
+
+/* =========================================================
+   FACTIONS STATE
+========================================================= */
+
 let mapFactions =
   [];
+
 
 let selectedFaction =
   null;
 
+
 let paintMode =
   false;
+
+
+let mapViewMode =
+  "quartiers";
+
+
+const overlayVisibility = {
+  repere: true,
+  batiment: true
+};
+
+
+let drawingTargetKind =
+  null;
+
+
+let paintPreviousDisplayState =
+  null;
+
 
 let layerGroups =
   {};
 
+
 let selectedLeafletLayer =
   null;
 
+
 let selectedShapeRecord =
   null;
+
 
 let temporaryLayer =
   null;
@@ -2740,7 +3419,18 @@ const layerVisibility =
 
 
 /* =========================================================
-   INNER OUTLINE
+   INNER OUTLINE SYSTEM
+
+   Le stroke Leaflet est normalement centré.
+
+   Ici on crée un masque SVG identique au polygone.
+   Tout ce qui dépasse à l'extérieur est coupé.
+
+   Ça fonctionne :
+   - sur les zones sauvegardées
+   - pendant la création
+   - pendant un snap
+   - pendant la modification des sommets
 ========================================================= */
 
 const SVG_NS =
@@ -2765,13 +3455,16 @@ function isAreaLayer(
 ) {
 
   return (
-    layer instanceof
-    L.Polygon
+    layer instanceof L.Polygon
   );
 
 }
 
 
+
+/* =========================================================
+   DESTROY CLIP
+========================================================= */
 
 function destroyInnerOutline(
   layer
@@ -2783,23 +3476,30 @@ function destroyInnerOutline(
     );
 
 
+  if (!record) {
+    return;
+  }
+
+
   if (
-    !record
+    record.path
   ) {
 
-    return;
+    record.path.removeAttribute(
+      "clip-path"
+    );
 
   }
 
 
-  record.path
-    ?.removeAttribute(
-      "clip-path"
-    );
+  if (
+    record.clipPath &&
+    record.clipPath.isConnected
+  ) {
 
+    record.clipPath.remove();
 
-  record.clipPath
-    ?.remove();
+  }
 
 
   innerClipRegistry.delete(
@@ -2810,6 +3510,10 @@ function destroyInnerOutline(
 
 
 
+/* =========================================================
+   INSTALL CLIP
+========================================================= */
+
 function installInnerOutline(
   layer
 ) {
@@ -2817,18 +3521,22 @@ function installInnerOutline(
   if (
     !isAreaLayer(
       layer
-    ) ||
-    !layer._path ||
-    !layer._path.ownerSVGElement
+    )
   ) {
-
     return;
-
   }
 
 
   const path =
     layer._path;
+
+
+  if (
+    !path ||
+    !path.ownerSVGElement
+  ) {
+    return;
+  }
 
 
   const svg =
@@ -2841,10 +3549,14 @@ function installInnerOutline(
     );
 
 
+  /*
+    Leaflet / Geoman peut remplacer
+    complètement le PATH SVG.
+  */
+
   if (
     record &&
-    record.path !==
-      path
+    record.path !== path
   ) {
 
     destroyInnerOutline(
@@ -2858,9 +3570,7 @@ function installInnerOutline(
   }
 
 
-  if (
-    !record
-  ) {
+  if (!record) {
 
 
     let defs =
@@ -2869,9 +3579,7 @@ function installInnerOutline(
       );
 
 
-    if (
-      !defs
-    ) {
+    if (!defs) {
 
       defs =
         document.createElementNS(
@@ -2906,13 +3614,6 @@ function installInnerOutline(
       );
 
 
-    const clipShape =
-      document.createElementNS(
-        SVG_NS,
-        "path"
-      );
-
-
     clipPath.setAttribute(
       "id",
       id
@@ -2923,6 +3624,13 @@ function installInnerOutline(
       "clipPathUnits",
       "userSpaceOnUse"
     );
+
+
+    const clipShape =
+      document.createElementNS(
+        SVG_NS,
+        "path"
+      );
 
 
     clipShape.setAttribute(
@@ -2977,6 +3685,12 @@ function installInnerOutline(
   }
 
 
+  path.setAttribute(
+    "clip-path",
+    `url(#${record.id})`
+  );
+
+
   syncInnerOutline(
     layer
   );
@@ -2985,6 +3699,10 @@ function installInnerOutline(
 
 
 
+/* =========================================================
+   SYNC ONE CLIP
+========================================================= */
+
 function syncInnerOutline(
   layer
 ) {
@@ -2992,12 +3710,18 @@ function syncInnerOutline(
   if (
     !isAreaLayer(
       layer
-    ) ||
-    !layer._path
+    )
   ) {
-
     return;
+  }
 
+
+  const path =
+    layer._path;
+
+
+  if (!path) {
+    return;
   }
 
 
@@ -3009,8 +3733,7 @@ function syncInnerOutline(
 
   if (
     !record ||
-    record.path !==
-      layer._path
+    record.path !== path
   ) {
 
     installInnerOutline(
@@ -3026,27 +3749,19 @@ function syncInnerOutline(
   }
 
 
-  if (
-    !record
-  ) {
-
+  if (!record) {
     return;
-
   }
 
 
   const d =
-    layer._path.getAttribute(
+    path.getAttribute(
       "d"
     );
 
 
-  if (
-    !d
-  ) {
-
+  if (!d) {
     return;
-
   }
 
 
@@ -3056,19 +3771,24 @@ function syncInnerOutline(
   );
 
 
-  layer._path.setAttribute(
+  /*
+    Geoman peut retirer l'attribut,
+    on le réapplique systématiquement.
+  */
+
+  path.setAttribute(
     "clip-path",
     `url(#${record.id})`
   );
 
 
-  layer._path.setAttribute(
+  path.setAttribute(
     "stroke-linejoin",
     "round"
   );
 
 
-  layer._path.setAttribute(
+  path.setAttribute(
     "stroke-linecap",
     "round"
   );
@@ -3076,6 +3796,13 @@ function syncInnerOutline(
 }
 
 
+
+/* =========================================================
+   SCHEDULE CLIP
+
+   Plusieurs passages car Geoman effectue parfois
+   plusieurs redraws après un événement.
+========================================================= */
 
 function scheduleInnerOutline(
   layer
@@ -3086,56 +3813,96 @@ function scheduleInnerOutline(
       layer
     )
   ) {
-
     return;
-
   }
 
 
   requestAnimationFrame(
-    () =>
+    () => {
+
       installInnerOutline(
         layer
-      )
+      );
+
+
+      syncInnerOutline(
+        layer
+      );
+
+    }
   );
 
 
   setTimeout(
-    () =>
+    () => {
+
       installInnerOutline(
         layer
-      ),
-    50
+      );
+
+
+      syncInnerOutline(
+        layer
+      );
+
+    },
+    35
   );
 
 
   setTimeout(
-    () =>
+    () => {
+
       installInnerOutline(
         layer
-      ),
-    150
+      );
+
+
+      syncInnerOutline(
+        layer
+      );
+
+    },
+    100
+  );
+
+
+  setTimeout(
+    () => {
+
+      installInnerOutline(
+        layer
+      );
+
+
+      syncInnerOutline(
+        layer
+      );
+
+    },
+    220
   );
 
 }
 
 
 
+/* =========================================================
+   SYNC ALL
+========================================================= */
+
 function syncAllInnerOutlines() {
 
   if (
     globalClipFrame
   ) {
-
     return;
-
   }
 
 
   globalClipFrame =
     requestAnimationFrame(
       () => {
-
 
         globalClipFrame =
           null;
@@ -3159,29 +3926,43 @@ function syncAllInnerOutlines() {
 
 
 
+/* =========================================================
+   CLEAR CLIPS
+========================================================= */
+
 function clearInnerClips() {
 
-  [
-    ...innerClipRegistry.keys()
-  ].forEach(
-    destroyInnerOutline
-  );
+  const layers =
+    Array.from(
+      innerClipRegistry.keys()
+    );
+
+
+  for (
+    const layer
+    of layers
+  ) {
+
+    destroyInnerOutline(
+      layer
+    );
+
+  }
 
 }
 
 
 
 /* =========================================================
-   MAP IMAGE
+   IMAGE
 ========================================================= */
 
 const MAP_IMAGE =
-  window.APP_CONFIG?.MAP_IMAGE ||
-  "images/map.png";
+  window.APP_CONFIG.MAP_IMAGE;
 
 
 function loadImageSize(
-  source
+  src
 ) {
 
   return new Promise(
@@ -3189,7 +3970,6 @@ function loadImageSize(
       resolve,
       reject
     ) => {
-
 
       const image =
         new Image();
@@ -3224,7 +4004,7 @@ function loadImageSize(
 
 
       image.src =
-        source;
+        src;
 
     }
   );
@@ -3237,139 +4017,111 @@ function loadImageSize(
    MAP
 ========================================================= */
 
-try {
-
-
-  const imageSize =
-    await loadImageSize(
-      MAP_IMAGE
-    );
-
-
-  initialBounds = [
-
-    [0, 0],
-
-    [
-      imageSize.height,
-      imageSize.width
-    ]
-
-  ];
-
-
-  map =
-    L.map(
-      "map",
-      {
-
-        crs:
-          L.CRS.Simple,
-
-        minZoom:
-          -6,
-
-        maxZoom:
-          5,
-
-        zoomSnap:
-          .25,
-
-        attributionControl:
-          false,
-
-        zoomControl:
-          false
-
-      }
-    );
-
-
-  /* =======================================================
-     PANES
-  ======================================================= */
-
-  map.createPane(
-    "territoryPane"
+const imageSize =
+  await loadImageSize(
+    MAP_IMAGE
   );
 
-  map.getPane(
-    "territoryPane"
-  ).style.zIndex =
-    410;
+
+initialBounds = [
+
+  [0, 0],
+
+  [
+    imageSize.height,
+    imageSize.width
+  ]
+
+];
 
 
-  map.createPane(
-    "quartierPane"
-  );
-
-  map.getPane(
-    "quartierPane"
-  ).style.zIndex =
-    420;
-
-
-  map.createPane(
-    "otherShapePane"
-  );
-
-  map.getPane(
-    "otherShapePane"
-  ).style.zIndex =
-    430;
-
-
-  map.createPane(
-    "factionLabelPane"
-  );
-
-  map.getPane(
-    "factionLabelPane"
-  ).style.zIndex =
-    440;
-
-
-
-  L.control
-    .zoom({
-
-      position:
-        "bottomright"
-
-    })
-    .addTo(
-      map
-    );
-
-
-
-  L.imageOverlay(
-
-    MAP_IMAGE,
-
-    initialBounds,
-
+map =
+  L.map(
+    "map",
     {
 
-      interactive:
+      crs:
+        L.CRS.Simple,
+
+      minZoom:
+        -6,
+
+      maxZoom:
+        5,
+
+      zoomSnap:
+        .25,
+
+      attributionControl:
         false,
 
-      pmIgnore:
-        true
+      zoomControl:
+        false
 
     }
+  );
 
-  ).addTo(
+
+/* =========================================================
+   MAP PANES
+========================================================= */
+
+map.createPane("territoryPane");
+map.getPane("territoryPane").style.zIndex = 410;
+
+map.createPane("quartierPane");
+map.getPane("quartierPane").style.zIndex = 420;
+
+map.createPane("otherShapePane");
+map.getPane("otherShapePane").style.zIndex = 430;
+
+map.createPane("zoneLabelPane");
+map.getPane("zoneLabelPane").style.zIndex = 438;
+
+map.createPane("factionLabelPane");
+map.getPane("factionLabelPane").style.zIndex = 440;
+
+
+L.control
+  .zoom({
+
+    position:
+      "bottomright"
+
+  })
+  .addTo(
     map
   );
 
 
-  map.fitBounds(
-    initialBounds
-  );
+L.imageOverlay(
+
+  MAP_IMAGE,
+
+  initialBounds,
+
+  {
+
+    interactive:
+      false,
+
+    pmIgnore:
+      true
+
+  }
+
+).addTo(
+  map
+);
 
 
-  map.setMaxBounds([
+map.fitBounds(
+  initialBounds
+);
+
+
+map.setMaxBounds(
+  [
 
     [
       -imageSize.height,
@@ -3381,48 +4133,24 @@ try {
       imageSize.width * 2
     ]
 
-  ]);
-
-
-}
-catch (
-  error
-) {
-
-  console.error(
-    error
-  );
-
-
-  layersList.textContent =
-    "Erreur de chargement de la carte";
-
-
-  return;
-
-}
+  ]
+);
 
 
 
 /* =========================================================
-   MAP EVENTS
+   MAP REDRAW
 ========================================================= */
 
 map.on(
-
   "zoom move resize viewreset",
-
   syncAllInnerOutlines
-
 );
 
 
 map.on(
-
   "zoomend moveend",
-
   () => {
-
 
     for (
       const layer
@@ -3436,7 +4164,6 @@ map.on(
     }
 
   }
-
 );
 
 
@@ -3469,12 +4196,17 @@ map.pm.setGlobalOptions({
 
 
 
+/* =========================================================
+   CRITICAL FIX:
+   INNER OUTLINE WHILE DRAWING
+
+   Geoman utilise un workingLayer temporaire.
+   C'était lui qui remettait le contour centré.
+========================================================= */
+
 map.on(
-
   "pm:drawstart",
-
   event => {
-
 
     const workingLayer =
       event.workingLayer;
@@ -3485,52 +4217,82 @@ map.on(
         workingLayer
       )
     ) {
-
       return;
-
     }
 
 
     const refresh =
-      () =>
+      () => {
+
         scheduleInnerOutline(
           workingLayer
         );
 
-
-    workingLayer.on(
-
-      "add pm:vertexadded pm:change pm:snap pm:unsnap pm:markerdrag",
-
-      refresh
-
-    );
+      };
 
 
     requestAnimationFrame(
       refresh
     );
 
-  }
 
+    workingLayer.on(
+      "add",
+      refresh
+    );
+
+
+    workingLayer.on(
+      "pm:vertexadded",
+      refresh
+    );
+
+
+    workingLayer.on(
+      "pm:change",
+      refresh
+    );
+
+
+    workingLayer.on(
+      "pm:snap",
+      refresh
+    );
+
+
+    workingLayer.on(
+      "pm:unsnap",
+      refresh
+    );
+
+
+    workingLayer.on(
+      "pm:markerdrag",
+      refresh
+    );
+
+  }
 );
 
 
 
 /* =========================================================
-   RESET
+   RESET MAP
 ========================================================= */
 
-$("reset-map")
+document
+  .getElementById(
+    "reset-map"
+  )
   .addEventListener(
-
     "click",
+    () => {
 
-    () =>
       map.fitBounds(
         initialBounds
-      )
+      );
 
+    }
   );
 
 
@@ -3543,60 +4305,51 @@ function setLayersOpen(
   open
 ) {
 
-  document.body
-    .classList.toggle(
-
-      "layers-open",
-
-      open
-
-    );
+  document.body.classList.toggle(
+    "layers-open",
+    open
+  );
 
 
-  layersPanel
-    .classList.toggle(
-
-      "closed",
-
-      !open
-
-    );
+  layersPanel.classList.toggle(
+    "closed",
+    !open
+  );
 
 }
 
 
-
-$("nav-layers")
+document
+  .getElementById(
+    "nav-layers"
+  )
   .addEventListener(
-
     "click",
-
     () => {
 
       setLayersOpen(
-
-        !document.body
-          .classList.contains(
-            "layers-open"
-          )
-
+        !document.body.classList.contains(
+          "layers-open"
+        )
       );
 
     }
-
   );
 
 
-$("close-layers")
+document
+  .getElementById(
+    "close-layers"
+  )
   .addEventListener(
-
     "click",
+    () => {
 
-    () =>
       setLayersOpen(
         false
-      )
+      );
 
+    }
   );
 
 
@@ -3608,7 +4361,8 @@ $("close-layers")
 async function refreshAuth() {
 
   const {
-    data: {
+    data:
+    {
       user
     }
   } =
@@ -3616,8 +4370,7 @@ async function refreshAuth() {
 
 
   currentUser =
-    user ||
-    null;
+    user || null;
 
 
   admin =
@@ -3629,8 +4382,7 @@ async function refreshAuth() {
   ) {
 
     const {
-      data:
-        isAdmin
+      data: isAdmin
     } =
       await db.rpc(
         "is_admin"
@@ -3638,52 +4390,67 @@ async function refreshAuth() {
 
 
     admin =
-      isAdmin ===
-      true;
+      isAdmin === true;
 
   }
 
 
-  $("nav-editor")
+  document
+    .getElementById(
+      "nav-editor"
+    )
     .style.display =
       admin
         ? ""
         : "none";
 
 
-  loginButton.style.display =
-    admin
-      ? "none"
-      : "";
-
-
-  editModeButton.style.display =
-    admin
-      ? ""
-      : "none";
-
-
-  logoutButton.style.display =
-    admin
-      ? ""
-      : "none";
-
-
-  adminEmail.textContent =
-    admin
-      ? (
-          currentUser.email ||
-          ""
-        )
-      : "";
-
-
   if (
-    !admin &&
-    editMode
+    admin
   ) {
 
-    disableEditMode();
+    loginButton.style.display =
+      "none";
+
+
+    editModeButton.style.display =
+      "";
+
+
+    logoutButton.style.display =
+      "";
+
+
+    adminEmail.textContent =
+      currentUser.email ||
+      "";
+
+  }
+  else {
+
+    loginButton.style.display =
+      "";
+
+
+    editModeButton.style.display =
+      "none";
+
+
+    logoutButton.style.display =
+      "none";
+
+
+    adminEmail.textContent =
+      "";
+
+
+    if (
+      editMode
+    ) {
+
+      disableEditMode();
+
+    }
 
   }
 
@@ -3698,146 +4465,139 @@ async function refreshAuth() {
    LOGIN
 ========================================================= */
 
-loginButton
+loginButton.addEventListener(
+  "click",
+  () => {
+
+    loginError.textContent =
+      "";
+
+
+    loginOverlay.classList.add(
+      "visible"
+    );
+
+  }
+);
+
+
+document
+  .getElementById(
+    "close-login"
+  )
   .addEventListener(
-
     "click",
-
     () => {
 
-      loginError.textContent =
-        "";
+      loginOverlay.classList.remove(
+        "visible"
+      );
+
+    }
+  );
 
 
+loginOverlay.addEventListener(
+  "click",
+  event => {
+
+    if (
+      event.target ===
       loginOverlay
-        .classList.add(
-          "visible"
-        );
+    ) {
+
+      loginOverlay.classList.remove(
+        "visible"
+      );
 
     }
 
-  );
+  }
+);
 
 
-$("close-login")
-  .addEventListener(
+loginForm.addEventListener(
+  "submit",
+  async event => {
 
-    "click",
+    event.preventDefault();
 
-    () => {
 
-      loginOverlay
-        .classList.remove(
-          "visible"
-        );
+    loginError.textContent =
+      "Connexion...";
+
+
+    const email =
+      document
+        .getElementById(
+          "login-email"
+        )
+        .value
+        .trim();
+
+
+    const password =
+      document
+        .getElementById(
+          "login-password"
+        )
+        .value;
+
+
+    const {
+      error
+    } =
+      await db.auth
+        .signInWithPassword({
+
+          email,
+          password
+
+        });
+
+
+    if (
+      error
+    ) {
+
+      loginError.textContent =
+        error.message;
+
+      return;
 
     }
 
-  );
+
+    await refreshAuth();
 
 
-loginOverlay
-  .addEventListener(
+    if (
+      !admin
+    ) {
 
-    "click",
-
-    event => {
-
-      if (
-        event.target ===
-        loginOverlay
-      ) {
-
-        loginOverlay
-          .classList.remove(
-            "visible"
-          );
-
-      }
-
-    }
-
-  );
-
-
-loginForm
-  .addEventListener(
-
-    "submit",
-
-    async event => {
-
-
-      event.preventDefault();
+      await db.auth.signOut();
 
 
       loginError.textContent =
-        "Connexion...";
-
-
-      const {
-        error
-      } =
-        await db.auth
-          .signInWithPassword({
-
-            email:
-              $("login-email")
-                .value
-                .trim(),
-
-            password:
-              $("login-password")
-                .value
-
-          });
-
-
-      if (
-        error
-      ) {
-
-        loginError.textContent =
-          error.message;
-
-        return;
-
-      }
+        "Ce compte n'est pas administrateur.";
 
 
       await refreshAuth();
 
-
-      if (
-        !admin
-      ) {
-
-        await db.auth.signOut();
-
-
-        loginError.textContent =
-          "Ce compte n'est pas administrateur.";
-
-
-        await refreshAuth();
-
-
-        return;
-
-      }
-
-
-      loginOverlay
-        .classList.remove(
-          "visible"
-        );
-
-
-      await loadDatabase();
+      return;
 
     }
 
-  );
+
+    loginOverlay.classList.remove(
+      "visible"
+    );
+
+
+    await loadDatabase();
+
+  }
+);
 
 
 
@@ -3845,25 +4605,20 @@ loginForm
    LOGOUT
 ========================================================= */
 
-logoutButton
-  .addEventListener(
+logoutButton.addEventListener(
+  "click",
+  async () => {
 
-    "click",
-
-    async () => {
-
-
-      await db.auth.signOut();
+    await db.auth.signOut();
 
 
-      await refreshAuth();
+    await refreshAuth();
 
 
-      await loadDatabase();
+    await loadDatabase();
 
-    }
-
-  );
+  }
+);
 
 
 
@@ -3876,9 +4631,7 @@ function enableEditMode() {
   if (
     !admin
   ) {
-
     return;
-
   }
 
 
@@ -3886,24 +4639,23 @@ function enableEditMode() {
     true;
 
 
-  document.body
-    .classList.add(
-      "editing"
-    );
+  mapViewMode =
+    "quartiers";
 
 
-  editModeButton
-    .classList.add(
-      "active"
-    );
+  document.body.classList.add(
+    "editing"
+  );
+
+
+  editModeButton.classList.add(
+    "active"
+  );
 
 
   editModeButton.innerHTML = `
-
     <i data-lucide="check"></i>
-
     Édition active
-
   `;
 
 
@@ -3941,24 +4693,19 @@ function disableEditMode() {
   cancelSelection();
 
 
-  document.body
-    .classList.remove(
-      "editing"
-    );
+  document.body.classList.remove(
+    "editing"
+  );
 
 
-  editModeButton
-    .classList.remove(
-      "active"
-    );
+  editModeButton.classList.remove(
+    "active"
+  );
 
 
   editModeButton.innerHTML = `
-
     <i data-lucide="pen-tool"></i>
-
     Éditer
-
   `;
 
 
@@ -3971,36 +4718,33 @@ function disableEditMode() {
 
 
 
-editModeButton
-  .addEventListener(
+editModeButton.addEventListener(
+  "click",
+  () => {
 
-    "click",
+    if (
+      editMode
+    ) {
 
-    () => {
+      disableEditMode();
 
-      if (
-        editMode
-      ) {
+    }
+    else {
 
-        disableEditMode();
-
-      }
-      else {
-
-        enableEditMode();
-
-      }
+      enableEditMode();
 
     }
 
-  );
+  }
+);
 
 
-$("nav-editor")
+document
+  .getElementById(
+    "nav-editor"
+  )
   .addEventListener(
-
     "click",
-
     () => {
 
       if (
@@ -4013,13 +4757,12 @@ $("nav-editor")
       }
 
     }
-
   );
 
 
 
 /* =========================================================
-   DRAW TOOLS
+   DRAWING TOOLS
 ========================================================= */
 
 function clearToolActive() {
@@ -4031,10 +4774,9 @@ function clearToolActive() {
     .forEach(
       button => {
 
-        button
-          .classList.remove(
-            "active"
-          );
+        button.classList.remove(
+          "active"
+        );
 
       }
     );
@@ -4047,6 +4789,8 @@ function stopDrawing() {
 
   map.pm.disableDraw();
 
+  drawingTargetKind =
+    null;
 
   clearToolActive();
 
@@ -4056,195 +4800,269 @@ function stopDrawing() {
 
 function startDrawing(
   type,
-  button
+  button,
+  targetKind
 ) {
 
   if (
     !editMode ||
     paintMode
   ) {
-
     return;
-
   }
-
 
   stopDrawing();
 
+  drawingTargetKind =
+    targetKind || null;
 
-  button
-    .classList.add(
-      "active"
-    );
-
-
-  const isArea =
-    type ===
-      "Polygon" ||
-    type ===
-      "Rectangle";
-
-
-  map.pm.enableDraw(
-
-    type,
-
-    {
-
-      snappable:
-        true,
-
-      snapDistance:
-        30,
-
-      snapVertex:
-        true,
-
-      snapSegment:
-        true,
-
-      snapMiddle:
-        false,
-
-      allowSelfIntersection:
-        false,
-
-
-      templineStyle: {
-
-        color:
-          "#86ad96",
-
-        weight:
-          2,
-
-        dashArray:
-          "4,5"
-
-      },
-
-
-      hintlineStyle: {
-
-        color:
-          "#86ad96",
-
-        weight:
-          2,
-
-        dashArray:
-          "4,5"
-
-      },
-
-
-      pathOptions: {
-
-        color:
-          "#86ad96",
-
-        fillColor:
-          "#86ad96",
-
-        fillOpacity:
-          isArea
-            ? .20
-            : 0,
-
-        /*
-          Contour réduit.
-        */
-
-        weight:
-          isArea
-            ? 4
-            : 3,
-
-        lineJoin:
-          "round",
-
-        lineCap:
-          "round"
-
-      }
-
-    }
-
+  button.classList.add(
+    "active"
   );
 
+  const isArea =
+    type === "Polygon" ||
+    type === "Rectangle";
+
+  map.pm.enableDraw(
+    type,
+    {
+      snappable: true,
+      snapDistance: 30,
+      snapVertex: true,
+      snapSegment: true,
+      snapMiddle: false,
+      allowSelfIntersection: false,
+
+      templineStyle: {
+        color: "#86ad96",
+        weight: 2,
+        dashArray: "4,5"
+      },
+
+      hintlineStyle: {
+        color: "#86ad96",
+        weight: 2,
+        dashArray: "4,5"
+      },
+
+      pathOptions: {
+        color: "#ffffff",
+        fillColor: "#86ad96",
+        fillOpacity: isArea ? .12 : 0,
+        weight: isArea ? 3 : 3,
+        lineJoin: "round",
+        lineCap: "round"
+      },
+
+      markerStyle: {
+        draggable: true
+      }
+    }
+  );
 }
 
 
-
-$("draw-polygon")
+document
+  .getElementById("draw-polygon")
   .addEventListener(
-
     "click",
-
     event => {
-
       startDrawing(
-
         "Polygon",
-
-        event.currentTarget
-
+        event.currentTarget,
+        "quartier"
       );
-
     }
-
   );
 
 
-$("draw-rectangle")
+document
+  .getElementById("draw-rectangle")
   .addEventListener(
-
     "click",
-
     event => {
-
       startDrawing(
-
         "Rectangle",
-
-        event.currentTarget
-
+        event.currentTarget,
+        "quartier"
       );
-
     }
-
   );
 
 
-$("draw-line")
+document
+  .getElementById("draw-marker-repere")
   .addEventListener(
-
     "click",
-
     event => {
-
       startDrawing(
-
-        "Line",
-
-        event.currentTarget
-
+        "Marker",
+        event.currentTarget,
+        "repere"
       );
-
     }
-
   );
 
 
-$("stop-drawing")
+document
+  .getElementById("draw-marker-batiment")
   .addEventListener(
-
     "click",
-
-    stopDrawing
-
+    event => {
+      startDrawing(
+        "Marker",
+        event.currentTarget,
+        "batiment"
+      );
+    }
   );
 
+
+document
+  .getElementById("stop-drawing")
+  .addEventListener(
+    "click",
+    stopDrawing
+  );
+
+
+/* =========================================================
+   TYPES DE DONNÉES CARTOGRAPHIQUES
+========================================================= */
+
+function normalizeLayerText(
+  value
+) {
+
+  return String(
+    value || ""
+  )
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+}
+
+
+function canonicalLayerKind(
+  layer
+) {
+
+  const source =
+    normalizeLayerText(
+      `${layer?.kind || ""} ${layer?.name || ""}`
+    );
+
+  if (source.includes("quartier")) return "quartier";
+  if (source.includes("repere")) return "repere";
+  if (source.includes("batiment") || source.includes("building")) return "batiment";
+
+  return null;
+}
+
+
+function getLayerByKind(
+  kind
+) {
+
+  return mapLayers.find(
+    layer =>
+      layer.kind === kind
+  ) || null;
+}
+
+
+function updateDisplayControls() {
+
+  viewQuartiersButton.classList.toggle(
+    "active",
+    mapViewMode === "quartiers"
+  );
+
+  viewFactionsButton.classList.toggle(
+    "active",
+    mapViewMode === "factions"
+  );
+
+  toggleReperesInput.checked =
+    overlayVisibility.repere;
+
+  toggleBatimentsInput.checked =
+    overlayVisibility.batiment;
+
+  const locked =
+    paintMode === true;
+
+  viewQuartiersButton.disabled = locked;
+  viewFactionsButton.disabled = locked;
+  toggleReperesInput.disabled = locked;
+  toggleBatimentsInput.disabled = locked;
+
+  displayNote.textContent =
+    paintMode
+      ? "Pot de peinture actif : vue Quartiers forcée, Repères et Bâtiments masqués."
+      : mapViewMode === "quartiers"
+        ? "Vue Quartiers : chaque zone reste individuelle et son nom est affiché au centre."
+        : "Vue Factions : les quartiers voisins d’une même faction sont fusionnés visuellement.";
+}
+
+
+function rerenderMapDisplay() {
+  renderLayers();
+  renderShapes();
+  updateDisplayControls();
+}
+
+
+function setMapViewMode(
+  mode
+) {
+
+  if (paintMode) return;
+
+  if (
+    mode !== "quartiers" &&
+    mode !== "factions"
+  ) {
+    return;
+  }
+
+  mapViewMode = mode;
+  rerenderMapDisplay();
+}
+
+
+viewQuartiersButton.addEventListener(
+  "click",
+  () => setMapViewMode("quartiers")
+);
+
+
+viewFactionsButton.addEventListener(
+  "click",
+  () => setMapViewMode("factions")
+);
+
+
+toggleReperesInput.addEventListener(
+  "change",
+  () => {
+    overlayVisibility.repere =
+      toggleReperesInput.checked;
+    rerenderMapDisplay();
+  }
+);
+
+
+toggleBatimentsInput.addEventListener(
+  "change",
+  () => {
+    overlayVisibility.batiment =
+      toggleBatimentsInput.checked;
+    rerenderMapDisplay();
+  }
+);
 
 
 /* =========================================================
@@ -4255,42 +5073,23 @@ async function loadDatabase() {
 
   let layersQuery =
     db
-      .from(
-        "map_layers"
-      )
+      .from("map_layers")
       .select("*")
-      .order(
-        "sort_order"
-      )
-      .order(
-        "name"
-      );
-
+      .order("sort_order")
+      .order("name");
 
   let shapesQuery =
     db
-      .from(
-        "map_shapes"
-      )
+      .from("map_shapes")
       .select("*")
-      .order(
-        "created_at"
-      );
-
+      .order("created_at");
 
   let factionsQuery =
     db
-      .from(
-        "factions"
-      )
+      .from("factions")
       .select("*")
-      .order(
-        "sort_order"
-      )
-      .order(
-        "name"
-      );
-
+      .order("sort_order")
+      .order("name");
 
   if (
     !admin ||
@@ -4298,295 +5097,156 @@ async function loadDatabase() {
   ) {
 
     layersQuery =
-      layersQuery.eq(
-        "visible",
-        true
-      );
-
+      layersQuery.eq("visible", true);
 
     shapesQuery =
-      shapesQuery.eq(
-        "published",
-        true
-      );
-
+      shapesQuery.eq("published", true);
 
     factionsQuery =
-      factionsQuery.eq(
-        "visible",
-        true
-      );
-
+      factionsQuery.eq("visible", true);
   }
-
 
   const [
     layersResponse,
     shapesResponse,
     factionsResponse
-  ] =
-    await Promise.all([
+  ] = await Promise.all([
+    layersQuery,
+    shapesQuery,
+    factionsQuery
+  ]);
 
-      layersQuery,
-
-      shapesQuery,
-
-      factionsQuery
-
-    ]);
-
-
-  if (
-    layersResponse.error
-  ) {
-
-    console.error(
-      layersResponse.error
-    );
-
-
-    layersList.textContent =
+  if (layersResponse.error) {
+    console.error(layersResponse.error);
+    displayNote.textContent =
       "Erreur couches : " +
       layersResponse.error.message;
-
-
     return;
-
   }
 
-
-  if (
-    shapesResponse.error
-  ) {
-
-    console.error(
-      shapesResponse.error
-    );
-
-
-    layersList.textContent =
+  if (shapesResponse.error) {
+    console.error(shapesResponse.error);
+    displayNote.textContent =
       "Erreur éléments : " +
       shapesResponse.error.message;
-
-
     return;
-
   }
 
-
-  if (
-    factionsResponse.error
-  ) {
-
+  if (factionsResponse.error) {
     console.warn(
-
       "Factions :",
-
       factionsResponse.error.message
-
     );
-
-
-    /*
-      Une erreur de faction ne bloque plus
-      toute la carte.
-    */
-
-    mapFactions =
-      [];
-
+    mapFactions = [];
   }
   else {
-
     mapFactions =
-      factionsResponse.data ||
-      [];
-
+      factionsResponse.data || [];
   }
 
-
   const allLayers =
-    layersResponse.data ||
-    [];
-
+    (layersResponse.data || [])
+      .map(layer => ({
+        ...layer,
+        kind: canonicalLayerKind(layer) || layer.kind
+      }));
 
   mapShapes =
-    shapesResponse.data ||
-    [];
-
-
-  /*
-    Couches autorisées uniquement.
-  */
+    shapesResponse.data || [];
 
   const allowedKinds = [
-
+    "quartier",
     "repere",
-
-    "batiment",
-
-    "quartier"
-
+    "batiment"
   ];
-
 
   mapLayers =
     allowedKinds
-      .map(
-        kind => {
+      .map(kind => {
 
-
-          const candidates =
-            allLayers.filter(
-              layer =>
-                layer.kind ===
-                kind
-            );
-
-
-          if (
-            !candidates.length
-          ) {
-
-            return null;
-
-          }
-
-
-          /*
-            Si une ancienne duplication existe,
-            on privilégie celle qui contient
-            le plus d'éléments.
-          */
-
-          candidates.sort(
-            (
-              a,
-              b
-            ) => {
-
-
-              const countA =
-                mapShapes.filter(
-                  shape =>
-                    shape.layer_id ===
-                    a.id
-                ).length;
-
-
-              const countB =
-                mapShapes.filter(
-                  shape =>
-                    shape.layer_id ===
-                    b.id
-                ).length;
-
-
-              return (
-                countB -
-                countA
-              );
-
-            }
+        const candidates =
+          allLayers.filter(
+            layer =>
+              layer.kind === kind
           );
 
-
-          return candidates[0];
-
+        if (!candidates.length) {
+          return null;
         }
-      )
-      .filter(
-        Boolean
-      )
-      .sort(
-        (
-          a,
-          b
-        ) =>
-          (
-            b.sort_order ??
-            0
-          )
-          -
-          (
-            a.sort_order ??
-            0
-          )
-      );
 
+        candidates.sort((a, b) => {
+          const countA =
+            mapShapes.filter(
+              shape =>
+                shape.layer_id === a.id
+            ).length;
 
-  if (
-    selectedFaction
-  ) {
+          const countB =
+            mapShapes.filter(
+              shape =>
+                shape.layer_id === b.id
+            ).length;
 
-    const factionId =
+          return countB - countA;
+        });
+
+        return candidates[0];
+      })
+      .filter(Boolean);
+
+  if (selectedFaction) {
+    const selectedId =
       selectedFaction.id;
-
 
     selectedFaction =
       mapFactions.find(
         faction =>
-          faction.id ===
-          factionId
-      ) ||
-      null;
-
+          faction.id === selectedId
+      ) || null;
   }
 
-
   renderLayers();
-
-
   renderShapes();
-
-
   updateShapeLayerSelect();
-
-
   renderFactionPanel();
-
+  updateDisplayControls();
 
   if (
     editMode &&
     !paintMode
   ) {
-
     status.textContent =
       `${mapShapes.length} élément(s) • ${mapFactions.length} faction(s)`;
-
   }
-
 }
 
 
-
 /* =========================================================
-   GROUPS
+   CLEAR GROUPS
 ========================================================= */
 
 function clearGroups() {
 
-  Object
-    .values(
+  for (
+    const group
+    of Object.values(
       layerGroups
     )
-    .forEach(
-      group => {
+  ) {
 
-        if (
-          map.hasLayer(
-            group
-          )
-        ) {
+    if (
+      map.hasLayer(
+        group
+      )
+    ) {
 
-          map.removeLayer(
-            group
-          );
+      map.removeLayer(
+        group
+      );
 
-        }
+    }
 
-      }
-    );
+  }
 
 
   layerGroups =
@@ -4600,285 +5260,56 @@ function clearGroups() {
 
 
 /* =========================================================
-   RENDER LAYERS
+   GROUPES D’AFFICHAGE
 ========================================================= */
 
 function renderLayers() {
 
   clearGroups();
 
-
-  layersList.innerHTML =
-    "";
-
-
-  if (
-    !mapLayers.length
-  ) {
-
-    layersList.innerHTML = `
-
-      <div
-        style="
-          color:#68736d;
-          font-size:10px;
-          padding:10px;
-        "
-      >
-        Aucune couche disponible.
-      </div>
-
-    `;
-
-
-    return;
-
-  }
-
-
   for (
     const layer
     of mapLayers
   ) {
 
-
     const group =
       L.layerGroup();
 
-
-    layerGroups[
-      layer.id
-    ] =
+    layerGroups[layer.id] =
       group;
 
+    let visible = true;
 
-    const savedVisible =
-      layerVisibility.has(
-        layer.id
-      )
-        ? layerVisibility.get(
-            layer.id
-          )
-        : true;
-
-
-    let currentVisible =
-      savedVisible;
-
-
-    /*
-      Pot de peinture :
-      Repères et bâtiments disparaissent.
-    */
-
-    if (
-      paintMode &&
-      (
-        layer.kind ===
-          "repere" ||
-        layer.kind ===
-          "batiment"
-      )
-    ) {
-
-      currentVisible =
-        false;
-
+    if (layer.kind === "repere") {
+      visible =
+        overlayVisibility.repere;
     }
 
-
-    /*
-      Quartiers forcés visibles.
-    */
-
-    if (
-      paintMode &&
-      layer.kind ===
-        "quartier"
-    ) {
-
-      currentVisible =
-        true;
-
+    if (layer.kind === "batiment") {
+      visible =
+        overlayVisibility.batiment;
     }
 
+    if (paintMode) {
+      if (
+        layer.kind === "repere" ||
+        layer.kind === "batiment"
+      ) {
+        visible = false;
+      }
 
-    if (
-      currentVisible
-    ) {
-
-      group.addTo(
-        map
-      );
-
+      if (layer.kind === "quartier") {
+        visible = true;
+      }
     }
 
-
-    const count =
-      mapShapes.filter(
-        shape =>
-          shape.layer_id ===
-          layer.id
-      ).length;
-
-
-    const label =
-      document.createElement(
-        "label"
-      );
-
-
-    label.className =
-      "layer-item";
-
-
-    const checkbox =
-      document.createElement(
-        "input"
-      );
-
-
-    checkbox.type =
-      "checkbox";
-
-
-    checkbox.checked =
-      currentVisible;
-
-
-    checkbox.disabled =
-      paintMode;
-
-
-    const swatch =
-      document.createElement(
-        "span"
-      );
-
-
-    swatch.className =
-      "layer-swatch";
-
-
-    swatch.style.background =
-      layer.kind ===
-        "quartier"
-        ? "#ffffff"
-        : (
-            layer.color ||
-            "#86ad96"
-          );
-
-
-    swatch.style.color =
-      swatch.style.background;
-
-
-    const title =
-      document.createElement(
-        "span"
-      );
-
-
-    title.className =
-      "layer-name";
-
-
-    title.textContent =
-      layer.name +
-      (
-        paintMode &&
-        (
-          layer.kind ===
-            "repere" ||
-          layer.kind ===
-            "batiment"
-        )
-          ? " • masqué"
-          : ""
-      );
-
-
-    const countElement =
-      document.createElement(
-        "span"
-      );
-
-
-    countElement.className =
-      "layer-count";
-
-
-    countElement.textContent =
-      count;
-
-
-    checkbox
-      .addEventListener(
-
-        "change",
-
-        () => {
-
-
-          layerVisibility.set(
-
-            layer.id,
-
-            checkbox.checked
-
-          );
-
-
-          if (
-            checkbox.checked
-          ) {
-
-            group.addTo(
-              map
-            );
-
-
-            setTimeout(
-              syncAllInnerOutlines,
-              30
-            );
-
-          }
-          else {
-
-            map.removeLayer(
-              group
-            );
-
-          }
-
-        }
-
-      );
-
-
-    label.append(
-
-      checkbox,
-
-      swatch,
-
-      title,
-
-      countElement
-
-    );
-
-
-    layersList.appendChild(
-      label
-    );
-
+    if (visible) {
+      group.addTo(map);
+    }
   }
 
+  updateDisplayControls();
 }
-
 
 
 /* =========================================================
@@ -4991,18 +5422,13 @@ function configureShapeLayer(
 
 
   leafletLayer.on(
-
     "click",
-
     async event => {
-
 
       if (
         !editMode
       ) {
-
         return;
-
       }
 
 
@@ -5010,10 +5436,6 @@ function configureShapeLayer(
         event
       );
 
-
-      /*
-        POT DE PEINTURE
-      */
 
       if (
         paintMode
@@ -5052,31 +5474,69 @@ function configureShapeLayer(
 
 
       selectExistingShape(
-
         leafletLayer,
-
         shape
-
       );
 
     }
-
   );
 
 
-  const refresh =
-    () =>
+const refreshClip =
+    () => {
+
       scheduleInnerOutline(
         leafletLayer
       );
 
+    };
+
 
   leafletLayer.on(
+    "add",
+    refreshClip
+  );
 
-    "add pm:edit pm:change pm:markerdrag pm:vertexadded pm:vertexremoved pm:snap pm:unsnap",
 
-    refresh
+  leafletLayer.on(
+    "pm:edit",
+    refreshClip
+  );
 
+
+  leafletLayer.on(
+    "pm:change",
+    refreshClip
+  );
+
+
+  leafletLayer.on(
+    "pm:markerdrag",
+    refreshClip
+  );
+
+
+  leafletLayer.on(
+    "pm:vertexadded",
+    refreshClip
+  );
+
+
+  leafletLayer.on(
+    "pm:vertexremoved",
+    refreshClip
+  );
+
+
+  leafletLayer.on(
+    "pm:snap",
+    refreshClip
+  );
+
+
+  leafletLayer.on(
+    "pm:unsnap",
+    refreshClip
   );
 
 
@@ -5089,775 +5549,330 @@ function configureShapeLayer(
 
 
 /* =========================================================
-   HELPERS
+   TERRITOIRES PUBLICS FUSIONNÉS
 ========================================================= */
 
-function escapeHtml(
-  value
-) {
-
-  return String(
-    value ??
-    ""
-  ).replace(
-
-    /[&<>"']/g,
-
-    character => ({
-
-      "&":
-        "&amp;",
-
-      "<":
-        "&lt;",
-
-      ">":
-        "&gt;",
-
-      '"':
-        "&quot;",
-
-      "'":
-        "&#039;"
-
-    })[
-      character
-    ]
-
-  );
-
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, character => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  })[character]);
 }
 
-
-
-function findFaction(
-  factionId
-) {
-
-  if (
-    !factionId
-  ) {
-
-    return null;
-
-  }
-
-
-  return (
-    mapFactions.find(
-      faction =>
-        faction.id ===
-        factionId
-    ) ||
-    null
-  );
-
+function findFaction(factionId) {
+  if (!factionId) return null;
+  return mapFactions.find(faction => faction.id === factionId) || null;
 }
 
-
-
-function isPolygonGeometry(
-  geometry
-) {
-
-  return (
-    geometry?.type ===
-      "Polygon"
-    ||
-    geometry?.type ===
-      "MultiPolygon"
-  );
-
+function isPolygonGeometry(geometry) {
+  return geometry?.type === "Polygon" || geometry?.type === "MultiPolygon";
 }
 
+function mergeFactionFeatures(features) {
+  if (!features.length) return null;
 
+  let merged = features[0];
 
-/* =========================================================
-   MERGE DES QUARTIERS
-========================================================= */
-
-function mergeFactionFeatures(
-  features
-) {
-
-  if (
-    !features.length
-  ) {
-
-    return null;
-
-  }
-
-
-  let merged =
-    features[0];
-
-
-  for (
-    let index = 1;
-    index < features.length;
-    index++
-  ) {
-
+  for (let index = 1; index < features.length; index++) {
     try {
-
-
-      const result =
-        turf.union(
-
-          merged,
-
-          features[
-            index
-          ]
-
-        );
-
-
-      if (
-        result
-      ) {
-
-        merged =
-          result;
-
-      }
-
+      const result = turf.union(merged, features[index]);
+      if (result) merged = result;
     }
-    catch (
-      error
-    ) {
-
-      console.warn(
-
-        "Fusion impossible :",
-
-        error
-
-      );
-
+    catch (error) {
+      console.warn("Fusion impossible pour un quartier :", error);
     }
-
   }
-
 
   return merged;
-
 }
 
+function buildFactionPopup(faction) {
+  const popup = document.createElement("div");
 
+  const category = document.createElement("div");
+  category.className = "zone-category";
+  category.textContent = "FACTION";
+  popup.appendChild(category);
 
-/* =========================================================
-   FACTION POPUP
-========================================================= */
+  const title = document.createElement("h3");
+  title.className = "zone-title";
+  title.textContent = faction.name || "Faction";
+  popup.appendChild(title);
 
-function buildFactionPopup(
-  faction
-) {
-
-  const popup =
-    document.createElement(
-      "div"
-    );
-
-
-  popup.innerHTML = `
-
-    <div class="zone-category">
-      FACTION
-    </div>
-
-    <h3 class="zone-title">
-      ${escapeHtml(
-        faction.name ||
-        "Faction"
-      )}
-    </h3>
-
-    ${
-      faction.description
-        ? `
-          <p class="zone-description">
-            ${escapeHtml(
-              faction.description
-            )}
-          </p>
-        `
-        : ""
-    }
-
-  `;
-
+  if (faction.description) {
+    const description = document.createElement("p");
+    description.className = "zone-description";
+    description.textContent = faction.description;
+    popup.appendChild(description);
+  }
 
   return popup;
-
 }
 
-
-
-/* =========================================================
-   FACTION LABEL
-========================================================= */
-
-function factionLabelHtml(
-  faction
-) {
-
-  const initial =
-    (
-      faction.name ||
-      "?"
-    )
-      .trim()
-      .charAt(0)
-      .toUpperCase();
-
-
-  const logo =
-    faction.logo_url
-      ? `
-
-          <img
-            src="${escapeHtml(
-              faction.logo_url
-            )}"
-            alt=""
-          >
-
-        `
-      : escapeHtml(
-          initial
-        );
-
+function factionLabelHtml(faction) {
+  const initial = (faction.name || "?").trim().charAt(0).toUpperCase();
+  const logo = faction.logo_url
+    ? `<img src="${escapeHtml(faction.logo_url)}" alt="">`
+    : escapeHtml(initial);
 
   return `
-
-    <div
-      class="faction-map-badge"
-      style="
-        color:${escapeHtml(
-          faction.color ||
-          "#8f6cff"
-        )}
-      "
-    >
-
-      <div class="faction-map-logo">
-
-        ${logo}
-
-      </div>
-
-
-      <div class="faction-map-name">
-
-        ${escapeHtml(
-          faction.name
-        )}
-
-      </div>
-
+    <div class="faction-map-badge" style="color:${escapeHtml(faction.color || "#8f6cff")}">
+      <div class="faction-map-logo">${logo}</div>
+      <div class="faction-map-name">${escapeHtml(faction.name)}</div>
     </div>
-
   `;
-
 }
 
+function splitTerritoryPieces(feature) {
+  if (!feature?.geometry) return [];
 
+  if (feature.geometry.type === "Polygon") return [feature];
 
-/* =========================================================
-   MULTIPOLYGON
-========================================================= */
-
-function splitTerritoryPieces(
-  feature
-) {
-
-  if (
-    !feature?.geometry
-  ) {
-
-    return [];
-
+  if (feature.geometry.type === "MultiPolygon") {
+    return feature.geometry.coordinates.map(coordinates => ({
+      type: "Feature",
+      properties: {},
+      geometry: {
+        type: "Polygon",
+        coordinates
+      }
+    }));
   }
-
-
-  if (
-    feature.geometry.type ===
-    "Polygon"
-  ) {
-
-    return [
-      feature
-    ];
-
-  }
-
-
-  if (
-    feature.geometry.type ===
-    "MultiPolygon"
-  ) {
-
-    return feature.geometry.coordinates.map(
-
-      coordinates => ({
-
-        type:
-          "Feature",
-
-        properties:
-          {},
-
-        geometry: {
-
-          type:
-            "Polygon",
-
-          coordinates:
-            coordinates
-
-        }
-
-      })
-
-    );
-
-  }
-
 
   return [];
-
 }
 
-
-
-/* =========================================================
-   PUBLIC TERRITORIES
-========================================================= */
-
-function renderPublicFactionTerritories() {
-
-  /*
-    En admin :
-    quartiers séparés.
-  */
+function renderFactionTerritories() {
 
   if (
-    editMode
+    mapViewMode !== "factions" ||
+    paintMode
   ) {
-
     return;
-
   }
-
 
   const quartierLayer =
-    mapLayers.find(
-      layer =>
-        layer.kind ===
-        "quartier"
-    );
+    getLayerByKind("quartier");
 
-
-  if (
-    !quartierLayer
-  ) {
-
-    return;
-
-  }
-
+  if (!quartierLayer) return;
 
   const group =
-    layerGroups[
-      quartierLayer.id
-    ];
+    layerGroups[quartierLayer.id];
 
-
-  if (
-    !group
-  ) {
-
-    return;
-
-  }
-
+  if (!group) return;
 
   for (
     const faction
     of mapFactions
   ) {
 
-
-    const owned =
+    const factionQuartiers =
       mapShapes.filter(
-
         shape =>
-
-          shape.layer_id ===
-            quartierLayer.id
-
-          &&
-
-          shape.faction_id ===
-            faction.id
-
-          &&
-
-          isPolygonGeometry(
-            shape.geometry
-          )
-
+          shape.layer_id === quartierLayer.id &&
+          shape.faction_id === faction.id &&
+          isPolygonGeometry(shape.geometry)
       );
 
-
-    if (
-      !owned.length
-    ) {
-
+    if (!factionQuartiers.length) {
       continue;
-
     }
 
-
     const features =
-      owned.map(
+      factionQuartiers.map(
         shape => ({
-
-          type:
-            "Feature",
-
-          properties: {
-
-            id:
-              shape.id
-
-          },
-
-          geometry:
-            shape.geometry
-
+          type: "Feature",
+          properties: { id: shape.id },
+          geometry: shape.geometry
         })
       );
 
-
     const merged =
-      mergeFactionFeatures(
-        features
-      );
+      mergeFactionFeatures(features);
 
+    if (!merged) continue;
 
-    if (
-      !merged
-    ) {
-
-      continue;
-
-    }
-
-
-    const color =
+    const factionColor =
       faction.color ||
       "#8f6cff";
 
-
-    /*
-      TERRITOIRE FUSIONNÉ
-    */
-
     const territory =
       L.geoJSON(
-
         merged,
-
         {
-
+          pane: "territoryPane",
           style: {
-
-            pane:
-              "territoryPane",
-
-            color:
-              color,
-
-            fillColor:
-              color,
-
-            /*
-              Plus fin que l'ancien contour.
-            */
-
-            weight:
-              4,
-
-            opacity:
-              .92,
-
-            fillOpacity:
-              .30,
-
-            lineJoin:
-              "round",
-
-            lineCap:
-              "round"
-
+            color: factionColor,
+            fillColor: factionColor,
+            weight: 3,
+            opacity: .92,
+            fillOpacity: .28,
+            lineJoin: "round",
+            lineCap: "round"
           }
-
         }
-
       );
 
-
     territory.eachLayer(
-
-      layer => {
-
-
-        layer.options.pmIgnore =
-          true;
-
-
-        layer.bindPopup(
-
-          buildFactionPopup(
-            faction
-          )
-
+      leafletLayer => {
+        leafletLayer.options.pmIgnore = true;
+        leafletLayer.bindPopup(
+          buildFactionPopup(faction)
         );
-
-
-        scheduleInnerOutline(
-          layer
-        );
-
-
-        layer.addTo(
-          group
-        );
-
+        scheduleInnerOutline(leafletLayer);
+        leafletLayer.addTo(group);
       }
-
     );
-
-
-    /*
-      LOGO SUR CHAQUE TERRITOIRE SÉPARÉ
-    */
 
     for (
       const piece
-      of splitTerritoryPieces(
-        merged
-      )
+      of splitTerritoryPieces(merged)
     ) {
-
       try {
-
-
         const point =
-          turf.pointOnFeature(
-            piece
-          );
+          turf.pointOnFeature(piece);
 
-
-        const [
-          x,
-          y
-        ] =
+        const [x, y] =
           point.geometry.coordinates;
 
-
         L.marker(
-
-          [
-            y,
-            x
-          ],
-
+          [y, x],
           {
-
-            pane:
-              "factionLabelPane",
-
-            interactive:
-              false,
-
-            icon:
-              L.divIcon({
-
-                className:
-                  "",
-
-                html:
-                  factionLabelHtml(
-                    faction
-                  ),
-
-                iconSize:
-                  [1,1],
-
-                iconAnchor:
-                  [0,0]
-
-              })
-
+            pane: "factionLabelPane",
+            interactive: false,
+            icon: L.divIcon({
+              className: "",
+              html: factionLabelHtml(faction),
+              iconSize: [1, 1],
+              iconAnchor: [0, 0]
+            })
           }
-
-        ).addTo(
-          group
-        );
-
-
+        ).addTo(group);
       }
-      catch (
-        error
-      ) {
-
+      catch (error) {
         console.warn(
-
-          "Logo faction :",
-
+          "Position du logo de faction impossible :",
           error
-
         );
-
       }
-
     }
-
   }
-
 }
 
 
-
-/* =========================================================
-   POINTS
-========================================================= */
-
-function pointToLayer(
-  feature,
-  latlng,
-  parentLayer,
+function quartierLabelHtml(
   shape
+) {
+  return `
+    <div class="zone-map-label">
+      ${escapeHtml(shape.name || "Quartier")}
+    </div>
+  `;
+}
+
+
+function addQuartierLabel(
+  shape,
+  group
 ) {
 
   if (
-    parentLayer.kind ===
-    "repere"
+    !shape.name ||
+    !isPolygonGeometry(shape.geometry)
   ) {
-
-    const iconText =
-      shape.properties?.icon ||
-      "◆";
-
-
-    return L.marker(
-
-      latlng,
-
-      {
-
-        pane:
-          "otherShapePane",
-
-        icon:
-          L.divIcon({
-
-            className:
-              "",
-
-            html:
-              `
-                <div class="map-repere">
-                  ${escapeHtml(
-                    iconText
-                  )}
-                </div>
-              `,
-
-            iconSize:
-              [28,28],
-
-            iconAnchor:
-              [14,14]
-
-          })
-
-      }
-
-    );
-
+    return;
   }
 
+  try {
+    const feature = {
+      type: "Feature",
+      properties: {},
+      geometry: shape.geometry
+    };
 
-  if (
-    parentLayer.kind ===
-    "batiment"
-  ) {
+    const point =
+      turf.pointOnFeature(feature);
 
-    const number =
-      shape.properties?.number ||
-      shape.name ||
-      "?";
+    const [x, y] =
+      point.geometry.coordinates;
 
-
-    return L.marker(
-
-      latlng,
-
+    L.marker(
+      [y, x],
       {
-
-        pane:
-          "otherShapePane",
-
-        icon:
-          L.divIcon({
-
-            className:
-              "",
-
-            html:
-              `
-                <div class="map-building">
-                  ${escapeHtml(
-                    number
-                  )}
-                </div>
-              `,
-
-            iconSize:
-              [34,26],
-
-            iconAnchor:
-              [17,13]
-
-          })
-
+        pane: "zoneLabelPane",
+        interactive: false,
+        icon: L.divIcon({
+          className: "",
+          html: quartierLabelHtml(shape),
+          iconSize: [1, 1],
+          iconAnchor: [0, 0]
+        })
       }
-
-    );
-
+    ).addTo(group);
   }
-
-
-  return L.marker(
-
-    latlng,
-
-    {
-
-      pane:
-        "otherShapePane"
-
-    }
-
-  );
-
+  catch (error) {
+    console.warn(
+      "Nom du quartier impossible à positionner :",
+      error
+    );
+  }
 }
 
+
+function pointMarkerHtml(
+  shape,
+  kind
+) {
+
+  const logo =
+    shape.style?.logo_url ||
+    "";
+
+  const fallback =
+    shape.style?.icon ||
+    (kind === "batiment" ? "▣" : "◆");
+
+  const visual =
+    logo
+      ? `<img src="${escapeHtml(logo)}" alt="">`
+      : escapeHtml(fallback);
+
+  return `
+    <div class="map-point-wrap ${kind === "batiment" ? "building" : "repere"}">
+      <div class="map-point-logo">
+        ${visual}
+      </div>
+      <div class="map-point-name">
+        ${escapeHtml(shape.name || (kind === "batiment" ? "Bâtiment" : "Repère"))}
+      </div>
+    </div>
+  `;
+}
+
+
+function pointToMapLayer(
+  feature,
+  latlng,
+  shape,
+  kind
+) {
+
+  return L.marker(
+    latlng,
+    {
+      pane: "otherShapePane",
+      icon: L.divIcon({
+        className: "",
+        html: pointMarkerHtml(shape, kind),
+        iconSize: [1, 1],
+        iconAnchor: [0, 0]
+      })
+    }
+  );
+}
 
 
 /* =========================================================
@@ -5866,390 +5881,222 @@ function pointToLayer(
 
 function renderShapes() {
 
-  /*
-    Public :
-    territoires faction d'abord.
-  */
-
-  renderPublicFactionTerritories();
-
+  renderFactionTerritories();
 
   for (
     const shape
     of mapShapes
   ) {
 
-
     const parentLayer =
       mapLayers.find(
         layer =>
-          layer.id ===
-          shape.layer_id
+          layer.id === shape.layer_id
       );
-
 
     if (
       !parentLayer ||
       !shape.geometry
     ) {
-
       continue;
-
     }
 
+    const kind =
+      parentLayer.kind;
 
     const quartier =
-      parentLayer.kind ===
-      "quartier";
-
+      kind === "quartier";
 
     const faction =
-      findFaction(
-        shape.faction_id
-      );
+      findFaction(shape.faction_id);
 
+    const group =
+      layerGroups[shape.layer_id];
+
+    if (!group) continue;
 
     /*
-      IMPORTANT :
-
-      En public, un quartier avec faction
-      ne doit PAS être dessiné séparément.
-
-      Sinon les frontières internes réapparaissent.
+      Vue Factions :
+      les quartiers possédés sont déjà dans la fusion.
     */
-
     if (
-      !editMode &&
       quartier &&
+      mapViewMode === "factions" &&
+      !paintMode &&
       faction
     ) {
-
       continue;
-
     }
-
 
     const polygon =
-      isPolygonGeometry(
-        shape.geometry
-      );
+      isPolygonGeometry(shape.geometry);
 
+    let color =
+      shape.style?.color ||
+      parentLayer.color ||
+      "#86ad96";
 
-    const color =
-      quartier
-        ? "#ffffff"
-        : (
-            shape.style?.color ||
-            parentLayer.color ||
-            "#86ad96"
-          );
+    let fillColor =
+      color;
 
+    let fillOpacity =
+      shape.style?.opacity ??
+      parentLayer.opacity ??
+      .30;
 
-    const fillColor =
-      quartier
-        ? (
-            faction?.color ||
-            "#ffffff"
-          )
-        : color;
+    let weight =
+      polygon ? 4 : 3;
 
+    let opacity = 1;
 
-    let fillOpacity;
-
-
-    /*
-      QUARTIERS
-    */
-
-    if (
-      quartier
-    ) {
+    if (quartier) {
+      color = "#ffffff";
+      weight = 3;
 
       if (
-        editMode
+        mapViewMode === "factions" &&
+        !paintMode
       ) {
-
-        if (
-          faction
-        ) {
-
-          fillOpacity =
-            paintMode
-              ? .35
-              : .15;
-
-        }
-        else {
-
-          fillOpacity =
-            paintMode
-              ? .04
-              : 0;
-
-        }
-
+        /* Quartiers sans faction, visibles très discrètement. */
+        color = "#9ca7a1";
+        fillColor = "#ffffff";
+        fillOpacity = 0;
+        weight = 2;
+        opacity = .30;
       }
       else {
+        fillColor =
+          faction?.color ||
+          "#ffffff";
 
-        fillOpacity =
-          0;
+        if (paintMode) {
+          fillOpacity =
+            faction ? .34 : .045;
+        }
+        else if (editMode && faction) {
+          fillOpacity = .12;
+        }
+        else {
+          fillOpacity = 0;
+        }
 
+        opacity =
+          editMode ? .92 : .62;
       }
-
     }
-
-    /*
-      AUTRES ÉLÉMENTS
-    */
-
-    else {
-
-      fillOpacity =
-        shape.style?.opacity ??
-        parentLayer.opacity ??
-        .30;
-
-    }
-
-
-    /*
-      Contours quartiers beaucoup plus fins.
-
-      3px au total avant clip,
-      soit environ 1.5px visible à l'intérieur.
-    */
-
-    const strokeWeight =
-      polygon
-        ? (
-            quartier
-              ? 3
-              : 5
-          )
-        : 3;
-
 
     const baseStyle = {
-
-      pane:
-        quartier
-          ? "quartierPane"
-          : "otherShapePane",
-
-      color:
-        color,
-
-      fillColor:
-        fillColor,
-
-      fillOpacity:
-        polygon
-          ? fillOpacity
-          : 0,
-
-      weight:
-        strokeWeight,
-
-      opacity:
-        quartier
-          ? (
-              editMode
-                ? .92
-                : .52
-            )
-          : 1,
-
-      lineCap:
-        "round",
-
-      lineJoin:
-        "round"
-
+      color,
+      fillColor,
+      fillOpacity: polygon ? fillOpacity : 0,
+      weight,
+      opacity,
+      lineCap: "round",
+      lineJoin: "round"
     };
-
 
     const geo =
       L.geoJSON(
-
         {
-
-          type:
-            "Feature",
-
-          geometry:
-            shape.geometry
-
+          type: "Feature",
+          geometry: shape.geometry
         },
-
         {
+          pane:
+            quartier
+              ? "quartierPane"
+              : "otherShapePane",
 
           style:
             baseStyle,
 
           pointToLayer:
-            (
-              feature,
-              latlng
-            ) =>
-              pointToLayer(
-
+            (feature, latlng) =>
+              pointToMapLayer(
                 feature,
-
                 latlng,
-
-                parentLayer,
-
-                shape
-
+                shape,
+                kind
               )
-
         }
-
       );
 
-
     geo.eachLayer(
-
       leafletLayer => {
 
-
         configureShapeLayer(
-
           leafletLayer,
-
           shape,
-
           parentLayer
-
         );
-
 
         leafletLayer.__gtaBaseStyle =
           baseStyle;
 
-
-        /*
-          HOVER DES QUARTIERS
-        */
-
         if (
           quartier &&
-          typeof leafletLayer.setStyle ===
-          "function"
+          typeof leafletLayer.setStyle === "function"
         ) {
 
           leafletLayer.on(
-
             "mouseover",
-
             () => {
-
+              if (!editMode) return;
 
               if (
-                !editMode
+                mapViewMode === "factions" &&
+                !paintMode
               ) {
-
                 return;
-
               }
-
 
               leafletLayer.setStyle({
-
-                weight:
-                  paintMode
-                    ? 5
-                    : 4,
-
+                weight: paintMode ? 5 : 4,
                 fillOpacity:
                   faction
-                    ? (
-                        paintMode
-                          ? .48
-                          : .24
-                      )
-                    : (
-                        paintMode
-                          ? .12
-                          : .05
-                      )
-
+                    ? (paintMode ? .48 : .23)
+                    : (paintMode ? .13 : .05)
               });
-
             }
-
           );
-
 
           leafletLayer.on(
-
             "mouseout",
-
             () => {
-
-
-              if (
-                !editMode
-              ) {
-
-                return;
-
-              }
-
-
-              leafletLayer.setStyle(
-                leafletLayer.__gtaBaseStyle
-              );
-
-
-              scheduleInnerOutline(
-                leafletLayer
-              );
-
+              if (!editMode) return;
+              leafletLayer.setStyle(baseStyle);
+              scheduleInnerOutline(leafletLayer);
             }
-
           );
-
         }
 
-
-        const group =
-          layerGroups[
-            shape.layer_id
-          ];
-
-
-        if (
-          group
-        ) {
-
-          leafletLayer.addTo(
-            group
-          );
-
-        }
-
+        leafletLayer.addTo(group);
       }
-
     );
 
+    if (
+      quartier &&
+      (
+        mapViewMode === "quartiers" ||
+        paintMode
+      )
+    ) {
+      addQuartierLabel(
+        shape,
+        group
+      );
+    }
   }
 
-
   setTimeout(
-
     syncAllInnerOutlines,
-
     50
-
   );
-
 }
 
 
-
 /* =========================================================
-   SELECT DE COUCHE
+   UPDATE LAYER SELECT
 ========================================================= */
 
 function updateShapeLayerSelect() {
@@ -6259,7 +6106,7 @@ function updateShapeLayerSelect() {
 
 
   if (
-    !mapLayers.length
+    mapLayers.length === 0
   ) {
 
     const option =
@@ -6311,6 +6158,9 @@ function updateShapeLayerSelect() {
 
   }
 
+
+  updateMarkerFieldsVisibility();
+
 }
 
 
@@ -6320,11 +6170,8 @@ function updateShapeLayerSelect() {
 ========================================================= */
 
 map.on(
-
   "pm:create",
-
   event => {
-
 
     if (
       !editMode
@@ -6340,7 +6187,16 @@ map.on(
     }
 
 
-    stopDrawing();
+    const targetKind =
+      drawingTargetKind;
+
+
+    map.pm.disableDraw();
+
+    clearToolActive();
+
+    drawingTargetKind =
+      null;
 
 
     selectedLeafletLayer =
@@ -6367,32 +6223,53 @@ map.on(
       "";
 
 
+    shapeLogoInput.value =
+      "";
+
+
+    shapeIconInput.value =
+      targetKind === "batiment"
+        ? "▣"
+        : targetKind === "repere"
+          ? "◆"
+          : "";
+
+
     shapePublishedInput.checked =
       true;
 
 
-    if (
-      mapLayers.length
-    ) {
+    const targetLayer =
+      getLayerByKind(targetKind) ||
+      getLayerByKind("quartier") ||
+      mapLayers[0] ||
+      null;
+
+
+    if (targetLayer) {
 
       shapeLayerInput.value =
-        mapLayers[0].id;
-
+        targetLayer.id;
 
       shapeColorInput.value =
-        mapLayers[0].color ||
+        targetLayer.color ||
         "#86ad96";
 
-
       shapeOpacityInput.value =
-        mapLayers[0].opacity ??
+        targetLayer.opacity ??
         .30;
-
     }
 
 
+    updateMarkerFieldsVisibility();
+
     applyShapePreview();
 
+
+    /*
+      Réapplication agressive après pm:create.
+      C'est ici que Geoman refaisait parfois le PATH.
+    */
 
     if (
       isAreaLayer(
@@ -6401,18 +6278,36 @@ map.on(
     ) {
 
       const refresh =
-        () =>
+        () => {
+
           scheduleInnerOutline(
             selectedLeafletLayer
           );
 
+        };
+
 
       selectedLeafletLayer.on(
-
-        "add pm:change pm:edit pm:snap",
-
+        "add",
         refresh
+      );
 
+
+      selectedLeafletLayer.on(
+        "pm:change",
+        refresh
+      );
+
+
+      selectedLeafletLayer.on(
+        "pm:edit",
+        refresh
+      );
+
+
+      selectedLeafletLayer.on(
+        "pm:snap",
+        refresh
       );
 
 
@@ -6422,13 +6317,12 @@ map.on(
 
 
     status.textContent =
-      "Nouvel élément créé. Choisis sa couche puis enregistre.";
+      "Nouvel élément créé. Le contour est conservé à l'intérieur de la zone.";
 
 
     updateButtons();
 
   }
-
 );
 
 
@@ -6442,9 +6336,13 @@ function selectExistingShape(
   shape
 ) {
 
-  selectedLeafletLayer
-    ?.pm
-    ?.disable();
+  if (
+    selectedLeafletLayer?.pm
+  ) {
+
+    selectedLeafletLayer.pm.disable();
+
+  }
 
 
   selectedLeafletLayer =
@@ -6483,6 +6381,19 @@ function selectExistingShape(
     .30;
 
 
+  shapeLogoInput.value =
+    shape.style?.logo_url ||
+    "";
+
+
+  shapeIconInput.value =
+    shape.style?.icon ||
+    "";
+
+
+  updateMarkerFieldsVisibility();
+
+
   shapePublishedInput.checked =
     shape.published ===
     true;
@@ -6508,360 +6419,311 @@ function selectExistingShape(
 
 
 /* =========================================================
-   PREVIEW
+   APERÇU / CHAMPS LOGO
 ========================================================= */
+
+function selectedEditorKind() {
+  const layer =
+    mapLayers.find(
+      item =>
+        item.id === shapeLayerInput.value
+    );
+
+  return layer?.kind || null;
+}
+
+
+function updateMarkerFieldsVisibility() {
+  const kind =
+    selectedEditorKind();
+
+  const visible =
+    kind === "repere" ||
+    kind === "batiment";
+
+  shapeMarkerFields.style.display =
+    visible ? "" : "none";
+
+  if (visible && !shapeIconInput.value) {
+    shapeIconInput.value =
+      kind === "batiment"
+        ? "▣"
+        : "◆";
+  }
+}
+
 
 function applyShapePreview() {
 
+  updateMarkerFieldsVisibility();
+
   if (
     !selectedLeafletLayer ||
-    typeof selectedLeafletLayer.setStyle !==
-      "function"
+    typeof selectedLeafletLayer.setStyle !== "function"
   ) {
-
     return;
-
   }
-
 
   const geometry =
     selectedLeafletLayer
       .toGeoJSON()
       .geometry;
 
-
   const isArea =
-    isPolygonGeometry(
-      geometry
-    );
+    isPolygonGeometry(geometry);
 
+  const kind =
+    selectedEditorKind();
 
-  const selectedLayer =
-    mapLayers.find(
-      layer =>
-        layer.id ===
-        shapeLayerInput.value
-    );
-
-
-  const isQuartier =
-    selectedLayer?.kind ===
-    "quartier";
-
+  const quartier =
+    kind === "quartier";
 
   selectedLeafletLayer.setStyle({
-
     color:
-      isQuartier
+      quartier
         ? "#ffffff"
         : shapeColorInput.value,
 
     fillColor:
-      isQuartier
+      quartier
         ? "#ffffff"
         : shapeColorInput.value,
 
     fillOpacity:
       isArea
         ? (
-            isQuartier
+            quartier
               ? 0
-              : Number(
-                  shapeOpacityInput.value
-                )
+              : Number(shapeOpacityInput.value)
           )
         : 0,
 
     weight:
       isArea
-        ? (
-            isQuartier
-              ? 3
-              : 5
-          )
+        ? (quartier ? 3 : 4)
         : 3,
 
-    lineJoin:
-      "round",
-
-    lineCap:
-      "round"
-
+    lineJoin: "round",
+    lineCap: "round"
   });
 
-
-  if (
-    isAreaLayer(
-      selectedLeafletLayer
-    )
-  ) {
-
-    scheduleInnerOutline(
-      selectedLeafletLayer
-    );
-
+  if (isAreaLayer(selectedLeafletLayer)) {
+    scheduleInnerOutline(selectedLeafletLayer);
   }
-
 }
 
 
+shapeColorInput.addEventListener(
+  "input",
+  applyShapePreview
+);
 
-shapeColorInput
-  .addEventListener(
+shapeOpacityInput.addEventListener(
+  "input",
+  applyShapePreview
+);
 
-    "input",
-
-    applyShapePreview
-
-  );
-
-
-shapeOpacityInput
-  .addEventListener(
-
-    "input",
-
-    applyShapePreview
-
-  );
-
-
-shapeLayerInput
-  .addEventListener(
-
-    "change",
-
-    applyShapePreview
-
-  );
-
+shapeLayerInput.addEventListener(
+  "change",
+  () => {
+    updateMarkerFieldsVisibility();
+    applyShapePreview();
+  }
+);
 
 
 /* =========================================================
    SAVE
 ========================================================= */
 
-saveShapeButton
-  .addEventListener(
+saveShapeButton.addEventListener(
+  "click",
+  async () => {
 
-    "click",
-
-    async () => {
-
-
-      if (
-        !selectedLeafletLayer
-      ) {
-
-        return;
-
-      }
+    if (
+      !selectedLeafletLayer
+    ) {
+      return;
+    }
 
 
-      if (
-        !shapeLayerInput.value
-      ) {
-
-        status.textContent =
-          "Aucune couche disponible.";
-
-
-        return;
-
-      }
-
-
-      selectedLeafletLayer
-        .pm
-        ?.disable();
-
-
-      const geometry =
-        selectedLeafletLayer
-          .toGeoJSON()
-          .geometry;
-
-
-      const area =
-        isPolygonGeometry(
-          geometry
-        );
-
-
-      const selectedLayer =
-        mapLayers.find(
-          layer =>
-            layer.id ===
-            shapeLayerInput.value
-        );
-
-
-      const quartier =
-        selectedLayer?.kind ===
-        "quartier";
-
-
-      const payload = {
-
-        layer_id:
-          shapeLayerInput.value,
-
-        name:
-          shapeNameInput
-            .value
-            .trim() ||
-          "Sans nom",
-
-        description:
-          shapeDescriptionInput
-            .value
-            .trim(),
-
-        geometry:
-          geometry,
-
-        style: {
-
-          color:
-            quartier
-              ? "#ffffff"
-              : shapeColorInput.value,
-
-          opacity:
-            quartier
-              ? 0
-              : Number(
-                  shapeOpacityInput.value
-                ),
-
-          weight:
-            area
-              ? (
-                  quartier
-                    ? 3
-                    : 5
-                )
-              : 3
-
-        },
-
-        published:
-          shapePublishedInput.checked
-
-      };
-
-
-      /*
-        Conserve la faction si on édite
-        un quartier existant.
-      */
-
-      if (
-        selectedShapeRecord?.faction_id
-      ) {
-
-        payload.faction_id =
-          selectedShapeRecord.faction_id;
-
-      }
-
+    if (
+      !shapeLayerInput.value
+    ) {
 
       status.textContent =
-        "Enregistrement...";
+        "Aucune couche disponible.";
 
-
-      let response;
-
-
-      if (
-        selectedShapeRecord
-      ) {
-
-        response =
-          await db
-            .from(
-              "map_shapes"
-            )
-            .update(
-              payload
-            )
-            .eq(
-              "id",
-              selectedShapeRecord.id
-            );
-
-      }
-      else {
-
-        response =
-          await db
-            .from(
-              "map_shapes"
-            )
-            .insert(
-              payload
-            );
-
-      }
-
-
-      if (
-        response.error
-      ) {
-
-        console.error(
-          response.error
-        );
-
-
-        status.textContent =
-          "Erreur : " +
-          response.error.message;
-
-
-        return;
-
-      }
-
-
-      if (
-        temporaryLayer &&
-        map.hasLayer(
-          temporaryLayer
-        )
-      ) {
-
-        map.removeLayer(
-          temporaryLayer
-        );
-
-      }
-
-
-      selectedLeafletLayer =
-        null;
-
-
-      selectedShapeRecord =
-        null;
-
-
-      temporaryLayer =
-        null;
-
-
-      await loadDatabase();
-
-
-      updateButtons();
-
-
-      status.textContent =
-        "Élément enregistré.";
+      return;
 
     }
 
-  );
+
+    selectedLeafletLayer
+      .pm
+      ?.disable();
+
+
+    const geometry =
+      selectedLeafletLayer
+        .toGeoJSON()
+        .geometry;
+
+
+    const area =
+      geometry.type ===
+        "Polygon" ||
+      geometry.type ===
+        "MultiPolygon";
+
+
+    const payload = {
+
+      layer_id:
+        shapeLayerInput.value,
+
+      name:
+        shapeNameInput
+          .value
+          .trim() ||
+        "Sans nom",
+
+      description:
+        shapeDescriptionInput
+          .value
+          .trim(),
+
+      geometry:
+        geometry,
+
+      style: {
+
+        ...(selectedShapeRecord?.style || {}),
+
+        color:
+          shapeColorInput.value,
+
+        opacity:
+          Number(
+            shapeOpacityInput.value
+          ),
+
+        weight:
+          area
+            ? (selectedEditorKind() === "quartier" ? 3 : 4)
+            : 3,
+
+        logo_url:
+          shapeLogoInput.value.trim() ||
+          null,
+
+        icon:
+          shapeIconInput.value.trim() ||
+          null
+
+      },
+
+      published:
+        shapePublishedInput.checked
+
+    };
+
+
+    status.textContent =
+      "Enregistrement...";
+
+
+    let response;
+
+
+    if (
+      selectedShapeRecord
+    ) {
+
+      response =
+        await db
+          .from(
+            "map_shapes"
+          )
+          .update(
+            payload
+          )
+          .eq(
+            "id",
+            selectedShapeRecord.id
+          );
+
+    }
+    else {
+
+      response =
+        await db
+          .from(
+            "map_shapes"
+          )
+          .insert(
+            payload
+          );
+
+    }
+
+
+    if (
+      response.error
+    ) {
+
+      console.error(
+        response.error
+      );
+
+
+      status.textContent =
+        "Erreur : " +
+        response.error.message;
+
+
+      return;
+
+    }
+
+
+    if (
+      temporaryLayer &&
+      map.hasLayer(
+        temporaryLayer
+      )
+    ) {
+
+      map.removeLayer(
+        temporaryLayer
+      );
+
+    }
+
+
+    selectedLeafletLayer =
+      null;
+
+
+    selectedShapeRecord =
+      null;
+
+
+    temporaryLayer =
+      null;
+
+
+    await loadDatabase();
+
+
+    updateButtons();
+
+
+    status.textContent =
+      "Élément enregistré.";
+
+  }
+);
 
 
 
@@ -6869,109 +6731,107 @@ saveShapeButton
    EDIT VERTICES
 ========================================================= */
 
-editShapeButton
-  .addEventListener(
+editShapeButton.addEventListener(
+  "click",
+  () => {
 
-    "click",
-
-    () => {
-
-
-      if (
-        !selectedLeafletLayer?.pm
-      ) {
-
-        return;
-
-      }
-
-
-      selectedLeafletLayer
-        .pm
-        .enable({
-
-          snappable:
-            true,
-
-          snapDistance:
-            30,
-
-          snapVertex:
-            true,
-
-          snapSegment:
-            true,
-
-          snapMiddle:
-            false,
-
-          allowSelfIntersection:
-            false
-
-        });
-
-
-      const refresh =
-        () =>
-          scheduleInnerOutline(
-            selectedLeafletLayer
-          );
-
-
-      selectedLeafletLayer.on(
-
-        "pm:change pm:markerdrag pm:snap",
-
-        refresh
-
-      );
-
-
-      status.textContent =
-        "Modification active. Les points s'accrochent aux zones existantes.";
-
-
-      updateButtons();
-
+    if (
+      !selectedLeafletLayer?.pm
+    ) {
+      return;
     }
 
-  );
+
+    selectedLeafletLayer.pm.enable({
+
+      snappable:
+        true,
+
+      snapDistance:
+        30,
+
+      snapVertex:
+        true,
+
+      snapSegment:
+        true,
+
+      snapMiddle:
+        false,
+
+      allowSelfIntersection:
+        false
+
+    });
 
 
-
-finishEditButton
-  .addEventListener(
-
-    "click",
-
-    () => {
-
-
-      selectedLeafletLayer
-        ?.pm
-        ?.disable();
-
-
-      if (
-        selectedLeafletLayer
-      ) {
+    const refresh =
+      () => {
 
         scheduleInnerOutline(
           selectedLeafletLayer
         );
 
-      }
+      };
 
 
-      status.textContent =
-        "Modification terminée. Clique sur Enregistrer.";
+    selectedLeafletLayer.on(
+      "pm:change",
+      refresh
+    );
 
 
-      updateButtons();
+    selectedLeafletLayer.on(
+      "pm:markerdrag",
+      refresh
+    );
+
+
+    selectedLeafletLayer.on(
+      "pm:snap",
+      refresh
+    );
+
+
+    status.textContent =
+      "Modification active. Les points s'accrochent aux sommets et segments existants.";
+
+
+    updateButtons();
+
+  }
+);
+
+
+
+finishEditButton.addEventListener(
+  "click",
+  () => {
+
+    selectedLeafletLayer
+      ?.pm
+      ?.disable();
+
+
+    if (
+      selectedLeafletLayer
+    ) {
+
+      scheduleInnerOutline(
+        selectedLeafletLayer
+      );
 
     }
 
-  );
+
+    status.textContent =
+      "Modification terminée. Clique sur Enregistrer.";
+
+
+    updateButtons();
+
+  }
+);
 
 
 
@@ -7020,29 +6880,35 @@ function cancelSelection() {
     "";
 
 
+  shapeLogoInput.value =
+    "";
+
+
+  shapeIconInput.value =
+    "";
+
+
+  updateMarkerFieldsVisibility();
+
+
   updateButtons();
 
 }
 
 
 
-cancelSelectionButton
-  .addEventListener(
+cancelSelectionButton.addEventListener(
+  "click",
+  () => {
 
-    "click",
-
-    () => {
-
-
-      cancelSelection();
+    cancelSelection();
 
 
-      status.textContent =
-        "Sélection annulée.";
+    status.textContent =
+      "Sélection annulée.";
 
-    }
-
-  );
+  }
+);
 
 
 
@@ -7050,80 +6916,125 @@ cancelSelectionButton
    DELETE
 ========================================================= */
 
-deleteShapeButton
-  .addEventListener(
+deleteShapeButton.addEventListener(
+  "click",
+  async () => {
 
-    "click",
-
-    async () => {
-
-
-      if (
-        !selectedShapeRecord
-      ) {
-
-        return;
-
-      }
+    if (
+      !selectedShapeRecord
+    ) {
+      return;
+    }
 
 
-      if (
-        !confirm(
-          "Supprimer définitivement cet élément ?"
+    if (
+      !confirm(
+        "Supprimer définitivement cet élément ?"
+      )
+    ) {
+      return;
+    }
+
+
+    const {
+      error
+    } =
+      await db
+        .from(
+          "map_shapes"
         )
-      ) {
-
-        return;
-
-      }
-
-
-      const {
-        error
-      } =
-        await db
-          .from(
-            "map_shapes"
-          )
-          .delete()
-          .eq(
-            "id",
-            selectedShapeRecord.id
-          );
+        .delete()
+        .eq(
+          "id",
+          selectedShapeRecord.id
+        );
 
 
-      if (
-        error
-      ) {
-
-        status.textContent =
-          "Erreur : " +
-          error.message;
-
-
-        return;
-
-      }
-
-
-      cancelSelection();
-
-
-      await loadDatabase();
-
+    if (
+      error
+    ) {
 
       status.textContent =
-        "Élément supprimé.";
+        "Erreur : " +
+        error.message;
+
+
+      return;
 
     }
 
-  );
+
+    cancelSelection();
+
+
+    await loadDatabase();
+
+
+    status.textContent =
+      "Élément supprimé.";
+
+  }
+);
 
 
 
 /* =========================================================
-   FACTION PANEL
+   FACTIONS
 ========================================================= */
+
+const factionList =
+  document.getElementById(
+    "faction-list"
+  );
+
+
+const factionNameInput =
+  document.getElementById(
+    "faction-name"
+  );
+
+
+const factionDescriptionInput =
+  document.getElementById(
+    "faction-description"
+  );
+
+
+const factionColorInput =
+  document.getElementById(
+    "faction-color"
+  );
+
+
+const factionLogoInput =
+  document.getElementById(
+    "faction-logo"
+  );
+
+
+const factionVisibleInput =
+  document.getElementById(
+    "faction-visible"
+  );
+
+
+const paintFactionButton =
+  document.getElementById(
+    "paint-faction"
+  );
+
+
+const deleteFactionButton =
+  document.getElementById(
+    "delete-faction"
+  );
+
+
+const paintInfo =
+  document.getElementById(
+    "paint-info"
+  );
+
 
 function renderFactionPanel() {
 
@@ -7141,22 +7052,20 @@ function renderFactionPanel() {
 
 
   if (
-    !mapFactions.length
+    mapFactions.length ===
+    0
   ) {
 
-    factionList.innerHTML = `
-
-      <div
-        style="
+    factionList.innerHTML =
+      `
+        <div style="
           color:#68736d;
           font-size:10px;
           padding:8px;
-        "
-      >
-        Aucune faction.
-      </div>
-
-    `;
+        ">
+          Aucune faction.
+        </div>
+      `;
 
   }
 
@@ -7166,8 +7075,7 @@ function renderFactionPanel() {
     of mapFactions
   ) {
 
-
-    const count =
+    const quartierCount =
       mapShapes.filter(
         shape =>
           shape.faction_id ===
@@ -7186,13 +7094,19 @@ function renderFactionPanel() {
 
 
     item.className =
-      "faction-item" +
-      (
-        selectedFaction?.id ===
-          faction.id
-          ? " active"
-          : ""
+      "faction-item";
+
+
+    if (
+      selectedFaction?.id ===
+      faction.id
+    ) {
+
+      item.classList.add(
+        "active"
       );
+
+    }
 
 
     const dot =
@@ -7224,40 +7138,36 @@ function renderFactionPanel() {
       faction.name;
 
 
-    const countElement =
+    const count =
       document.createElement(
         "span"
       );
 
 
-    countElement.className =
+    count.className =
       "faction-count";
 
 
-    countElement.textContent =
-      count;
+    count.textContent =
+      quartierCount;
 
 
     item.append(
-
       dot,
-
       name,
-
-      countElement
-
+      count
     );
 
 
     item.addEventListener(
-
       "click",
+      () => {
 
-      () =>
         selectFaction(
           faction
-        )
+        );
 
+      }
     );
 
 
@@ -7280,11 +7190,6 @@ function renderFactionPanel() {
 
 }
 
-
-
-/* =========================================================
-   SELECT FACTION
-========================================================= */
 
 function selectFaction(
   faction
@@ -7340,18 +7245,13 @@ function selectFaction(
 }
 
 
-
-/* =========================================================
-   NEW FACTION
-========================================================= */
-
-$("new-faction")
+document
+  .getElementById(
+    "new-faction"
+  )
   .addEventListener(
-
     "click",
-
     () => {
-
 
       if (
         paintMode
@@ -7393,22 +7293,16 @@ $("new-faction")
         "Nouvelle faction.";
 
     }
-
   );
 
 
-
-/* =========================================================
-   SAVE FACTION
-========================================================= */
-
-$("save-faction")
+document
+  .getElementById(
+    "save-faction"
+  )
   .addEventListener(
-
     "click",
-
     async () => {
-
 
       const name =
         factionNameInput
@@ -7422,7 +7316,6 @@ $("save-faction")
 
         status.textContent =
           "Entre un nom pour la faction.";
-
 
         return;
 
@@ -7524,22 +7417,13 @@ $("save-faction")
         "Faction enregistrée.";
 
     }
-
   );
 
 
-
-/* =========================================================
-   DELETE FACTION
-========================================================= */
-
 deleteFactionButton
   .addEventListener(
-
     "click",
-
     async () => {
-
 
       if (
         !selectedFaction
@@ -7550,10 +7434,14 @@ deleteFactionButton
       }
 
 
-      if (
-        !confirm(
+      const confirmation =
+        confirm(
           `Supprimer la faction "${selectedFaction.name}" ?`
-        )
+        );
+
+
+      if (
+        !confirmation
       ) {
 
         return;
@@ -7621,155 +7509,115 @@ deleteFactionButton
         "Faction supprimée.";
 
     }
-
   );
 
 
-
-/* =========================================================
-   START PAINT
-========================================================= */
-
 function startPaintMode() {
 
-  if (
-    !selectedFaction
-  ) {
-
+  if (!selectedFaction) {
     status.textContent =
       "Sélectionne d'abord une faction.";
-
-
     return;
-
   }
 
-
   stopDrawing();
-
-
   cancelSelection();
 
+  paintPreviousDisplayState = {
+    mapViewMode,
+    repere: overlayVisibility.repere,
+    batiment: overlayVisibility.batiment
+  };
+
+  mapViewMode =
+    "quartiers";
+
+  overlayVisibility.repere =
+    false;
+
+  overlayVisibility.batiment =
+    false;
 
   paintMode =
     true;
 
+  document.body.classList.add(
+    "painting"
+  );
 
-  document.body
-    .classList.add(
-      "painting"
-    );
+  paintFactionButton.classList.add(
+    "active"
+  );
 
+  paintInfo.classList.add(
+    "visible"
+  );
 
-  paintFactionButton
-    .classList.add(
-      "active"
-    );
-
-
-  paintInfo
-    .classList.add(
-      "visible"
-    );
-
-
-  $("paint-faction-title")
+  document
+    .getElementById("paint-faction-title")
     .textContent =
       "Pot de peinture : " +
       selectedFaction.name;
 
-
-  /*
-    Re-rendu immédiat.
-
-    Repères/Bâtiments masqués.
-    Quartiers visibles.
-  */
-
-  renderLayers();
-
-
-  renderShapes();
-
+  rerenderMapDisplay();
 
   status.textContent =
     "Clique sur les quartiers à attribuer à " +
     selectedFaction.name +
     ".";
 
-
   lucide.createIcons();
-
 }
 
 
-
-/* =========================================================
-   STOP PAINT
-========================================================= */
-
 function stopPaintMode() {
 
-  if (
-    !paintMode
-  ) {
-
-    return;
-
-  }
-
+  if (!paintMode) return;
 
   paintMode =
     false;
 
+  document.body.classList.remove(
+    "painting"
+  );
 
-  document.body
-    .classList.remove(
-      "painting"
-    );
+  paintFactionButton.classList.remove(
+    "active"
+  );
 
+  paintInfo.classList.remove(
+    "visible"
+  );
 
-  paintFactionButton
-    .classList.remove(
-      "active"
-    );
+  if (paintPreviousDisplayState) {
+    mapViewMode =
+      paintPreviousDisplayState.mapViewMode;
 
+    overlayVisibility.repere =
+      paintPreviousDisplayState.repere;
 
-  paintInfo
-    .classList.remove(
-      "visible"
-    );
-
-
-  renderLayers();
-
-
-  renderShapes();
-
-
-  if (
-    editMode
-  ) {
-
-    status.textContent =
-      "Placement des factions terminé.";
-
+    overlayVisibility.batiment =
+      paintPreviousDisplayState.batiment;
   }
 
+  paintPreviousDisplayState =
+    null;
+
+  rerenderMapDisplay();
+
+  if (editMode) {
+    status.textContent =
+      "Placement des factions terminé.";
+  }
 
   lucide.createIcons();
-
 }
-
 
 
 paintFactionButton
   .addEventListener(
-
     "click",
-
     () => {
-
 
       if (
         paintMode
@@ -7785,24 +7633,18 @@ paintFactionButton
       }
 
     }
-
   );
 
 
-$("stop-paint")
+document
+  .getElementById(
+    "stop-paint"
+  )
   .addEventListener(
-
     "click",
-
     stopPaintMode
-
   );
 
-
-
-/* =========================================================
-   PAINT QUARTIER
-========================================================= */
 
 async function paintQuartier(
   quartier
@@ -7817,14 +7659,6 @@ async function paintQuartier(
 
   }
 
-
-  /*
-    Même faction :
-    clic = retirer.
-
-    Autre faction :
-    clic = remplacer.
-  */
 
   const nextFactionId =
     quartier.faction_id ===
@@ -7845,10 +7679,8 @@ async function paintQuartier(
         "map_shapes"
       )
       .update({
-
         faction_id:
           nextFactionId
-
       })
       .eq(
         "id",
@@ -7902,7 +7734,6 @@ async function paintQuartier(
 }
 
 
-
 /* =========================================================
    BUTTON STATES
 ========================================================= */
@@ -7919,10 +7750,8 @@ function updateButtons() {
 
   finishEditButton.disabled =
     !(
-      selectedLeafletLayer
-      &&
-      selectedLeafletLayer.pm
-      &&
+      selectedLeafletLayer &&
+      selectedLeafletLayer.pm &&
       selectedLeafletLayer.pm.enabled()
     );
 
@@ -7939,63 +7768,27 @@ function updateButtons() {
 
 
 /* =========================================================
-   ESCAPE
+   RACCOURCIS CLAVIER
 ========================================================= */
 
-document.addEventListener(
+document.addEventListener("keydown", event => {
+  if (event.key !== "Escape") return;
 
-  "keydown",
-
-  event => {
-
-
-    if (
-      event.key !==
-      "Escape"
-    ) {
-
-      return;
-
-    }
-
-
-    if (
-      paintMode
-    ) {
-
-      stopPaintMode();
-
-
-      return;
-
-    }
-
-
-    stopDrawing();
-
-
-    if (
-      selectedLeafletLayer
-    ) {
-
-      cancelSelection();
-
-    }
-
-
-    if (
-      editMode
-    ) {
-
-      status.textContent =
-        "Outil annulé.";
-
-    }
-
+  if (paintMode) {
+    stopPaintMode();
+    return;
   }
 
-);
+  stopDrawing();
 
+  if (selectedLeafletLayer) {
+    cancelSelection();
+  }
+
+  if (editMode) {
+    status.textContent = "Outil annulé.";
+  }
+});
 
 
 /* =========================================================
@@ -8012,9 +7805,7 @@ updateButtons();
 
 
 setTimeout(
-
   () => {
-
 
     map.invalidateSize();
 
@@ -8022,15 +7813,14 @@ setTimeout(
     syncAllInnerOutlines();
 
   },
-
   300
-
 );
 
 
 })();
 
 </script>
+
 
 </body>
 </html>
