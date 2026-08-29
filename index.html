@@ -3096,6 +3096,178 @@ button svg {
   }
 }
 
+
+
+/* =========================================================
+   ZOOM SLIDER
+
+   Barre de zoom persistante en bas de la carte.
+   Elle reste centrée dans l'espace réellement libre entre
+   les colonnes de gauche et de droite.
+========================================================= */
+
+#zoom-slider-control {
+  position: fixed;
+  z-index: 7900;
+
+  left:
+    calc(
+      var(--left-safe, 0px)
+      +
+      (
+        100vw
+        - var(--left-safe, 0px)
+        - var(--right-safe, 0px)
+      ) / 2
+    );
+
+  bottom: 14px;
+
+  transform: translateX(-50%);
+
+  width:
+    min(
+      360px,
+      calc(
+        100vw
+        - var(--left-safe, 0px)
+        - var(--right-safe, 0px)
+        - 48px
+      )
+    );
+
+  min-width: 180px;
+  height: 34px;
+
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr) 18px;
+  align-items: center;
+  gap: 8px;
+
+  padding: 0 10px;
+
+  border: 1px solid rgba(140,177,155,.16);
+  border-radius: 999px;
+
+  background: rgba(5,9,7,.90);
+  backdrop-filter: blur(14px);
+
+  box-shadow: 0 10px 30px rgba(0,0,0,.38);
+}
+
+#zoom-slider-control svg {
+  width: 13px;
+  height: 13px;
+  color: rgba(199,215,205,.72);
+  pointer-events: none;
+}
+
+#zoom-slider {
+  --zoom-progress: 50%;
+
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  height: 18px;
+  padding: 0;
+  margin: 0;
+
+  border: 0;
+  border-radius: 999px;
+  outline: none;
+
+  appearance: none;
+  -webkit-appearance: none;
+
+  cursor: pointer;
+  background: transparent;
+}
+
+#zoom-slider::-webkit-slider-runnable-track {
+  height: 3px;
+  border-radius: 999px;
+  background:
+    linear-gradient(
+      to right,
+      rgba(166,196,178,.90) 0,
+      rgba(166,196,178,.90) var(--zoom-progress),
+      rgba(255,255,255,.14) var(--zoom-progress),
+      rgba(255,255,255,.14) 100%
+    );
+}
+
+#zoom-slider::-webkit-slider-thumb {
+  width: 15px;
+  height: 15px;
+  margin-top: -6px;
+
+  border: 2px solid #dce8e1;
+  border-radius: 50%;
+
+  appearance: none;
+  -webkit-appearance: none;
+
+  background: #72947f;
+  box-shadow:
+    0 0 0 3px rgba(114,148,127,.16),
+    0 3px 8px rgba(0,0,0,.45);
+}
+
+#zoom-slider::-moz-range-track {
+  height: 3px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255,255,255,.14);
+}
+
+#zoom-slider::-moz-range-progress {
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(166,196,178,.90);
+}
+
+#zoom-slider::-moz-range-thumb {
+  width: 15px;
+  height: 15px;
+
+  border: 2px solid #dce8e1;
+  border-radius: 50%;
+
+  background: #72947f;
+  box-shadow:
+    0 0 0 3px rgba(114,148,127,.16),
+    0 3px 8px rgba(0,0,0,.45);
+}
+
+#zoom-slider:focus-visible::-webkit-slider-thumb {
+  box-shadow:
+    0 0 0 4px rgba(198,164,67,.28),
+    0 3px 8px rgba(0,0,0,.45);
+}
+
+/* En édition la barre d'outils monte pour laisser le zoom en bas. */
+body.editing #draw-toolbar {
+  bottom: 58px !important;
+}
+
+@media (max-width: 760px) {
+  #zoom-slider-control {
+    left: 50%;
+    right: auto;
+    bottom: 8px;
+    width: calc(100vw - 20px);
+    min-width: 0;
+  }
+
+  body.editing #draw-toolbar {
+    bottom: 52px !important;
+  }
+
+  .leaflet-bottom.leaflet-right {
+    bottom: 96px !important;
+  }
+}
+
 </style>
 
 </head>
@@ -3818,6 +3990,29 @@ button svg {
 
 
 
+
+<!-- ZOOM SLIDER -->
+<div
+  id="zoom-slider-control"
+  role="group"
+  aria-label="Zoom de la carte"
+>
+  <i data-lucide="minus"></i>
+
+  <input
+    id="zoom-slider"
+    type="range"
+    min="-6"
+    max="5"
+    step="0.05"
+    value="0"
+    aria-label="Niveau de zoom"
+  >
+
+  <i data-lucide="plus"></i>
+</div>
+
+
 <!-- TOOLBAR -->
 
 <div id="draw-toolbar">
@@ -4025,6 +4220,12 @@ const toggleBatimentsInput =
 const displayNote =
   document.getElementById(
     "display-note"
+  );
+
+
+const zoomSlider =
+  document.getElementById(
+    "zoom-slider"
   );
 
 
@@ -4249,6 +4450,10 @@ const layerVisibility =
 */
 const quartierLabelMarkers =
   new Set();
+
+
+let quartierLabelRefreshFrame =
+  null;
 
 
 
@@ -4884,6 +5089,9 @@ map =
         5,
 
       zoomSnap:
+        .05,
+
+      zoomDelta:
         .25,
 
       attributionControl:
@@ -4973,12 +5181,157 @@ map.setMaxBounds(
 
 
 /* =========================================================
+   ZOOM SLIDER
+========================================================= */
+
+function syncZoomSlider() {
+
+  if (
+    !zoomSlider ||
+    !map
+  ) {
+    return;
+  }
+
+
+  const minimum =
+    map.getMinZoom();
+
+
+  const maximum =
+    map.getMaxZoom();
+
+
+  const current =
+    map.getZoom();
+
+
+  zoomSlider.min =
+    String(minimum);
+
+
+  zoomSlider.max =
+    String(maximum);
+
+
+  zoomSlider.value =
+    String(current);
+
+
+  const range =
+    maximum - minimum;
+
+
+  const progress =
+    range > 0
+      ? (
+          (current - minimum) /
+          range
+        ) * 100
+      : 0;
+
+
+  zoomSlider.style.setProperty(
+    "--zoom-progress",
+    `${Math.max(0, Math.min(100, progress)).toFixed(2)}%`
+  );
+
+
+  zoomSlider.setAttribute(
+    "aria-valuetext",
+    `Zoom ${current.toFixed(2)}`
+  );
+
+}
+
+
+function scheduleQuartierLabelRefresh() {
+
+  if (
+    quartierLabelRefreshFrame
+  ) {
+    return;
+  }
+
+
+  quartierLabelRefreshFrame =
+    requestAnimationFrame(
+      () => {
+
+        quartierLabelRefreshFrame =
+          null;
+
+
+        refreshQuartierLabels();
+
+      }
+    );
+
+}
+
+
+zoomSlider?.addEventListener(
+  "input",
+  event => {
+
+    const nextZoom =
+      Number(
+        event.currentTarget.value
+      );
+
+
+    if (
+      !Number.isFinite(
+        nextZoom
+      )
+    ) {
+      return;
+    }
+
+
+    /*
+      Pas d'animation ici : le curseur et la carte suivent
+      exactement le doigt / la souris en temps réel.
+    */
+    map.setZoom(
+      nextZoom,
+      {
+        animate: false
+      }
+    );
+
+
+    syncZoomSlider();
+
+
+    scheduleQuartierLabelRefresh();
+
+  }
+);
+
+
+syncZoomSlider();
+
+
+/* =========================================================
    MAP REDRAW
 ========================================================= */
 
 map.on(
   "zoom move resize viewreset",
   syncAllInnerOutlines
+);
+
+
+map.on(
+  "zoom viewreset resize",
+  () => {
+
+    syncZoomSlider();
+
+    scheduleQuartierLabelRefresh();
+
+  }
 );
 
 
@@ -4996,6 +5349,8 @@ map.on(
       );
 
     }
+
+    syncZoomSlider();
 
     refreshQuartierLabels();
 
@@ -7184,7 +7539,7 @@ function updateQuartierLabelMarker(
 
     const fontSize =
       Math.min(
-        26,
+        42,
         100 *
         usableRadius /
         halfDiagonalAt100
