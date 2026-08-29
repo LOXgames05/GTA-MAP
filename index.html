@@ -1,111 +1,54 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1.0"
->
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GTA MAP</title>
 
-
-<!-- LEAFLET -->
 <link
   rel="stylesheet"
   href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
 >
 
-
-<!-- LEAFLET GEOMAN -->
 <link
   rel="stylesheet"
   href="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css"
 >
 
-
-<!-- ICONES -->
 <script src="https://unpkg.com/lucide@latest"></script>
 
-
 <style>
-
-/* =========================================================
-   ROOT
-========================================================= */
 
 * {
   box-sizing: border-box;
 }
 
 :root {
-
   --bg: #050807;
-
-  --panel:
-    rgba(8, 13, 11, .94);
-
-  --border:
-    rgba(140, 177, 155, .13);
-
-  --border-strong:
-    rgba(140, 177, 155, .25);
-
-  --green:
-    #86ad96;
-
-  --green-light:
-    #a7c4b2;
-
-  --gold:
-    #c6a443;
-
-  --gold-light:
-    #e3c868;
-
-  --red:
-    #c95a5a;
-
-  --text:
-    #edf2ef;
-
-  --muted:
-    #87928c;
-
-  --top-height:
-    72px;
-
-  --left-panel:
-    366px;
-
-  --right-panel:
-    320px;
-
-  --panel-gap:
-    18px;
-
+  --panel: rgba(8,13,11,.95);
+  --border: rgba(140,177,155,.13);
+  --border-strong: rgba(140,177,155,.28);
+  --green: #86ad96;
+  --green-light: #a7c4b2;
+  --gold: #c6a443;
+  --gold-light: #e3c868;
+  --red: #c95a5a;
+  --text: #edf2ef;
+  --muted: #87928c;
+  --top-height: 72px;
+  --left-panel: 366px;
+  --right-panel: 320px;
+  --panel-gap: 18px;
 }
-
 
 html,
 body {
-
   width: 100%;
   height: 100%;
-
   margin: 0;
-
   overflow: hidden;
-
-  background:
-    var(--bg);
-
-  color:
-    var(--text);
-
+  background: var(--bg);
+  color: var(--text);
   font-family:
     Inter,
     system-ui,
@@ -113,38 +56,27 @@ body {
     BlinkMacSystemFont,
     "Segoe UI",
     sans-serif;
-
 }
 
-
 body::before {
-
   content: "";
-
   position: fixed;
-
   inset: 0;
-
   z-index: 0;
-
   pointer-events: none;
 
   background:
-
     radial-gradient(
       circle at 65% 10%,
-      rgba(41, 92, 69, .15),
+      rgba(41,92,69,.15),
       transparent 35%
     ),
-
     radial-gradient(
       circle at 15% 85%,
-      rgba(26, 75, 53, .12),
+      rgba(26,75,53,.12),
       transparent 35%
     );
-
 }
-
 
 
 /* =========================================================
@@ -152,26 +84,15 @@ body::before {
 ========================================================= */
 
 #map {
-
   position: fixed;
-
   inset: 0;
-
   z-index: 1;
-
-  background:
-    #070a09;
-
+  background: #070a09;
 }
-
 
 .leaflet-container {
-
-  background:
-    #070a09;
-
+  background: #070a09;
 }
-
 
 
 /* =========================================================
@@ -179,42 +100,40 @@ body::before {
 ========================================================= */
 
 #topbar {
-
   position: fixed;
-
   top: 0;
   left: 0;
   right: 0;
 
   z-index: 9000;
 
-  height:
-    var(--top-height);
+  height: var(--top-height);
 
   display: grid;
 
   grid-template-columns:
-    290px 1fr auto;
+    290px
+    1fr
+    auto;
 
   align-items: center;
 
   padding:
-    0 22px;
+    0
+    22px;
 
   border-bottom:
     1px solid var(--border);
 
   background:
-    rgba(3, 6, 5, .96);
+    rgba(3,6,5,.96);
 
   backdrop-filter:
     blur(18px);
 
   box-shadow:
     0 10px 40px rgba(0,0,0,.3);
-
 }
-
 
 
 /* =========================================================
@@ -222,23 +141,16 @@ body::before {
 ========================================================= */
 
 .brand {
-
   display: flex;
-
   align-items: center;
-
   gap: 13px;
-
 }
 
-
 .brand-emblem {
-
   width: 38px;
   height: 38px;
 
   display: grid;
-
   place-items: center;
 
   border:
@@ -256,42 +168,25 @@ body::before {
       rgba(198,164,67,.12),
       rgba(198,164,67,.02)
     );
-
 }
-
 
 .brand-emblem svg {
-
   width: 19px;
   height: 19px;
-
 }
-
 
 .brand-name {
-
   font-size: 13px;
-
   font-weight: 800;
-
   letter-spacing: 3px;
-
 }
-
 
 .brand-sub {
-
   margin-top: 2px;
-
-  color:
-    var(--muted);
-
+  color: var(--muted);
   font-size: 9px;
-
   letter-spacing: 1px;
-
 }
-
 
 
 /* =========================================================
@@ -299,63 +194,41 @@ body::before {
 ========================================================= */
 
 .main-nav {
-
   height: 100%;
-
   display: flex;
-
   align-items: center;
-
   justify-content: center;
-
   gap: 28px;
-
 }
 
-
 .nav-item {
-
   position: relative;
 
   height: 100%;
 
   display: flex;
-
   align-items: center;
 
-  color:
-    #89908d;
+  color: #89908d;
 
   font-size: 10px;
-
   font-weight: 800;
-
   letter-spacing: 2px;
 
   cursor: pointer;
-
   user-select: none;
-
 }
-
 
 .nav-item:hover {
-
-  color: white;
-
+  color: #fff;
 }
-
 
 .nav-item.active {
-
   color:
     var(--green-light);
-
 }
 
-
 .nav-item.active::after {
-
   content: "";
 
   position: absolute;
@@ -368,9 +241,7 @@ body::before {
 
   background:
     var(--green);
-
 }
-
 
 
 /* =========================================================
@@ -378,35 +249,28 @@ body::before {
 ========================================================= */
 
 .account-area {
-
   display: flex;
-
   align-items: center;
-
   justify-content: flex-end;
-
   gap: 8px;
-
 }
 
-
 #admin-email {
-
   max-width: 170px;
 
   overflow: hidden;
 
-  text-overflow: ellipsis;
+  text-overflow:
+    ellipsis;
 
-  white-space: nowrap;
+  white-space:
+    nowrap;
 
   color:
     var(--muted);
 
   font-size: 10px;
-
 }
-
 
 
 /* =========================================================
@@ -414,7 +278,6 @@ body::before {
 ========================================================= */
 
 button {
-
   appearance: none;
 
   min-height: 38px;
@@ -422,13 +285,17 @@ button {
   border:
     1px solid var(--border);
 
-  border-radius: 9px;
+  border-radius:
+    9px;
 
-  display: inline-flex;
+  display:
+    inline-flex;
 
-  align-items: center;
+  align-items:
+    center;
 
-  justify-content: center;
+  justify-content:
+    center;
 
   gap: 7px;
 
@@ -436,111 +303,93 @@ button {
     8px 12px;
 
   background:
-    rgba(20, 28, 24, .9);
+    rgba(20,28,24,.9);
 
   color:
     #dce5e0;
 
-  font-family: inherit;
+  font-family:
+    inherit;
 
-  font-size: 10px;
+  font-size:
+    10px;
 
-  font-weight: 750;
+  font-weight:
+    750;
 
-  cursor: pointer;
+  cursor:
+    pointer;
 
   transition:
     .15s ease;
-
 }
-
 
 button svg {
-
   width: 15px;
   height: 15px;
-
 }
 
-
 button:hover {
-
   border-color:
     var(--border-strong);
 
   background:
-    rgba(33, 46, 39, .96);
+    rgba(33,46,39,.96);
 
-  color: white;
-
+  color:
+    #fff;
 }
-
 
 button:active {
-
   transform:
     scale(.975);
-
 }
 
-
 button.primary {
-
   background:
-    rgba(43, 77, 59, .9);
+    rgba(43,77,59,.9);
 
   border-color:
     rgba(134,173,150,.3);
 
   color:
     #c9ded1;
-
 }
 
-
 button.gold {
-
   background:
-    rgba(117, 92, 26, .19);
+    rgba(117,92,26,.19);
 
   border-color:
     rgba(198,164,67,.38);
 
   color:
     var(--gold-light);
-
 }
 
-
 button.danger {
-
   background:
-    rgba(112, 34, 34, .12);
+    rgba(112,34,34,.12);
 
   border-color:
     rgba(201,90,90,.25);
 
   color:
     #e88484;
-
 }
 
-
 button.active {
-
   border-color:
     rgba(134,173,150,.55);
 
   background:
     rgba(43,77,59,.95);
 
-  color: white;
-
+  color:
+    #fff;
 }
 
-
 button:disabled {
-
   opacity: .32;
 
   cursor:
@@ -548,9 +397,7 @@ button:disabled {
 
   transform:
     none;
-
 }
-
 
 
 /* =========================================================
@@ -558,7 +405,6 @@ button:disabled {
 ========================================================= */
 
 .panel {
-
   position: fixed;
 
   z-index: 6000;
@@ -568,7 +414,8 @@ button:disabled {
   border:
     1px solid var(--border);
 
-  border-radius: 13px;
+  border-radius:
+    13px;
 
   background:
     linear-gradient(
@@ -582,31 +429,27 @@ button:disabled {
 
   box-shadow:
     0 22px 65px rgba(0,0,0,.46);
-
 }
 
-
 .panel-header {
-
   min-height: 56px;
 
   display: flex;
 
-  align-items: center;
+  align-items:
+    center;
 
-  justify-content: space-between;
+  justify-content:
+    space-between;
 
   padding:
     0 16px;
 
   border-bottom:
     1px solid var(--border);
-
 }
 
-
 .panel-kicker {
-
   color:
     var(--muted);
 
@@ -614,45 +457,33 @@ button:disabled {
 
   font-weight: 800;
 
-  letter-spacing: 2px;
-
+  letter-spacing:
+    2px;
 }
 
-
 .panel-title {
-
   margin-top: 3px;
 
   font-size: 15px;
 
   font-weight: 750;
-
 }
-
 
 .panel-scroll {
-
   overflow-y: auto;
-
 }
-
 
 .panel-scroll::-webkit-scrollbar {
-
   width: 5px;
-
 }
 
-
 .panel-scroll::-webkit-scrollbar-thumb {
-
-  border-radius: 999px;
+  border-radius:
+    999px;
 
   background:
     rgba(134,173,150,.2);
-
 }
-
 
 
 /* =========================================================
@@ -660,7 +491,6 @@ button:disabled {
 ========================================================= */
 
 #layers-panel {
-
   top:
     calc(var(--top-height) + 18px);
 
@@ -672,42 +502,32 @@ button:disabled {
 
   max-height:
     255px;
-
 }
-
 
 #layers-panel.closed {
-
   display: none;
-
 }
-
 
 #layers-panel .panel-scroll {
+  max-height: 190px;
 
-  max-height:
-    190px;
-
-  padding: 12px;
-
+  padding:
+    12px;
 }
-
 
 #layers-list {
-
   display: grid;
-
   gap: 7px;
-
 }
 
-
 .layer-item {
-
   display: grid;
 
   grid-template-columns:
-    18px 10px 1fr auto;
+    18px
+    10px
+    1fr
+    auto;
 
   align-items: center;
 
@@ -718,29 +538,30 @@ button:disabled {
   padding:
     8px 11px;
 
+  margin: 0;
+
   border:
     1px solid rgba(255,255,255,.045);
 
-  border-radius: 9px;
+  border-radius:
+    9px;
 
   background:
     rgba(255,255,255,.018);
 
-  cursor: pointer;
+  cursor:
+    pointer;
 
+  text-transform:
+    none;
 }
-
 
 .layer-item:hover {
-
   background:
     rgba(81,118,96,.08);
-
 }
 
-
 .layer-item input {
-
   width: 15px;
   height: 15px;
 
@@ -748,46 +569,41 @@ button:disabled {
 
   accent-color:
     var(--green);
-
 }
 
-
 .layer-swatch {
-
   width: 9px;
   height: 9px;
 
-  border-radius: 50%;
+  border-radius:
+    50%;
 
   box-shadow:
     0 0 7px currentColor;
-
 }
 
-
 .layer-name {
-
   overflow: hidden;
 
-  white-space: nowrap;
+  white-space:
+    nowrap;
 
-  text-overflow: ellipsis;
+  text-overflow:
+    ellipsis;
 
   font-size: 11px;
 
   font-weight: 650;
-
 }
 
-
 .layer-count {
-
   min-width: 24px;
 
   padding:
     3px 6px;
 
-  border-radius: 999px;
+  border-radius:
+    999px;
 
   background:
     rgba(255,255,255,.035);
@@ -795,12 +611,12 @@ button:disabled {
   color:
     var(--muted);
 
-  text-align: center;
+  text-align:
+    center;
 
-  font-size: 9px;
-
+  font-size:
+    9px;
 }
-
 
 
 /* =========================================================
@@ -808,7 +624,6 @@ button:disabled {
 ========================================================= */
 
 #editor-panel {
-
   top:
     calc(var(--top-height) + 18px);
 
@@ -825,20 +640,16 @@ button:disabled {
       - 36px
     );
 
-  display: none;
-
+  display:
+    none;
 }
-
 
 body.editing #editor-panel {
-
-  display: block;
-
+  display:
+    block;
 }
 
-
 #editor-panel .panel-scroll {
-
   max-height:
     calc(
       100vh
@@ -846,47 +657,39 @@ body.editing #editor-panel {
       - 108px
     );
 
-  padding: 16px;
-
+  padding:
+    16px;
 }
 
-
 .editor-section {
-
   padding-bottom: 18px;
 
   margin-bottom: 18px;
 
   border-bottom:
     1px solid var(--border);
-
 }
 
-
 .editor-section:last-child {
-
   margin-bottom: 0;
 
   border-bottom: 0;
-
 }
-
 
 .section-head {
-
   display: flex;
 
-  align-items: center;
+  align-items:
+    center;
 
-  justify-content: space-between;
+  justify-content:
+    space-between;
 
-  margin-bottom: 12px;
-
+  margin-bottom:
+    12px;
 }
 
-
 .section-name {
-
   color:
     #b8c5be;
 
@@ -894,10 +697,9 @@ body.editing #editor-panel {
 
   font-weight: 800;
 
-  letter-spacing: 2px;
-
+  letter-spacing:
+    2px;
 }
-
 
 
 /* =========================================================
@@ -905,14 +707,14 @@ body.editing #editor-panel {
 ========================================================= */
 
 #status {
-
   padding:
     11px 12px;
 
   border:
     1px solid rgba(134,173,150,.14);
 
-  border-radius: 9px;
+  border-radius:
+    9px;
 
   background:
     rgba(48,81,62,.09);
@@ -922,10 +724,9 @@ body.editing #editor-panel {
 
   font-size: 10px;
 
-  line-height: 1.5;
-
+  line-height:
+    1.5;
 }
-
 
 
 /* =========================================================
@@ -933,7 +734,6 @@ body.editing #editor-panel {
 ========================================================= */
 
 label {
-
   display: block;
 
   margin:
@@ -946,17 +746,16 @@ label {
 
   font-weight: 800;
 
-  letter-spacing: 1.4px;
+  letter-spacing:
+    1.4px;
 
-  text-transform: uppercase;
-
+  text-transform:
+    uppercase;
 }
-
 
 input,
 select,
 textarea {
-
   width: 100%;
 
   min-height: 40px;
@@ -967,9 +766,11 @@ textarea {
   border:
     1px solid var(--border);
 
-  border-radius: 8px;
+  border-radius:
+    8px;
 
-  outline: none;
+  outline:
+    none;
 
   background:
     rgba(4,8,6,.88);
@@ -977,102 +778,84 @@ textarea {
   color:
     #e5ece8;
 
-  font-family: inherit;
+  font-family:
+    inherit;
 
-  font-size: 11px;
-
+  font-size:
+    11px;
 }
-
 
 input:focus,
 select:focus,
 textarea:focus {
-
   border-color:
     rgba(134,173,150,.42);
-
 }
-
 
 textarea {
-
   min-height: 74px;
 
-  resize: vertical;
-
+  resize:
+    vertical;
 }
-
 
 input[type="color"] {
-
   height: 40px;
 
-  padding: 4px;
-
+  padding:
+    4px;
 }
 
-
 input[type="range"] {
-
   min-height: 30px;
 
   padding: 0;
 
   accent-color:
     var(--green);
-
 }
 
-
 .form-grid {
-
   display: grid;
 
   grid-template-columns:
     1fr 1fr;
 
   gap: 10px;
-
 }
 
-
 .check-row {
-
   display: flex;
 
-  align-items: center;
+  align-items:
+    center;
 
   gap: 8px;
 
-  margin-top: 12px;
+  margin-top:
+    12px;
 
   color:
     #a4afa9;
 
-  font-size: 10px;
+  font-size:
+    10px;
 
+  text-transform:
+    none;
 }
 
-
 .check-row input {
-
   width: 15px;
 
-  min-height: 15px;
+  min-height:
+    15px;
 
   accent-color:
     var(--green);
-
 }
 
-
-
-/* =========================================================
-   ACTIONS
-========================================================= */
-
 .action-grid {
-
   display: grid;
 
   grid-template-columns:
@@ -1080,18 +863,14 @@ input[type="range"] {
 
   gap: 7px;
 
-  margin-top: 13px;
-
+  margin-top:
+    13px;
 }
-
 
 .action-grid .wide {
-
   grid-column:
     1 / -1;
-
 }
-
 
 
 /* =========================================================
@@ -1099,7 +878,6 @@ input[type="range"] {
 ========================================================= */
 
 #draw-toolbar {
-
   position: fixed;
 
   z-index: 8000;
@@ -1120,18 +898,22 @@ input[type="range"] {
   transform:
     translateX(-50%);
 
-  display: none;
+  display:
+    none;
 
-  align-items: stretch;
+  align-items:
+    stretch;
 
   gap: 4px;
 
-  padding: 6px;
+  padding:
+    6px;
 
   border:
     1px solid var(--border);
 
-  border-radius: 12px;
+  border-radius:
+    12px;
 
   background:
     rgba(5,9,7,.96);
@@ -1141,54 +923,45 @@ input[type="range"] {
 
   box-shadow:
     0 18px 50px rgba(0,0,0,.55);
-
 }
-
 
 body.editing #draw-toolbar {
-
-  display: flex;
-
+  display:
+    flex;
 }
 
-
 body.editing {
-
   --left-safe:
     calc(
       var(--left-panel)
       + var(--panel-gap)
       + 18px
     );
-
 }
 
-
 body.layers-open {
-
   --right-safe:
     calc(
       var(--right-panel)
       + var(--panel-gap)
       + 18px
     );
-
 }
 
-
 .draw-tool {
-
   width: 76px;
 
   min-height: 54px;
 
   display: flex;
 
-  flex-direction: column;
+  flex-direction:
+    column;
 
   gap: 4px;
 
-  padding: 6px;
+  padding:
+    6px;
 
   border:
     1px solid transparent;
@@ -1198,33 +971,25 @@ body.layers-open {
 
   color:
     #909b95;
-
 }
-
 
 .draw-tool svg {
-
   width: 18px;
   height: 18px;
-
 }
 
-
 .draw-tool:hover {
-
   border-color:
     var(--border);
 
   background:
     rgba(63,94,75,.1);
 
-  color: white;
-
+  color:
+    #fff;
 }
 
-
 .draw-tool.active {
-
   border-color:
     rgba(134,173,150,.3);
 
@@ -1233,23 +998,18 @@ body.layers-open {
 
   color:
     var(--green-light);
-
 }
 
-
 .draw-label {
-
   font-size: 8px;
 
   font-weight: 800;
 
-  letter-spacing: .5px;
-
+  letter-spacing:
+    .5px;
 }
 
-
 .toolbar-separator {
-
   width: 1px;
 
   margin:
@@ -1257,9 +1017,7 @@ body.layers-open {
 
   background:
     var(--border);
-
 }
-
 
 
 /* =========================================================
@@ -1267,7 +1025,6 @@ body.layers-open {
 ========================================================= */
 
 .leaflet-bottom.leaflet-right {
-
   right:
     calc(
       var(--right-safe, 0px)
@@ -1275,12 +1032,9 @@ body.layers-open {
     );
 
   bottom: 14px;
-
 }
 
-
 .leaflet-control-zoom {
-
   overflow: hidden;
 
   border:
@@ -1291,12 +1045,9 @@ body.layers-open {
 
   box-shadow:
     0 12px 35px rgba(0,0,0,.42) !important;
-
 }
 
-
 .leaflet-control-zoom a {
-
   width:
     38px !important;
 
@@ -1314,9 +1065,7 @@ body.layers-open {
 
   color:
     var(--green-light) !important;
-
 }
-
 
 
 /* =========================================================
@@ -1324,7 +1073,6 @@ body.layers-open {
 ========================================================= */
 
 #login-overlay {
-
   position: fixed;
 
   inset: 0;
@@ -1333,9 +1081,11 @@ body.layers-open {
 
   display: none;
 
-  align-items: center;
+  align-items:
+    center;
 
-  justify-content: center;
+  justify-content:
+    center;
 
   padding: 20px;
 
@@ -1344,29 +1094,27 @@ body.layers-open {
 
   backdrop-filter:
     blur(12px);
-
 }
-
 
 #login-overlay.visible {
-
-  display: flex;
-
+  display:
+    flex;
 }
 
-
 .login-box {
-
   width: 410px;
 
-  max-width: 100%;
+  max-width:
+    100%;
 
-  overflow: hidden;
+  overflow:
+    hidden;
 
   border:
     1px solid var(--border);
 
-  border-radius: 14px;
+  border-radius:
+    14px;
 
   background:
     linear-gradient(
@@ -1377,22 +1125,16 @@ body.layers-open {
 
   box-shadow:
     0 35px 100px rgba(0,0,0,.7);
-
 }
 
-
 .login-head {
-
   padding: 22px;
 
   border-bottom:
     1px solid var(--border);
-
 }
 
-
 .login-kicker {
-
   margin-bottom: 7px;
 
   color:
@@ -1402,52 +1144,41 @@ body.layers-open {
 
   font-weight: 900;
 
-  letter-spacing: 2px;
-
+  letter-spacing:
+    2px;
 }
 
-
 .login-title {
-
   margin: 0;
 
   font-size: 21px;
-
 }
 
-
 .login-sub {
-
   margin:
     6px 0 0;
 
   color:
     var(--muted);
 
-  font-size: 10px;
-
+  font-size:
+    10px;
 }
-
 
 .login-body {
-
   padding:
     20px 22px 22px;
-
 }
 
-
 #login-error {
-
   margin-top: 12px;
 
   color:
     #d6bd68;
 
-  font-size: 10px;
-
+  font-size:
+    10px;
 }
-
 
 
 /* =========================================================
@@ -1455,30 +1186,25 @@ body.layers-open {
 ========================================================= */
 
 .leaflet-popup-content-wrapper {
-
   border:
     1px solid var(--border);
 
-  border-radius: 10px;
+  border-radius:
+    10px;
 
   background:
     rgba(6,11,8,.97);
 
-  color: white;
-
+  color:
+    #fff;
 }
-
 
 .leaflet-popup-tip {
-
   background:
     rgba(6,11,8,.97);
-
 }
 
-
 .zone-category {
-
   margin-bottom: 5px;
 
   color:
@@ -1488,48 +1214,39 @@ body.layers-open {
 
   font-weight: 900;
 
-  letter-spacing: 1.6px;
+  letter-spacing:
+    1.6px;
 
-  text-transform: uppercase;
-
+  text-transform:
+    uppercase;
 }
 
-
 .zone-title {
-
   margin:
     0 0 5px;
 
-  font-size: 15px;
-
+  font-size:
+    15px;
 }
 
-
 .zone-description {
-
   margin: 0;
 
   color:
     var(--muted);
 
-  font-size: 10px;
-
+  font-size:
+    10px;
 }
 
 
-
 /* =========================================================
-   FACTIONS PANEL
+   FACTIONS
 ========================================================= */
 
 #factions-panel {
-
   top:
-    calc(
-      var(--top-height)
-      + 18px
-      + 265px
-    );
+    calc(var(--top-height) + 283px);
 
   right:
     var(--panel-gap);
@@ -1542,20 +1259,14 @@ body.layers-open {
 
   display:
     none;
-
 }
-
 
 body.editing #factions-panel {
-
   display:
     block;
-
 }
 
-
 #factions-panel .panel-scroll {
-
   max-height:
     calc(
       100vh
@@ -1565,37 +1276,28 @@ body.editing #factions-panel {
 
   padding:
     12px;
-
 }
-
 
 #faction-list {
+  display: grid;
 
-  display:
-    grid;
-
-  gap:
-    7px;
-
+  gap: 7px;
 }
 
-
 .faction-item {
+  width: 100%;
 
-  width:
-    100%;
-
-  display:
-    grid;
+  display: grid;
 
   grid-template-columns:
-    11px 1fr auto;
+    11px
+    1fr
+    auto;
 
   align-items:
     center;
 
-  gap:
-    9px;
+  gap: 9px;
 
   min-height:
     44px;
@@ -1614,50 +1316,34 @@ body.editing #factions-panel {
 
   cursor:
     pointer;
-
 }
 
-
 .faction-item:hover {
-
   border-color:
     var(--border-strong);
 
   background:
     rgba(81,118,96,.08);
-
 }
 
-
 .faction-item.active {
-
   border-color:
     rgba(198,164,67,.42);
 
   background:
     rgba(198,164,67,.08);
-
 }
 
-
 .faction-dot {
-
-  width:
-    10px;
-
-  height:
-    10px;
+  width: 10px;
+  height: 10px;
 
   border-radius:
     50%;
-
 }
 
-
 .faction-name {
-
-  overflow:
-    hidden;
+  overflow: hidden;
 
   text-overflow:
     ellipsis;
@@ -1670,39 +1356,27 @@ body.editing #factions-panel {
 
   font-weight:
     700;
-
 }
 
-
 .faction-count {
-
   color:
     var(--muted);
 
   font-size:
     9px;
-
 }
 
-
 .faction-form {
+  margin-top: 15px;
 
-  margin-top:
-    15px;
-
-  padding-top:
-    15px;
+  padding-top: 15px;
 
   border-top:
     1px solid var(--border);
-
 }
 
-
 #paint-info {
-
-  display:
-    none;
+  display: none;
 
   margin-top:
     12px;
@@ -1727,72 +1401,75 @@ body.editing #factions-panel {
 
   line-height:
     1.5;
-
 }
-
 
 #paint-info.visible {
-
   display:
     block;
-
 }
 
+
+/* =========================================================
+   PAINT MODE
+========================================================= */
 
 body.painting #map {
-
   cursor:
     crosshair;
-
 }
-
 
 body.painting #draw-toolbar {
-
   display:
     none;
-
 }
 
-
 body.painting #editor-panel {
-
   opacity:
     .45;
 
   pointer-events:
     none;
-
 }
-
 
 body.painting .leaflet-interactive {
-
   cursor:
     crosshair !important;
-
 }
 
+body.painting .faction-item.active {
+  border-color:
+    rgba(198,164,67,.72);
+
+  background:
+    rgba(198,164,67,.14);
+
+  box-shadow:
+    0 0 0 1px rgba(198,164,67,.12);
+}
+
+body.painting #factions-panel {
+  border-color:
+    rgba(198,164,67,.28);
+}
+
+body.painting #layers-panel {
+  opacity:
+    .82;
+}
+
+
 /* =========================================================
-   MAP VISUAL IMPROVEMENTS
+   TERRITOIRES PUBLICS
 ========================================================= */
 
 .leaflet-interactive {
-
   transition:
     fill-opacity .12s ease,
     stroke-width .12s ease,
     opacity .12s ease;
-
 }
 
-
-/* =========================================================
-   FACTION LABEL ON MAP
-========================================================= */
-
 .faction-map-badge {
-
   transform:
     translate(-50%, -50%);
 
@@ -1810,20 +1487,13 @@ body.painting .leaflet-interactive {
 
   pointer-events:
     none;
-
 }
 
-
 .faction-map-logo {
+  width: 44px;
+  height: 44px;
 
-  width:
-    44px;
-
-  height:
-    44px;
-
-  display:
-    grid;
+  display: grid;
 
   place-items:
     center;
@@ -1848,26 +1518,17 @@ body.painting .leaflet-interactive {
 
   font-weight:
     900;
-
 }
 
-
 .faction-map-logo img {
-
-  width:
-    100%;
-
-  height:
-    100%;
+  width: 100%;
+  height: 100%;
 
   object-fit:
     cover;
-
 }
 
-
 .faction-map-name {
-
   max-width:
     140px;
 
@@ -1890,7 +1551,7 @@ body.painting .leaflet-interactive {
     0 5px 15px rgba(0,0,0,.35);
 
   color:
-    #ffffff;
+    #fff;
 
   font-size:
     8px;
@@ -1909,182 +1570,202 @@ body.painting .leaflet-interactive {
 
   text-transform:
     uppercase;
-
 }
 
 
 /* =========================================================
-   PAINT MODE
+   REPÈRES / BÂTIMENTS
 ========================================================= */
 
-body.painting .faction-item.active {
+.map-repere {
+  width: 28px;
+  height: 28px;
 
-  border-color:
-    rgba(198,164,67,.72);
+  display: grid;
+
+  place-items:
+    center;
+
+  border:
+    1px solid rgba(255,255,255,.65);
+
+  border-radius:
+    50%;
 
   background:
-    rgba(198,164,67,.14);
+    rgba(5,9,7,.9);
+
+  color:
+    #fff;
 
   box-shadow:
-    0 0 0 1px rgba(198,164,67,.12);
+    0 5px 15px rgba(0,0,0,.42);
 
+  font-size:
+    12px;
 }
 
+.map-building {
+  min-width: 28px;
 
-body.painting #factions-panel {
+  height: 26px;
 
-  border-color:
-    rgba(198,164,67,.28);
+  display: grid;
 
+  place-items:
+    center;
+
+  padding:
+    0 6px;
+
+  border:
+    1px solid rgba(255,255,255,.65);
+
+  border-radius:
+    6px;
+
+  background:
+    rgba(5,9,7,.92);
+
+  color:
+    #fff;
+
+  box-shadow:
+    0 5px 15px rgba(0,0,0,.42);
+
+  font-size:
+    9px;
+
+  font-weight:
+    900;
 }
 
-
-body.painting #layers-panel {
-
-  opacity:
-    .82;
-
-}
 
 /* =========================================================
    RESPONSIVE
 ========================================================= */
 
-@media (max-width: 1000px) {
+@media(max-width: 1000px) {
 
   #topbar {
-
     grid-template-columns:
       1fr auto;
-
   }
 
   .main-nav {
-
-    display: none;
-
+    display:
+      none;
   }
 
 }
 
 
-@media (max-width: 760px) {
+@media(max-width: 760px) {
 
   :root {
-
     --top-height:
       62px;
-
   }
-
 
   #topbar {
-
     padding:
       0 10px;
-
   }
-
 
   .brand-name {
-
-    font-size: 10px;
-
+    font-size:
+      10px;
   }
-
 
   .brand-sub,
   #admin-email {
-
-    display: none;
-
+    display:
+      none;
   }
-
 
   .brand-emblem {
-
     width: 32px;
     height: 32px;
-
   }
 
-
   #layers-panel {
-
     top: 74px;
 
     right: 8px;
 
-    width: 245px;
+    width:
+      245px;
 
-    max-height: 44vh;
-
+    max-height:
+      235px;
   }
-
-
-  #editor-panel {
-
-    top: auto;
-
-    left: 8px;
-    right: 8px;
-
-    bottom: 78px;
-
-    width: auto;
-
-    max-height: 50vh;
-
-  }
-
-
-  #draw-toolbar {
-
-    left: 8px !important;
-    right: 8px;
-
-    bottom: 8px;
-
-    transform: none;
-
-    overflow-x: auto;
-
-  }
-
-
-  body.editing {
-
-    --left-safe: 0px;
-
-  }
-
-
-  body.layers-open {
-
-    --right-safe: 0px;
-
-  }
-
-
-  .leaflet-bottom.leaflet-right {
-
-    right: 8px;
-
-    bottom: 78px;
-
-  }
-
 
   #factions-panel {
+    top:
+      320px;
 
-    top: 330px;
+    right:
+      8px;
 
+    width:
+      245px;
+
+    bottom:
+      80px;
+  }
+
+  #editor-panel {
+    top:
+      auto;
+
+    left:
+      8px;
+
+    right:
+      8px;
+
+    bottom:
+      78px;
+
+    width:
+      auto;
+
+    max-height:
+      50vh;
+  }
+
+  #draw-toolbar {
+    left:
+      8px !important;
+
+    right:
+      8px;
+
+    bottom:
+      8px;
+
+    transform:
+      none;
+
+    overflow-x:
+      auto;
+  }
+
+  body.editing {
+    --left-safe:
+      0px;
+  }
+
+  body.layers-open {
+    --right-safe:
+      0px;
+  }
+
+  .leaflet-bottom.leaflet-right {
     right: 8px;
 
-    width: 245px;
-
-    bottom: 80px;
-
+    bottom:
+      78px;
   }
 
 }
@@ -2094,28 +1775,23 @@ body.painting #layers-panel {
 </head>
 
 
-
 <body class="layers-open">
 
-
-<!-- MAP -->
 
 <div id="map"></div>
 
 
-
-<!-- HEADER -->
+<!-- =========================================================
+     HEADER
+========================================================= -->
 
 <header id="topbar">
 
   <div class="brand">
 
     <div class="brand-emblem">
-
       <i data-lucide="compass"></i>
-
     </div>
-
 
     <div>
 
@@ -2132,7 +1808,6 @@ body.painting #layers-panel {
   </div>
 
 
-
   <nav class="main-nav">
 
     <div
@@ -2142,7 +1817,6 @@ body.painting #layers-panel {
       CARTE
     </div>
 
-
     <div
       id="nav-layers"
       class="nav-item"
@@ -2150,17 +1824,15 @@ body.painting #layers-panel {
       COUCHES
     </div>
 
-
     <div
       id="nav-editor"
       class="nav-item"
-      style="display:none;"
+      style="display:none"
     >
       ÉDITION
     </div>
 
   </nav>
-
 
 
   <div class="account-area">
@@ -2189,7 +1861,7 @@ body.painting #layers-panel {
     <button
       id="edit-mode-button"
       class="primary"
-      style="display:none;"
+      style="display:none"
     >
 
       <i data-lucide="pen-tool"></i>
@@ -2202,7 +1874,7 @@ body.painting #layers-panel {
     <button
       id="logout-button"
       class="danger"
-      style="display:none;"
+      style="display:none"
     >
 
       <i data-lucide="log-out"></i>
@@ -2215,7 +1887,9 @@ body.painting #layers-panel {
 
 
 
-<!-- LAYERS -->
+<!-- =========================================================
+     COUCHES
+========================================================= -->
 
 <aside
   id="layers-panel"
@@ -2258,7 +1932,9 @@ body.painting #layers-panel {
 
 
 
-<!-- FACTIONS -->
+<!-- =========================================================
+     FACTIONS
+========================================================= -->
 
 <aside
   id="factions-panel"
@@ -2311,7 +1987,7 @@ body.painting #layers-panel {
 
     <div
       class="action-grid"
-      style="margin-top:12px;"
+      style="margin-top:12px"
     >
 
       <button
@@ -2354,6 +2030,7 @@ body.painting #layers-panel {
 
       <div class="form-grid">
 
+
         <div>
 
           <label>
@@ -2388,6 +2065,7 @@ body.painting #layers-panel {
           </select>
 
         </div>
+
 
       </div>
 
@@ -2443,6 +2121,7 @@ body.painting #layers-panel {
 
         </button>
 
+
       </div>
 
 
@@ -2454,8 +2133,7 @@ body.painting #layers-panel {
 
         <br><br>
 
-        Clique directement sur les quartiers
-        pour les attribuer à cette faction.
+        Clique directement sur les quartiers pour les attribuer à cette faction.
 
         <br>
 
@@ -2463,10 +2141,11 @@ body.painting #layers-panel {
 
         <br><br>
 
+
         <button
           id="stop-paint"
           class="danger"
-          style="width:100%;"
+          style="width:100%"
         >
 
           <i data-lucide="x"></i>
@@ -2486,7 +2165,9 @@ body.painting #layers-panel {
 
 
 
-<!-- EDITOR -->
+<!-- =========================================================
+     EDITOR
+========================================================= -->
 
 <aside
   id="editor-panel"
@@ -2582,6 +2263,7 @@ body.painting #layers-panel {
 
       <div class="form-grid">
 
+
         <div>
 
           <label>
@@ -2613,6 +2295,7 @@ body.painting #layers-panel {
           >
 
         </div>
+
 
       </div>
 
@@ -2694,9 +2377,11 @@ body.painting #layers-panel {
 
         </button>
 
+
       </div>
 
     </section>
+
 
   </div>
 
@@ -2704,7 +2389,9 @@ body.painting #layers-panel {
 
 
 
-<!-- TOOLBAR -->
+<!-- =========================================================
+     TOOLBAR
+========================================================= -->
 
 <div id="draw-toolbar">
 
@@ -2767,11 +2454,14 @@ body.painting #layers-panel {
 
   </button>
 
+
 </div>
 
 
 
-<!-- LOGIN -->
+<!-- =========================================================
+     LOGIN
+========================================================= -->
 
 <div id="login-overlay">
 
@@ -2824,7 +2514,7 @@ body.painting #layers-panel {
 
         <div
           class="action-grid"
-          style="margin-top:17px;"
+          style="margin-top:17px"
         >
 
           <button
@@ -2844,13 +2534,16 @@ body.painting #layers-panel {
             type="button"
             class="wide"
           >
+
             Annuler
+
           </button>
 
         </div>
 
 
         <div id="login-error"></div>
+
 
       </form>
 
@@ -2862,7 +2555,9 @@ body.painting #layers-panel {
 
 
 
-<!-- LIBRARIES -->
+<!-- =========================================================
+     LIBRARIES
+========================================================= -->
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
@@ -2877,16 +2572,21 @@ body.painting #layers-panel {
 <script src="js/supabase-client.js"></script>
 
 
-
 <script>
 
 (async function () {
 
 
-
 /* =========================================================
-   ICONS
+   RACCOURCI DOM
 ========================================================= */
+
+const $ =
+  id =>
+    document.getElementById(
+      id
+    );
+
 
 lucide.createIcons();
 
@@ -2897,129 +2597,95 @@ lucide.createIcons();
 ========================================================= */
 
 const layersPanel =
-  document.getElementById(
-    "layers-panel"
-  );
-
+  $("layers-panel");
 
 const layersList =
-  document.getElementById(
-    "layers-list"
-  );
-
+  $("layers-list");
 
 const status =
-  document.getElementById(
-    "status"
-  );
-
+  $("status");
 
 const loginOverlay =
-  document.getElementById(
-    "login-overlay"
-  );
-
+  $("login-overlay");
 
 const loginForm =
-  document.getElementById(
-    "login-form"
-  );
-
+  $("login-form");
 
 const loginError =
-  document.getElementById(
-    "login-error"
-  );
-
+  $("login-error");
 
 const loginButton =
-  document.getElementById(
-    "login-button"
-  );
-
+  $("login-button");
 
 const logoutButton =
-  document.getElementById(
-    "logout-button"
-  );
-
+  $("logout-button");
 
 const editModeButton =
-  document.getElementById(
-    "edit-mode-button"
-  );
-
+  $("edit-mode-button");
 
 const adminEmail =
-  document.getElementById(
-    "admin-email"
-  );
-
+  $("admin-email");
 
 const shapeLayerInput =
-  document.getElementById(
-    "shape-layer"
-  );
-
+  $("shape-layer");
 
 const shapeNameInput =
-  document.getElementById(
-    "shape-name"
-  );
-
+  $("shape-name");
 
 const shapeDescriptionInput =
-  document.getElementById(
-    "shape-description"
-  );
-
+  $("shape-description");
 
 const shapeColorInput =
-  document.getElementById(
-    "shape-color"
-  );
-
+  $("shape-color");
 
 const shapeOpacityInput =
-  document.getElementById(
-    "shape-opacity"
-  );
-
+  $("shape-opacity");
 
 const shapePublishedInput =
-  document.getElementById(
-    "shape-published"
-  );
-
+  $("shape-published");
 
 const saveShapeButton =
-  document.getElementById(
-    "save-shape"
-  );
-
+  $("save-shape");
 
 const editShapeButton =
-  document.getElementById(
-    "edit-shape"
-  );
-
+  $("edit-shape");
 
 const finishEditButton =
-  document.getElementById(
-    "finish-edit"
-  );
-
+  $("finish-edit");
 
 const cancelSelectionButton =
-  document.getElementById(
-    "cancel-selection"
-  );
-
+  $("cancel-selection");
 
 const deleteShapeButton =
-  document.getElementById(
-    "delete-shape"
-  );
+  $("delete-shape");
+
+
+const factionList =
+  $("faction-list");
+
+const factionNameInput =
+  $("faction-name");
+
+const factionDescriptionInput =
+  $("faction-description");
+
+const factionColorInput =
+  $("faction-color");
+
+const factionLogoInput =
+  $("faction-logo");
+
+const factionVisibleInput =
+  $("faction-visible");
+
+const paintFactionButton =
+  $("paint-faction");
+
+const deleteFactionButton =
+  $("delete-faction");
+
+const paintInfo =
+  $("paint-info");
 
 
 
@@ -3034,50 +2700,35 @@ let initialBounds;
 let currentUser =
   null;
 
-
 let admin =
   false;
-
 
 let editMode =
   false;
 
-
 let mapLayers =
   [];
-
 
 let mapShapes =
   [];
 
-
-/* =========================================================
-   FACTIONS STATE
-========================================================= */
-
 let mapFactions =
   [];
-
 
 let selectedFaction =
   null;
 
-
 let paintMode =
   false;
-
 
 let layerGroups =
   {};
 
-
 let selectedLeafletLayer =
   null;
 
-
 let selectedShapeRecord =
   null;
-
 
 let temporaryLayer =
   null;
@@ -3089,7 +2740,7 @@ const layerVisibility =
 
 
 /* =========================================================
-   INNER OUTLINE SYSTEM
+   INNER OUTLINE
 ========================================================= */
 
 const SVG_NS =
@@ -3114,16 +2765,13 @@ function isAreaLayer(
 ) {
 
   return (
-    layer instanceof L.Polygon
+    layer instanceof
+    L.Polygon
   );
 
 }
 
 
-
-/* =========================================================
-   DESTROY CLIP
-========================================================= */
 
 function destroyInnerOutline(
   layer
@@ -3135,30 +2783,23 @@ function destroyInnerOutline(
     );
 
 
-  if (!record) {
+  if (
+    !record
+  ) {
+
     return;
+
   }
 
 
-  if (
-    record.path
-  ) {
-
-    record.path.removeAttribute(
+  record.path
+    ?.removeAttribute(
       "clip-path"
     );
 
-  }
 
-
-  if (
-    record.clipPath &&
-    record.clipPath.isConnected
-  ) {
-
-    record.clipPath.remove();
-
-  }
+  record.clipPath
+    ?.remove();
 
 
   innerClipRegistry.delete(
@@ -3169,10 +2810,6 @@ function destroyInnerOutline(
 
 
 
-/* =========================================================
-   INSTALL CLIP
-========================================================= */
-
 function installInnerOutline(
   layer
 ) {
@@ -3180,22 +2817,18 @@ function installInnerOutline(
   if (
     !isAreaLayer(
       layer
-    )
+    ) ||
+    !layer._path ||
+    !layer._path.ownerSVGElement
   ) {
+
     return;
+
   }
 
 
   const path =
     layer._path;
-
-
-  if (
-    !path ||
-    !path.ownerSVGElement
-  ) {
-    return;
-  }
 
 
   const svg =
@@ -3210,7 +2843,8 @@ function installInnerOutline(
 
   if (
     record &&
-    record.path !== path
+    record.path !==
+      path
   ) {
 
     destroyInnerOutline(
@@ -3224,7 +2858,9 @@ function installInnerOutline(
   }
 
 
-  if (!record) {
+  if (
+    !record
+  ) {
 
 
     let defs =
@@ -3233,7 +2869,9 @@ function installInnerOutline(
       );
 
 
-    if (!defs) {
+    if (
+      !defs
+    ) {
 
       defs =
         document.createElementNS(
@@ -3268,6 +2906,13 @@ function installInnerOutline(
       );
 
 
+    const clipShape =
+      document.createElementNS(
+        SVG_NS,
+        "path"
+      );
+
+
     clipPath.setAttribute(
       "id",
       id
@@ -3278,13 +2923,6 @@ function installInnerOutline(
       "clipPathUnits",
       "userSpaceOnUse"
     );
-
-
-    const clipShape =
-      document.createElementNS(
-        SVG_NS,
-        "path"
-      );
 
 
     clipShape.setAttribute(
@@ -3339,12 +2977,6 @@ function installInnerOutline(
   }
 
 
-  path.setAttribute(
-    "clip-path",
-    `url(#${record.id})`
-  );
-
-
   syncInnerOutline(
     layer
   );
@@ -3353,10 +2985,6 @@ function installInnerOutline(
 
 
 
-/* =========================================================
-   SYNC ONE CLIP
-========================================================= */
-
 function syncInnerOutline(
   layer
 ) {
@@ -3364,18 +2992,12 @@ function syncInnerOutline(
   if (
     !isAreaLayer(
       layer
-    )
+    ) ||
+    !layer._path
   ) {
+
     return;
-  }
 
-
-  const path =
-    layer._path;
-
-
-  if (!path) {
-    return;
   }
 
 
@@ -3387,7 +3009,8 @@ function syncInnerOutline(
 
   if (
     !record ||
-    record.path !== path
+    record.path !==
+      layer._path
   ) {
 
     installInnerOutline(
@@ -3403,19 +3026,27 @@ function syncInnerOutline(
   }
 
 
-  if (!record) {
+  if (
+    !record
+  ) {
+
     return;
+
   }
 
 
   const d =
-    path.getAttribute(
+    layer._path.getAttribute(
       "d"
     );
 
 
-  if (!d) {
+  if (
+    !d
+  ) {
+
     return;
+
   }
 
 
@@ -3425,19 +3056,19 @@ function syncInnerOutline(
   );
 
 
-  path.setAttribute(
+  layer._path.setAttribute(
     "clip-path",
     `url(#${record.id})`
   );
 
 
-  path.setAttribute(
+  layer._path.setAttribute(
     "stroke-linejoin",
     "round"
   );
 
 
-  path.setAttribute(
+  layer._path.setAttribute(
     "stroke-linecap",
     "round"
   );
@@ -3445,10 +3076,6 @@ function syncInnerOutline(
 }
 
 
-
-/* =========================================================
-   SCHEDULE CLIP
-========================================================= */
 
 function scheduleInnerOutline(
   layer
@@ -3459,96 +3086,56 @@ function scheduleInnerOutline(
       layer
     )
   ) {
+
     return;
+
   }
 
 
   requestAnimationFrame(
-    () => {
-
+    () =>
       installInnerOutline(
         layer
-      );
-
-
-      syncInnerOutline(
-        layer
-      );
-
-    }
+      )
   );
 
 
   setTimeout(
-    () => {
-
+    () =>
       installInnerOutline(
         layer
-      );
-
-
-      syncInnerOutline(
-        layer
-      );
-
-    },
-    35
+      ),
+    50
   );
 
 
   setTimeout(
-    () => {
-
+    () =>
       installInnerOutline(
         layer
-      );
-
-
-      syncInnerOutline(
-        layer
-      );
-
-    },
-    100
-  );
-
-
-  setTimeout(
-    () => {
-
-      installInnerOutline(
-        layer
-      );
-
-
-      syncInnerOutline(
-        layer
-      );
-
-    },
-    220
+      ),
+    150
   );
 
 }
 
 
 
-/* =========================================================
-   SYNC ALL
-========================================================= */
-
 function syncAllInnerOutlines() {
 
   if (
     globalClipFrame
   ) {
+
     return;
+
   }
 
 
   globalClipFrame =
     requestAnimationFrame(
       () => {
+
 
         globalClipFrame =
           null;
@@ -3572,43 +3159,29 @@ function syncAllInnerOutlines() {
 
 
 
-/* =========================================================
-   CLEAR CLIPS
-========================================================= */
-
 function clearInnerClips() {
 
-  const layers =
-    Array.from(
-      innerClipRegistry.keys()
-    );
-
-
-  for (
-    const layer
-    of layers
-  ) {
-
-    destroyInnerOutline(
-      layer
-    );
-
-  }
+  [
+    ...innerClipRegistry.keys()
+  ].forEach(
+    destroyInnerOutline
+  );
 
 }
 
 
 
 /* =========================================================
-   IMAGE
+   MAP IMAGE
 ========================================================= */
 
 const MAP_IMAGE =
-  window.APP_CONFIG.MAP_IMAGE;
+  window.APP_CONFIG?.MAP_IMAGE ||
+  "images/map.png";
 
 
 function loadImageSize(
-  src
+  source
 ) {
 
   return new Promise(
@@ -3616,6 +3189,7 @@ function loadImageSize(
       resolve,
       reject
     ) => {
+
 
       const image =
         new Image();
@@ -3650,7 +3224,7 @@ function loadImageSize(
 
 
       image.src =
-        src;
+        source;
 
     }
   );
@@ -3663,91 +3237,139 @@ function loadImageSize(
    MAP
 ========================================================= */
 
-const imageSize =
-  await loadImageSize(
-    MAP_IMAGE
+try {
+
+
+  const imageSize =
+    await loadImageSize(
+      MAP_IMAGE
+    );
+
+
+  initialBounds = [
+
+    [0, 0],
+
+    [
+      imageSize.height,
+      imageSize.width
+    ]
+
+  ];
+
+
+  map =
+    L.map(
+      "map",
+      {
+
+        crs:
+          L.CRS.Simple,
+
+        minZoom:
+          -6,
+
+        maxZoom:
+          5,
+
+        zoomSnap:
+          .25,
+
+        attributionControl:
+          false,
+
+        zoomControl:
+          false
+
+      }
+    );
+
+
+  /* =======================================================
+     PANES
+  ======================================================= */
+
+  map.createPane(
+    "territoryPane"
   );
 
-
-initialBounds = [
-
-  [0, 0],
-
-  [
-    imageSize.height,
-    imageSize.width
-  ]
-
-];
+  map.getPane(
+    "territoryPane"
+  ).style.zIndex =
+    410;
 
 
-map =
-  L.map(
-    "map",
+  map.createPane(
+    "quartierPane"
+  );
+
+  map.getPane(
+    "quartierPane"
+  ).style.zIndex =
+    420;
+
+
+  map.createPane(
+    "otherShapePane"
+  );
+
+  map.getPane(
+    "otherShapePane"
+  ).style.zIndex =
+    430;
+
+
+  map.createPane(
+    "factionLabelPane"
+  );
+
+  map.getPane(
+    "factionLabelPane"
+  ).style.zIndex =
+    440;
+
+
+
+  L.control
+    .zoom({
+
+      position:
+        "bottomright"
+
+    })
+    .addTo(
+      map
+    );
+
+
+
+  L.imageOverlay(
+
+    MAP_IMAGE,
+
+    initialBounds,
+
     {
 
-      crs:
-        L.CRS.Simple,
-
-      minZoom:
-        -6,
-
-      maxZoom:
-        5,
-
-      zoomSnap:
-        .25,
-
-      attributionControl:
+      interactive:
         false,
 
-      zoomControl:
-        false
+      pmIgnore:
+        true
 
     }
-  );
 
-
-L.control
-  .zoom({
-
-    position:
-      "bottomright"
-
-  })
-  .addTo(
+  ).addTo(
     map
   );
 
 
-L.imageOverlay(
-
-  MAP_IMAGE,
-
-  initialBounds,
-
-  {
-
-    interactive:
-      false,
-
-    pmIgnore:
-      true
-
-  }
-
-).addTo(
-  map
-);
+  map.fitBounds(
+    initialBounds
+  );
 
 
-map.fitBounds(
-  initialBounds
-);
-
-
-map.setMaxBounds(
-  [
+  map.setMaxBounds([
 
     [
       -imageSize.height,
@@ -3759,24 +3381,48 @@ map.setMaxBounds(
       imageSize.width * 2
     ]
 
-  ]
-);
+  ]);
+
+
+}
+catch (
+  error
+) {
+
+  console.error(
+    error
+  );
+
+
+  layersList.textContent =
+    "Erreur de chargement de la carte";
+
+
+  return;
+
+}
 
 
 
 /* =========================================================
-   MAP REDRAW
+   MAP EVENTS
 ========================================================= */
 
 map.on(
+
   "zoom move resize viewreset",
+
   syncAllInnerOutlines
+
 );
 
 
 map.on(
+
   "zoomend moveend",
+
   () => {
+
 
     for (
       const layer
@@ -3790,6 +3436,7 @@ map.on(
     }
 
   }
+
 );
 
 
@@ -3822,13 +3469,12 @@ map.pm.setGlobalOptions({
 
 
 
-/* =========================================================
-   INNER OUTLINE WHILE DRAWING
-========================================================= */
-
 map.on(
+
   "pm:drawstart",
+
   event => {
+
 
     const workingLayer =
       event.workingLayer;
@@ -3839,82 +3485,52 @@ map.on(
         workingLayer
       )
     ) {
+
       return;
+
     }
 
 
     const refresh =
-      () => {
-
+      () =>
         scheduleInnerOutline(
           workingLayer
         );
 
-      };
+
+    workingLayer.on(
+
+      "add pm:vertexadded pm:change pm:snap pm:unsnap pm:markerdrag",
+
+      refresh
+
+    );
 
 
     requestAnimationFrame(
       refresh
     );
 
-
-    workingLayer.on(
-      "add",
-      refresh
-    );
-
-
-    workingLayer.on(
-      "pm:vertexadded",
-      refresh
-    );
-
-
-    workingLayer.on(
-      "pm:change",
-      refresh
-    );
-
-
-    workingLayer.on(
-      "pm:snap",
-      refresh
-    );
-
-
-    workingLayer.on(
-      "pm:unsnap",
-      refresh
-    );
-
-
-    workingLayer.on(
-      "pm:markerdrag",
-      refresh
-    );
-
   }
+
 );
 
 
 
 /* =========================================================
-   RESET MAP
+   RESET
 ========================================================= */
 
-document
-  .getElementById(
-    "reset-map"
-  )
+$("reset-map")
   .addEventListener(
-    "click",
-    () => {
 
+    "click",
+
+    () =>
       map.fitBounds(
         initialBounds
-      );
+      )
 
-    }
   );
 
 
@@ -3927,51 +3543,60 @@ function setLayersOpen(
   open
 ) {
 
-  document.body.classList.toggle(
-    "layers-open",
-    open
-  );
+  document.body
+    .classList.toggle(
+
+      "layers-open",
+
+      open
+
+    );
 
 
-  layersPanel.classList.toggle(
-    "closed",
-    !open
-  );
+  layersPanel
+    .classList.toggle(
+
+      "closed",
+
+      !open
+
+    );
 
 }
 
 
-document
-  .getElementById(
-    "nav-layers"
-  )
+
+$("nav-layers")
   .addEventListener(
+
     "click",
+
     () => {
 
       setLayersOpen(
-        !document.body.classList.contains(
-          "layers-open"
-        )
+
+        !document.body
+          .classList.contains(
+            "layers-open"
+          )
+
       );
 
     }
+
   );
 
 
-document
-  .getElementById(
-    "close-layers"
-  )
+$("close-layers")
   .addEventListener(
-    "click",
-    () => {
 
+    "click",
+
+    () =>
       setLayersOpen(
         false
-      );
+      )
 
-    }
   );
 
 
@@ -3983,8 +3608,7 @@ document
 async function refreshAuth() {
 
   const {
-    data:
-    {
+    data: {
       user
     }
   } =
@@ -3992,7 +3616,8 @@ async function refreshAuth() {
 
 
   currentUser =
-    user || null;
+    user ||
+    null;
 
 
   admin =
@@ -4004,7 +3629,8 @@ async function refreshAuth() {
   ) {
 
     const {
-      data: isAdmin
+      data:
+        isAdmin
     } =
       await db.rpc(
         "is_admin"
@@ -4012,67 +3638,52 @@ async function refreshAuth() {
 
 
     admin =
-      isAdmin === true;
+      isAdmin ===
+      true;
 
   }
 
 
-  document
-    .getElementById(
-      "nav-editor"
-    )
+  $("nav-editor")
     .style.display =
       admin
         ? ""
         : "none";
 
 
-  if (
+  loginButton.style.display =
     admin
+      ? "none"
+      : "";
+
+
+  editModeButton.style.display =
+    admin
+      ? ""
+      : "none";
+
+
+  logoutButton.style.display =
+    admin
+      ? ""
+      : "none";
+
+
+  adminEmail.textContent =
+    admin
+      ? (
+          currentUser.email ||
+          ""
+        )
+      : "";
+
+
+  if (
+    !admin &&
+    editMode
   ) {
 
-    loginButton.style.display =
-      "none";
-
-
-    editModeButton.style.display =
-      "";
-
-
-    logoutButton.style.display =
-      "";
-
-
-    adminEmail.textContent =
-      currentUser.email ||
-      "";
-
-  }
-  else {
-
-    loginButton.style.display =
-      "";
-
-
-    editModeButton.style.display =
-      "none";
-
-
-    logoutButton.style.display =
-      "none";
-
-
-    adminEmail.textContent =
-      "";
-
-
-    if (
-      editMode
-    ) {
-
-      disableEditMode();
-
-    }
+    disableEditMode();
 
   }
 
@@ -4087,139 +3698,146 @@ async function refreshAuth() {
    LOGIN
 ========================================================= */
 
-loginButton.addEventListener(
-  "click",
-  () => {
-
-    loginError.textContent =
-      "";
-
-
-    loginOverlay.classList.add(
-      "visible"
-    );
-
-  }
-);
-
-
-document
-  .getElementById(
-    "close-login"
-  )
+loginButton
   .addEventListener(
+
     "click",
+
     () => {
 
-      loginOverlay.classList.remove(
-        "visible"
-      );
+      loginError.textContent =
+        "";
+
+
+      loginOverlay
+        .classList.add(
+          "visible"
+        );
 
     }
+
   );
 
 
-loginOverlay.addEventListener(
-  "click",
-  event => {
+$("close-login")
+  .addEventListener(
 
-    if (
-      event.target ===
+    "click",
+
+    () => {
+
       loginOverlay
-    ) {
-
-      loginOverlay.classList.remove(
-        "visible"
-      );
+        .classList.remove(
+          "visible"
+        );
 
     }
 
-  }
-);
+  );
 
 
-loginForm.addEventListener(
-  "submit",
-  async event => {
+loginOverlay
+  .addEventListener(
 
-    event.preventDefault();
+    "click",
 
+    event => {
 
-    loginError.textContent =
-      "Connexion...";
+      if (
+        event.target ===
+        loginOverlay
+      ) {
 
+        loginOverlay
+          .classList.remove(
+            "visible"
+          );
 
-    const email =
-      document
-        .getElementById(
-          "login-email"
-        )
-        .value
-        .trim();
-
-
-    const password =
-      document
-        .getElementById(
-          "login-password"
-        )
-        .value;
-
-
-    const {
-      error
-    } =
-      await db.auth
-        .signInWithPassword({
-
-          email,
-          password
-
-        });
-
-
-    if (
-      error
-    ) {
-
-      loginError.textContent =
-        error.message;
-
-      return;
+      }
 
     }
 
+  );
 
-    await refreshAuth();
+
+loginForm
+  .addEventListener(
+
+    "submit",
+
+    async event => {
 
 
-    if (
-      !admin
-    ) {
-
-      await db.auth.signOut();
+      event.preventDefault();
 
 
       loginError.textContent =
-        "Ce compte n'est pas administrateur.";
+        "Connexion...";
+
+
+      const {
+        error
+      } =
+        await db.auth
+          .signInWithPassword({
+
+            email:
+              $("login-email")
+                .value
+                .trim(),
+
+            password:
+              $("login-password")
+                .value
+
+          });
+
+
+      if (
+        error
+      ) {
+
+        loginError.textContent =
+          error.message;
+
+        return;
+
+      }
 
 
       await refreshAuth();
 
-      return;
+
+      if (
+        !admin
+      ) {
+
+        await db.auth.signOut();
+
+
+        loginError.textContent =
+          "Ce compte n'est pas administrateur.";
+
+
+        await refreshAuth();
+
+
+        return;
+
+      }
+
+
+      loginOverlay
+        .classList.remove(
+          "visible"
+        );
+
+
+      await loadDatabase();
 
     }
 
-
-    loginOverlay.classList.remove(
-      "visible"
-    );
-
-
-    await loadDatabase();
-
-  }
-);
+  );
 
 
 
@@ -4227,20 +3845,25 @@ loginForm.addEventListener(
    LOGOUT
 ========================================================= */
 
-logoutButton.addEventListener(
-  "click",
-  async () => {
+logoutButton
+  .addEventListener(
 
-    await db.auth.signOut();
+    "click",
 
-
-    await refreshAuth();
+    async () => {
 
 
-    await loadDatabase();
+      await db.auth.signOut();
 
-  }
-);
+
+      await refreshAuth();
+
+
+      await loadDatabase();
+
+    }
+
+  );
 
 
 
@@ -4253,7 +3876,9 @@ function enableEditMode() {
   if (
     !admin
   ) {
+
     return;
+
   }
 
 
@@ -4261,19 +3886,24 @@ function enableEditMode() {
     true;
 
 
-  document.body.classList.add(
-    "editing"
-  );
+  document.body
+    .classList.add(
+      "editing"
+    );
 
 
-  editModeButton.classList.add(
-    "active"
-  );
+  editModeButton
+    .classList.add(
+      "active"
+    );
 
 
   editModeButton.innerHTML = `
+
     <i data-lucide="check"></i>
+
     Édition active
+
   `;
 
 
@@ -4311,19 +3941,24 @@ function disableEditMode() {
   cancelSelection();
 
 
-  document.body.classList.remove(
-    "editing"
-  );
+  document.body
+    .classList.remove(
+      "editing"
+    );
 
 
-  editModeButton.classList.remove(
-    "active"
-  );
+  editModeButton
+    .classList.remove(
+      "active"
+    );
 
 
   editModeButton.innerHTML = `
+
     <i data-lucide="pen-tool"></i>
+
     Éditer
+
   `;
 
 
@@ -4336,33 +3971,36 @@ function disableEditMode() {
 
 
 
-editModeButton.addEventListener(
-  "click",
-  () => {
-
-    if (
-      editMode
-    ) {
-
-      disableEditMode();
-
-    }
-    else {
-
-      enableEditMode();
-
-    }
-
-  }
-);
-
-
-document
-  .getElementById(
-    "nav-editor"
-  )
+editModeButton
   .addEventListener(
+
     "click",
+
+    () => {
+
+      if (
+        editMode
+      ) {
+
+        disableEditMode();
+
+      }
+      else {
+
+        enableEditMode();
+
+      }
+
+    }
+
+  );
+
+
+$("nav-editor")
+  .addEventListener(
+
+    "click",
+
     () => {
 
       if (
@@ -4375,12 +4013,13 @@ document
       }
 
     }
+
   );
 
 
 
 /* =========================================================
-   DRAWING TOOLS
+   DRAW TOOLS
 ========================================================= */
 
 function clearToolActive() {
@@ -4392,9 +4031,10 @@ function clearToolActive() {
     .forEach(
       button => {
 
-        button.classList.remove(
-          "active"
-        );
+        button
+          .classList.remove(
+            "active"
+          );
 
       }
     );
@@ -4420,23 +4060,29 @@ function startDrawing(
 ) {
 
   if (
-    !editMode
+    !editMode ||
+    paintMode
   ) {
+
     return;
+
   }
 
 
   stopDrawing();
 
 
-  button.classList.add(
-    "active"
-  );
+  button
+    .classList.add(
+      "active"
+    );
 
 
   const isArea =
-    type === "Polygon" ||
-    type === "Rectangle";
+    type ===
+      "Polygon" ||
+    type ===
+      "Rectangle";
 
 
   map.pm.enableDraw(
@@ -4502,12 +4148,16 @@ function startDrawing(
 
         fillOpacity:
           isArea
-            ? .25
+            ? .20
             : 0,
+
+        /*
+          Contour réduit.
+        */
 
         weight:
           isArea
-            ? 6
+            ? 4
             : 3,
 
         lineJoin:
@@ -4526,64 +4176,73 @@ function startDrawing(
 
 
 
-document
-  .getElementById(
-    "draw-polygon"
-  )
+$("draw-polygon")
   .addEventListener(
+
     "click",
+
     event => {
 
       startDrawing(
+
         "Polygon",
+
         event.currentTarget
+
       );
 
     }
+
   );
 
 
-document
-  .getElementById(
-    "draw-rectangle"
-  )
+$("draw-rectangle")
   .addEventListener(
+
     "click",
+
     event => {
 
       startDrawing(
+
         "Rectangle",
+
         event.currentTarget
+
       );
 
     }
+
   );
 
 
-document
-  .getElementById(
-    "draw-line"
-  )
+$("draw-line")
   .addEventListener(
+
     "click",
+
     event => {
 
       startDrawing(
+
         "Line",
+
         event.currentTarget
+
       );
 
     }
+
   );
 
 
-document
-  .getElementById(
-    "stop-drawing"
-  )
+$("stop-drawing")
   .addEventListener(
+
     "click",
+
     stopDrawing
+
   );
 
 
@@ -4667,9 +4326,13 @@ async function loadDatabase() {
     factionsResponse
   ] =
     await Promise.all([
+
       layersQuery,
+
       shapesQuery,
+
       factionsQuery
+
     ]);
 
 
@@ -4682,15 +4345,9 @@ async function loadDatabase() {
     );
 
 
-    if (
-      editMode
-    ) {
-
-      status.textContent =
-        "Erreur couches : " +
-        layersResponse.error.message;
-
-    }
+    layersList.textContent =
+      "Erreur couches : " +
+      layersResponse.error.message;
 
 
     return;
@@ -4707,15 +4364,9 @@ async function loadDatabase() {
     );
 
 
-    if (
-      editMode
-    ) {
-
-      status.textContent =
-        "Erreur zones : " +
-        shapesResponse.error.message;
-
-    }
+    layersList.textContent =
+      "Erreur éléments : " +
+      shapesResponse.error.message;
 
 
     return;
@@ -4727,24 +4378,22 @@ async function loadDatabase() {
     factionsResponse.error
   ) {
 
-    console.error(
-      factionsResponse.error
+    console.warn(
+
+      "Factions :",
+
+      factionsResponse.error.message
+
     );
 
 
+    /*
+      Une erreur de faction ne bloque plus
+      toute la carte.
+    */
+
     mapFactions =
       [];
-
-
-    if (
-      editMode
-    ) {
-
-      status.textContent =
-        "Erreur factions : " +
-        factionsResponse.error.message;
-
-    }
 
   }
   else {
@@ -4754,13 +4403,6 @@ async function loadDatabase() {
       [];
 
   }
-
-
-  const allowedKinds = [
-    "repere",
-    "batiment",
-    "quartier"
-  ];
 
 
   const allLayers =
@@ -4773,10 +4415,26 @@ async function loadDatabase() {
     [];
 
 
+  /*
+    Couches autorisées uniquement.
+  */
+
+  const allowedKinds = [
+
+    "repere",
+
+    "batiment",
+
+    "quartier"
+
+  ];
+
+
   mapLayers =
     allowedKinds
       .map(
         kind => {
+
 
           const candidates =
             allLayers.filter(
@@ -4787,8 +4445,7 @@ async function loadDatabase() {
 
 
           if (
-            candidates.length ===
-            0
+            !candidates.length
           ) {
 
             return null;
@@ -4796,11 +4453,18 @@ async function loadDatabase() {
           }
 
 
+          /*
+            Si une ancienne duplication existe,
+            on privilégie celle qui contient
+            le plus d'éléments.
+          */
+
           candidates.sort(
             (
               a,
               b
             ) => {
+
 
               const countA =
                 mapShapes.filter(
@@ -4839,8 +4503,15 @@ async function loadDatabase() {
           a,
           b
         ) =>
-          (a.sort_order ?? 0) -
-          (b.sort_order ?? 0)
+          (
+            b.sort_order ??
+            0
+          )
+          -
+          (
+            a.sort_order ??
+            0
+          )
       );
 
 
@@ -4857,7 +4528,8 @@ async function loadDatabase() {
         faction =>
           faction.id ===
           factionId
-      ) || null;
+      ) ||
+      null;
 
   }
 
@@ -4889,31 +4561,32 @@ async function loadDatabase() {
 
 
 /* =========================================================
-   CLEAR GROUPS
+   GROUPS
 ========================================================= */
 
 function clearGroups() {
 
-  for (
-    const group
-    of Object.values(
+  Object
+    .values(
       layerGroups
     )
-  ) {
+    .forEach(
+      group => {
 
-    if (
-      map.hasLayer(
-        group
-      )
-    ) {
+        if (
+          map.hasLayer(
+            group
+          )
+        ) {
 
-      map.removeLayer(
-        group
-      );
+          map.removeLayer(
+            group
+          );
 
-    }
+        }
 
-  }
+      }
+    );
 
 
   layerGroups =
@@ -4940,19 +4613,22 @@ function renderLayers() {
 
 
   if (
-    mapLayers.length === 0
+    !mapLayers.length
   ) {
 
-    layersList.innerHTML =
-      `
-        <div style="
+    layersList.innerHTML = `
+
+      <div
+        style="
           color:#68736d;
           font-size:10px;
           padding:10px;
-        ">
-          Aucune couche disponible.
-        </div>
-      `;
+        "
+      >
+        Aucune couche disponible.
+      </div>
+
+    `;
 
 
     return;
@@ -4964,6 +4640,7 @@ function renderLayers() {
     const layer
     of mapLayers
   ) {
+
 
     const group =
       L.layerGroup();
@@ -4989,32 +4666,39 @@ function renderLayers() {
       savedVisible;
 
 
-    if (
-      paintMode
-    ) {
+    /*
+      Pot de peinture :
+      Repères et bâtiments disparaissent.
+    */
 
-      if (
+    if (
+      paintMode &&
+      (
         layer.kind ===
           "repere" ||
         layer.kind ===
           "batiment"
-      ) {
+      )
+    ) {
 
-        currentVisible =
-          false;
+      currentVisible =
+        false;
 
-      }
+    }
 
 
-      if (
-        layer.kind ===
-          "quartier"
-      ) {
+    /*
+      Quartiers forcés visibles.
+    */
 
-        currentVisible =
-          true;
+    if (
+      paintMode &&
+      layer.kind ===
+        "quartier"
+    ) {
 
-      }
+      currentVisible =
+        true;
 
     }
 
@@ -5100,28 +4784,19 @@ function renderLayers() {
       "layer-name";
 
 
-    let titleText =
-      layer.name;
-
-
-    if (
-      paintMode &&
-      (
-        layer.kind ===
-          "repere" ||
-        layer.kind ===
-          "batiment"
-      )
-    ) {
-
-      titleText +=
-        " • masqué";
-
-    }
-
-
     title.textContent =
-      titleText;
+      layer.name +
+      (
+        paintMode &&
+        (
+          layer.kind ===
+            "repere" ||
+          layer.kind ===
+            "batiment"
+        )
+          ? " • masqué"
+          : ""
+      );
 
 
     const countElement =
@@ -5138,48 +4813,61 @@ function renderLayers() {
       count;
 
 
-    checkbox.addEventListener(
-      "change",
-      () => {
+    checkbox
+      .addEventListener(
 
-        layerVisibility.set(
-          layer.id,
-          checkbox.checked
-        );
+        "change",
+
+        () => {
 
 
-        if (
-          checkbox.checked
-        ) {
+          layerVisibility.set(
 
-          group.addTo(
-            map
+            layer.id,
+
+            checkbox.checked
+
           );
 
 
-          setTimeout(
-            syncAllInnerOutlines,
-            30
-          );
+          if (
+            checkbox.checked
+          ) {
+
+            group.addTo(
+              map
+            );
+
+
+            setTimeout(
+              syncAllInnerOutlines,
+              30
+            );
+
+          }
+          else {
+
+            map.removeLayer(
+              group
+            );
+
+          }
 
         }
-        else {
 
-          map.removeLayer(
-            group
-          );
-
-        }
-
-      }
-    );
+      );
 
 
     label.append(
+
       checkbox,
+
       swatch,
+
       title,
+
       countElement
+
     );
 
 
@@ -5303,13 +4991,18 @@ function configureShapeLayer(
 
 
   leafletLayer.on(
+
     "click",
+
     async event => {
+
 
       if (
         !editMode
       ) {
+
         return;
+
       }
 
 
@@ -5317,6 +5010,10 @@ function configureShapeLayer(
         event
       );
 
+
+      /*
+        POT DE PEINTURE
+      */
 
       if (
         paintMode
@@ -5355,69 +5052,31 @@ function configureShapeLayer(
 
 
       selectExistingShape(
+
         leafletLayer,
+
         shape
+
       );
 
     }
+
   );
 
 
-  const refreshClip =
-    () => {
-
+  const refresh =
+    () =>
       scheduleInnerOutline(
         leafletLayer
       );
 
-    };
-
 
   leafletLayer.on(
-    "add",
-    refreshClip
-  );
 
+    "add pm:edit pm:change pm:markerdrag pm:vertexadded pm:vertexremoved pm:snap pm:unsnap",
 
-  leafletLayer.on(
-    "pm:edit",
-    refreshClip
-  );
+    refresh
 
-
-  leafletLayer.on(
-    "pm:change",
-    refreshClip
-  );
-
-
-  leafletLayer.on(
-    "pm:markerdrag",
-    refreshClip
-  );
-
-
-  leafletLayer.on(
-    "pm:vertexadded",
-    refreshClip
-  );
-
-
-  leafletLayer.on(
-    "pm:vertexremoved",
-    refreshClip
-  );
-
-
-  leafletLayer.on(
-    "pm:snap",
-    refreshClip
-  );
-
-
-  leafletLayer.on(
-    "pm:unsnap",
-    refreshClip
   );
 
 
@@ -5430,10 +5089,790 @@ function configureShapeLayer(
 
 
 /* =========================================================
+   HELPERS
+========================================================= */
+
+function escapeHtml(
+  value
+) {
+
+  return String(
+    value ??
+    ""
+  ).replace(
+
+    /[&<>"']/g,
+
+    character => ({
+
+      "&":
+        "&amp;",
+
+      "<":
+        "&lt;",
+
+      ">":
+        "&gt;",
+
+      '"':
+        "&quot;",
+
+      "'":
+        "&#039;"
+
+    })[
+      character
+    ]
+
+  );
+
+}
+
+
+
+function findFaction(
+  factionId
+) {
+
+  if (
+    !factionId
+  ) {
+
+    return null;
+
+  }
+
+
+  return (
+    mapFactions.find(
+      faction =>
+        faction.id ===
+        factionId
+    ) ||
+    null
+  );
+
+}
+
+
+
+function isPolygonGeometry(
+  geometry
+) {
+
+  return (
+    geometry?.type ===
+      "Polygon"
+    ||
+    geometry?.type ===
+      "MultiPolygon"
+  );
+
+}
+
+
+
+/* =========================================================
+   MERGE DES QUARTIERS
+========================================================= */
+
+function mergeFactionFeatures(
+  features
+) {
+
+  if (
+    !features.length
+  ) {
+
+    return null;
+
+  }
+
+
+  let merged =
+    features[0];
+
+
+  for (
+    let index = 1;
+    index < features.length;
+    index++
+  ) {
+
+    try {
+
+
+      const result =
+        turf.union(
+
+          merged,
+
+          features[
+            index
+          ]
+
+        );
+
+
+      if (
+        result
+      ) {
+
+        merged =
+          result;
+
+      }
+
+    }
+    catch (
+      error
+    ) {
+
+      console.warn(
+
+        "Fusion impossible :",
+
+        error
+
+      );
+
+    }
+
+  }
+
+
+  return merged;
+
+}
+
+
+
+/* =========================================================
+   FACTION POPUP
+========================================================= */
+
+function buildFactionPopup(
+  faction
+) {
+
+  const popup =
+    document.createElement(
+      "div"
+    );
+
+
+  popup.innerHTML = `
+
+    <div class="zone-category">
+      FACTION
+    </div>
+
+    <h3 class="zone-title">
+      ${escapeHtml(
+        faction.name ||
+        "Faction"
+      )}
+    </h3>
+
+    ${
+      faction.description
+        ? `
+          <p class="zone-description">
+            ${escapeHtml(
+              faction.description
+            )}
+          </p>
+        `
+        : ""
+    }
+
+  `;
+
+
+  return popup;
+
+}
+
+
+
+/* =========================================================
+   FACTION LABEL
+========================================================= */
+
+function factionLabelHtml(
+  faction
+) {
+
+  const initial =
+    (
+      faction.name ||
+      "?"
+    )
+      .trim()
+      .charAt(0)
+      .toUpperCase();
+
+
+  const logo =
+    faction.logo_url
+      ? `
+
+          <img
+            src="${escapeHtml(
+              faction.logo_url
+            )}"
+            alt=""
+          >
+
+        `
+      : escapeHtml(
+          initial
+        );
+
+
+  return `
+
+    <div
+      class="faction-map-badge"
+      style="
+        color:${escapeHtml(
+          faction.color ||
+          "#8f6cff"
+        )}
+      "
+    >
+
+      <div class="faction-map-logo">
+
+        ${logo}
+
+      </div>
+
+
+      <div class="faction-map-name">
+
+        ${escapeHtml(
+          faction.name
+        )}
+
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+
+
+/* =========================================================
+   MULTIPOLYGON
+========================================================= */
+
+function splitTerritoryPieces(
+  feature
+) {
+
+  if (
+    !feature?.geometry
+  ) {
+
+    return [];
+
+  }
+
+
+  if (
+    feature.geometry.type ===
+    "Polygon"
+  ) {
+
+    return [
+      feature
+    ];
+
+  }
+
+
+  if (
+    feature.geometry.type ===
+    "MultiPolygon"
+  ) {
+
+    return feature.geometry.coordinates.map(
+
+      coordinates => ({
+
+        type:
+          "Feature",
+
+        properties:
+          {},
+
+        geometry: {
+
+          type:
+            "Polygon",
+
+          coordinates:
+            coordinates
+
+        }
+
+      })
+
+    );
+
+  }
+
+
+  return [];
+
+}
+
+
+
+/* =========================================================
+   PUBLIC TERRITORIES
+========================================================= */
+
+function renderPublicFactionTerritories() {
+
+  /*
+    En admin :
+    quartiers séparés.
+  */
+
+  if (
+    editMode
+  ) {
+
+    return;
+
+  }
+
+
+  const quartierLayer =
+    mapLayers.find(
+      layer =>
+        layer.kind ===
+        "quartier"
+    );
+
+
+  if (
+    !quartierLayer
+  ) {
+
+    return;
+
+  }
+
+
+  const group =
+    layerGroups[
+      quartierLayer.id
+    ];
+
+
+  if (
+    !group
+  ) {
+
+    return;
+
+  }
+
+
+  for (
+    const faction
+    of mapFactions
+  ) {
+
+
+    const owned =
+      mapShapes.filter(
+
+        shape =>
+
+          shape.layer_id ===
+            quartierLayer.id
+
+          &&
+
+          shape.faction_id ===
+            faction.id
+
+          &&
+
+          isPolygonGeometry(
+            shape.geometry
+          )
+
+      );
+
+
+    if (
+      !owned.length
+    ) {
+
+      continue;
+
+    }
+
+
+    const features =
+      owned.map(
+        shape => ({
+
+          type:
+            "Feature",
+
+          properties: {
+
+            id:
+              shape.id
+
+          },
+
+          geometry:
+            shape.geometry
+
+        })
+      );
+
+
+    const merged =
+      mergeFactionFeatures(
+        features
+      );
+
+
+    if (
+      !merged
+    ) {
+
+      continue;
+
+    }
+
+
+    const color =
+      faction.color ||
+      "#8f6cff";
+
+
+    /*
+      TERRITOIRE FUSIONNÉ
+    */
+
+    const territory =
+      L.geoJSON(
+
+        merged,
+
+        {
+
+          style: {
+
+            pane:
+              "territoryPane",
+
+            color:
+              color,
+
+            fillColor:
+              color,
+
+            /*
+              Plus fin que l'ancien contour.
+            */
+
+            weight:
+              4,
+
+            opacity:
+              .92,
+
+            fillOpacity:
+              .30,
+
+            lineJoin:
+              "round",
+
+            lineCap:
+              "round"
+
+          }
+
+        }
+
+      );
+
+
+    territory.eachLayer(
+
+      layer => {
+
+
+        layer.options.pmIgnore =
+          true;
+
+
+        layer.bindPopup(
+
+          buildFactionPopup(
+            faction
+          )
+
+        );
+
+
+        scheduleInnerOutline(
+          layer
+        );
+
+
+        layer.addTo(
+          group
+        );
+
+      }
+
+    );
+
+
+    /*
+      LOGO SUR CHAQUE TERRITOIRE SÉPARÉ
+    */
+
+    for (
+      const piece
+      of splitTerritoryPieces(
+        merged
+      )
+    ) {
+
+      try {
+
+
+        const point =
+          turf.pointOnFeature(
+            piece
+          );
+
+
+        const [
+          x,
+          y
+        ] =
+          point.geometry.coordinates;
+
+
+        L.marker(
+
+          [
+            y,
+            x
+          ],
+
+          {
+
+            pane:
+              "factionLabelPane",
+
+            interactive:
+              false,
+
+            icon:
+              L.divIcon({
+
+                className:
+                  "",
+
+                html:
+                  factionLabelHtml(
+                    faction
+                  ),
+
+                iconSize:
+                  [1,1],
+
+                iconAnchor:
+                  [0,0]
+
+              })
+
+          }
+
+        ).addTo(
+          group
+        );
+
+
+      }
+      catch (
+        error
+      ) {
+
+        console.warn(
+
+          "Logo faction :",
+
+          error
+
+        );
+
+      }
+
+    }
+
+  }
+
+}
+
+
+
+/* =========================================================
+   POINTS
+========================================================= */
+
+function pointToLayer(
+  feature,
+  latlng,
+  parentLayer,
+  shape
+) {
+
+  if (
+    parentLayer.kind ===
+    "repere"
+  ) {
+
+    const iconText =
+      shape.properties?.icon ||
+      "◆";
+
+
+    return L.marker(
+
+      latlng,
+
+      {
+
+        pane:
+          "otherShapePane",
+
+        icon:
+          L.divIcon({
+
+            className:
+              "",
+
+            html:
+              `
+                <div class="map-repere">
+                  ${escapeHtml(
+                    iconText
+                  )}
+                </div>
+              `,
+
+            iconSize:
+              [28,28],
+
+            iconAnchor:
+              [14,14]
+
+          })
+
+      }
+
+    );
+
+  }
+
+
+  if (
+    parentLayer.kind ===
+    "batiment"
+  ) {
+
+    const number =
+      shape.properties?.number ||
+      shape.name ||
+      "?";
+
+
+    return L.marker(
+
+      latlng,
+
+      {
+
+        pane:
+          "otherShapePane",
+
+        icon:
+          L.divIcon({
+
+            className:
+              "",
+
+            html:
+              `
+                <div class="map-building">
+                  ${escapeHtml(
+                    number
+                  )}
+                </div>
+              `,
+
+            iconSize:
+              [34,26],
+
+            iconAnchor:
+              [17,13]
+
+          })
+
+      }
+
+    );
+
+  }
+
+
+  return L.marker(
+
+    latlng,
+
+    {
+
+      pane:
+        "otherShapePane"
+
+    }
+
+  );
+
+}
+
+
+
+/* =========================================================
    RENDER SHAPES
 ========================================================= */
 
 function renderShapes() {
+
+  /*
+    Public :
+    territoires faction d'abord.
+  */
+
+  renderPublicFactionTerritories();
+
 
   for (
     const shape
@@ -5453,23 +5892,47 @@ function renderShapes() {
       !parentLayer ||
       !shape.geometry
     ) {
+
       continue;
+
     }
-
-
-    const faction =
-      shape.faction_id
-        ? mapFactions.find(
-            item =>
-              item.id ===
-              shape.faction_id
-          )
-        : null;
 
 
     const quartier =
       parentLayer.kind ===
       "quartier";
+
+
+    const faction =
+      findFaction(
+        shape.faction_id
+      );
+
+
+    /*
+      IMPORTANT :
+
+      En public, un quartier avec faction
+      ne doit PAS être dessiné séparément.
+
+      Sinon les frontières internes réapparaissent.
+    */
+
+    if (
+      !editMode &&
+      quartier &&
+      faction
+    ) {
+
+      continue;
+
+    }
+
+
+    const polygon =
+      isPolygonGeometry(
+        shape.geometry
+      );
 
 
     const color =
@@ -5491,37 +5954,118 @@ function renderShapes() {
         : color;
 
 
-    const opacity =
+    let fillOpacity;
+
+
+    /*
+      QUARTIERS
+    */
+
+    if (
       quartier
+    ) {
+
+      if (
+        editMode
+      ) {
+
+        if (
+          faction
+        ) {
+
+          fillOpacity =
+            paintMode
+              ? .35
+              : .15;
+
+        }
+        else {
+
+          fillOpacity =
+            paintMode
+              ? .04
+              : 0;
+
+        }
+
+      }
+      else {
+
+        fillOpacity =
+          0;
+
+      }
+
+    }
+
+    /*
+      AUTRES ÉLÉMENTS
+    */
+
+    else {
+
+      fillOpacity =
+        shape.style?.opacity ??
+        parentLayer.opacity ??
+        .30;
+
+    }
+
+
+    /*
+      Contours quartiers beaucoup plus fins.
+
+      3px au total avant clip,
+      soit environ 1.5px visible à l'intérieur.
+    */
+
+    const strokeWeight =
+      polygon
         ? (
-            faction
-              ? (
-                  paintMode
-                    ? .36
-                    : .22
-                )
-              : (
-                  paintMode
-                    ? .04
-                    : 0
-                )
+            quartier
+              ? 3
+              : 5
           )
-        : (
-            shape.style?.opacity ??
-            parentLayer.opacity ??
-            .30
-          );
+        : 3;
 
 
-    const geometryType =
-      shape.geometry.type;
+    const baseStyle = {
 
+      pane:
+        quartier
+          ? "quartierPane"
+          : "otherShapePane",
 
-    const polygon =
-      geometryType ===
-        "Polygon" ||
-      geometryType ===
-        "MultiPolygon";
+      color:
+        color,
+
+      fillColor:
+        fillColor,
+
+      fillOpacity:
+        polygon
+          ? fillOpacity
+          : 0,
+
+      weight:
+        strokeWeight,
+
+      opacity:
+        quartier
+          ? (
+              editMode
+                ? .92
+                : .52
+            )
+          : 1,
+
+      lineCap:
+        "round",
+
+      lineJoin:
+        "round"
+
+    };
 
 
     const geo =
@@ -5539,31 +6083,25 @@ function renderShapes() {
 
         {
 
-          style: {
+          style:
+            baseStyle,
 
-            color:
-              color,
+          pointToLayer:
+            (
+              feature,
+              latlng
+            ) =>
+              pointToLayer(
 
-            fillColor:
-              fillColor,
+                feature,
 
-            fillOpacity:
-              polygon
-                ? opacity
-                : 0,
+                latlng,
 
-            weight:
-              polygon
-                ? 6
-                : 3,
+                parentLayer,
 
-            lineCap:
-              "round",
+                shape
 
-            lineJoin:
-              "round"
-
-          }
+              )
 
         }
 
@@ -5571,13 +6109,108 @@ function renderShapes() {
 
 
     geo.eachLayer(
+
       leafletLayer => {
 
+
         configureShapeLayer(
+
           leafletLayer,
+
           shape,
+
           parentLayer
+
         );
+
+
+        leafletLayer.__gtaBaseStyle =
+          baseStyle;
+
+
+        /*
+          HOVER DES QUARTIERS
+        */
+
+        if (
+          quartier &&
+          typeof leafletLayer.setStyle ===
+          "function"
+        ) {
+
+          leafletLayer.on(
+
+            "mouseover",
+
+            () => {
+
+
+              if (
+                !editMode
+              ) {
+
+                return;
+
+              }
+
+
+              leafletLayer.setStyle({
+
+                weight:
+                  paintMode
+                    ? 5
+                    : 4,
+
+                fillOpacity:
+                  faction
+                    ? (
+                        paintMode
+                          ? .48
+                          : .24
+                      )
+                    : (
+                        paintMode
+                          ? .12
+                          : .05
+                      )
+
+              });
+
+            }
+
+          );
+
+
+          leafletLayer.on(
+
+            "mouseout",
+
+            () => {
+
+
+              if (
+                !editMode
+              ) {
+
+                return;
+
+              }
+
+
+              leafletLayer.setStyle(
+                leafletLayer.__gtaBaseStyle
+              );
+
+
+              scheduleInnerOutline(
+                leafletLayer
+              );
+
+            }
+
+          );
+
+        }
 
 
         const group =
@@ -5597,14 +6230,18 @@ function renderShapes() {
         }
 
       }
+
     );
 
   }
 
 
   setTimeout(
+
     syncAllInnerOutlines,
+
     50
+
   );
 
 }
@@ -5612,7 +6249,7 @@ function renderShapes() {
 
 
 /* =========================================================
-   UPDATE LAYER SELECT
+   SELECT DE COUCHE
 ========================================================= */
 
 function updateShapeLayerSelect() {
@@ -5622,7 +6259,7 @@ function updateShapeLayerSelect() {
 
 
   if (
-    mapLayers.length === 0
+    !mapLayers.length
   ) {
 
     const option =
@@ -5683,8 +6320,11 @@ function updateShapeLayerSelect() {
 ========================================================= */
 
 map.on(
+
   "pm:create",
+
   event => {
+
 
     if (
       !editMode
@@ -5732,7 +6372,7 @@ map.on(
 
 
     if (
-      mapLayers.length > 0
+      mapLayers.length
     ) {
 
       shapeLayerInput.value =
@@ -5761,36 +6401,18 @@ map.on(
     ) {
 
       const refresh =
-        () => {
-
+        () =>
           scheduleInnerOutline(
             selectedLeafletLayer
           );
 
-        };
-
 
       selectedLeafletLayer.on(
-        "add",
+
+        "add pm:change pm:edit pm:snap",
+
         refresh
-      );
 
-
-      selectedLeafletLayer.on(
-        "pm:change",
-        refresh
-      );
-
-
-      selectedLeafletLayer.on(
-        "pm:edit",
-        refresh
-      );
-
-
-      selectedLeafletLayer.on(
-        "pm:snap",
-        refresh
       );
 
 
@@ -5800,12 +6422,13 @@ map.on(
 
 
     status.textContent =
-      "Nouvel élément créé. Le contour est conservé à l'intérieur de la zone.";
+      "Nouvel élément créé. Choisis sa couche puis enregistre.";
 
 
     updateButtons();
 
   }
+
 );
 
 
@@ -5819,13 +6442,9 @@ function selectExistingShape(
   shape
 ) {
 
-  if (
-    selectedLeafletLayer?.pm
-  ) {
-
-    selectedLeafletLayer.pm.disable();
-
-  }
+  selectedLeafletLayer
+    ?.pm
+    ?.disable();
 
 
   selectedLeafletLayer =
@@ -5889,18 +6508,19 @@ function selectExistingShape(
 
 
 /* =========================================================
-   STYLE PREVIEW
+   PREVIEW
 ========================================================= */
 
 function applyShapePreview() {
 
   if (
     !selectedLeafletLayer ||
-    typeof
-      selectedLeafletLayer.setStyle
-      !== "function"
+    typeof selectedLeafletLayer.setStyle !==
+      "function"
   ) {
+
     return;
+
   }
 
 
@@ -5911,30 +6531,54 @@ function applyShapePreview() {
 
 
   const isArea =
-    geometry.type ===
-      "Polygon" ||
-    geometry.type ===
-      "MultiPolygon";
+    isPolygonGeometry(
+      geometry
+    );
+
+
+  const selectedLayer =
+    mapLayers.find(
+      layer =>
+        layer.id ===
+        shapeLayerInput.value
+    );
+
+
+  const isQuartier =
+    selectedLayer?.kind ===
+    "quartier";
 
 
   selectedLeafletLayer.setStyle({
 
     color:
-      shapeColorInput.value,
+      isQuartier
+        ? "#ffffff"
+        : shapeColorInput.value,
 
     fillColor:
-      shapeColorInput.value,
+      isQuartier
+        ? "#ffffff"
+        : shapeColorInput.value,
 
     fillOpacity:
       isArea
-        ? Number(
-            shapeOpacityInput.value
+        ? (
+            isQuartier
+              ? 0
+              : Number(
+                  shapeOpacityInput.value
+                )
           )
         : 0,
 
     weight:
       isArea
-        ? 6
+        ? (
+            isQuartier
+              ? 3
+              : 5
+          )
         : 3,
 
     lineJoin:
@@ -5962,16 +6606,34 @@ function applyShapePreview() {
 
 
 
-shapeColorInput.addEventListener(
-  "input",
-  applyShapePreview
-);
+shapeColorInput
+  .addEventListener(
+
+    "input",
+
+    applyShapePreview
+
+  );
 
 
-shapeOpacityInput.addEventListener(
-  "input",
-  applyShapePreview
-);
+shapeOpacityInput
+  .addEventListener(
+
+    "input",
+
+    applyShapePreview
+
+  );
+
+
+shapeLayerInput
+  .addEventListener(
+
+    "change",
+
+    applyShapePreview
+
+  );
 
 
 
@@ -5979,184 +6641,227 @@ shapeOpacityInput.addEventListener(
    SAVE
 ========================================================= */
 
-saveShapeButton.addEventListener(
-  "click",
-  async () => {
+saveShapeButton
+  .addEventListener(
 
-    if (
-      !selectedLeafletLayer
-    ) {
-      return;
-    }
+    "click",
+
+    async () => {
 
 
-    if (
-      !shapeLayerInput.value
-    ) {
+      if (
+        !selectedLeafletLayer
+      ) {
 
-      status.textContent =
-        "Aucune couche disponible.";
+        return;
 
-      return;
-
-    }
+      }
 
 
-    selectedLeafletLayer
-      .pm
-      ?.disable();
+      if (
+        !shapeLayerInput.value
+      ) {
+
+        status.textContent =
+          "Aucune couche disponible.";
 
 
-    const geometry =
+        return;
+
+      }
+
+
       selectedLeafletLayer
-        .toGeoJSON()
-        .geometry;
+        .pm
+        ?.disable();
 
 
-    const area =
-      geometry.type ===
-        "Polygon" ||
-      geometry.type ===
-        "MultiPolygon";
+      const geometry =
+        selectedLeafletLayer
+          .toGeoJSON()
+          .geometry;
 
 
-    const payload = {
-
-      layer_id:
-        shapeLayerInput.value,
-
-      name:
-        shapeNameInput
-          .value
-          .trim() ||
-        "Sans nom",
-
-      description:
-        shapeDescriptionInput
-          .value
-          .trim(),
-
-      geometry:
-        geometry,
-
-      style: {
-
-        color:
-          shapeColorInput.value,
-
-        opacity:
-          Number(
-            shapeOpacityInput.value
-          ),
-
-        weight:
-          area
-            ? 6
-            : 3
-
-      },
-
-      published:
-        shapePublishedInput.checked
-
-    };
+      const area =
+        isPolygonGeometry(
+          geometry
+        );
 
 
-    status.textContent =
-      "Enregistrement...";
+      const selectedLayer =
+        mapLayers.find(
+          layer =>
+            layer.id ===
+            shapeLayerInput.value
+        );
 
 
-    let response;
+      const quartier =
+        selectedLayer?.kind ===
+        "quartier";
 
 
-    if (
-      selectedShapeRecord
-    ) {
+      const payload = {
 
-      response =
-        await db
-          .from(
-            "map_shapes"
-          )
-          .update(
-            payload
-          )
-          .eq(
-            "id",
-            selectedShapeRecord.id
-          );
+        layer_id:
+          shapeLayerInput.value,
 
-    }
-    else {
+        name:
+          shapeNameInput
+            .value
+            .trim() ||
+          "Sans nom",
 
-      response =
-        await db
-          .from(
-            "map_shapes"
-          )
-          .insert(
-            payload
-          );
+        description:
+          shapeDescriptionInput
+            .value
+            .trim(),
 
-    }
+        geometry:
+          geometry,
+
+        style: {
+
+          color:
+            quartier
+              ? "#ffffff"
+              : shapeColorInput.value,
+
+          opacity:
+            quartier
+              ? 0
+              : Number(
+                  shapeOpacityInput.value
+                ),
+
+          weight:
+            area
+              ? (
+                  quartier
+                    ? 3
+                    : 5
+                )
+              : 3
+
+        },
+
+        published:
+          shapePublishedInput.checked
+
+      };
 
 
-    if (
-      response.error
-    ) {
+      /*
+        Conserve la faction si on édite
+        un quartier existant.
+      */
 
-      console.error(
-        response.error
-      );
+      if (
+        selectedShapeRecord?.faction_id
+      ) {
+
+        payload.faction_id =
+          selectedShapeRecord.faction_id;
+
+      }
 
 
       status.textContent =
-        "Erreur : " +
-        response.error.message;
+        "Enregistrement...";
 
 
-      return;
+      let response;
+
+
+      if (
+        selectedShapeRecord
+      ) {
+
+        response =
+          await db
+            .from(
+              "map_shapes"
+            )
+            .update(
+              payload
+            )
+            .eq(
+              "id",
+              selectedShapeRecord.id
+            );
+
+      }
+      else {
+
+        response =
+          await db
+            .from(
+              "map_shapes"
+            )
+            .insert(
+              payload
+            );
+
+      }
+
+
+      if (
+        response.error
+      ) {
+
+        console.error(
+          response.error
+        );
+
+
+        status.textContent =
+          "Erreur : " +
+          response.error.message;
+
+
+        return;
+
+      }
+
+
+      if (
+        temporaryLayer &&
+        map.hasLayer(
+          temporaryLayer
+        )
+      ) {
+
+        map.removeLayer(
+          temporaryLayer
+        );
+
+      }
+
+
+      selectedLeafletLayer =
+        null;
+
+
+      selectedShapeRecord =
+        null;
+
+
+      temporaryLayer =
+        null;
+
+
+      await loadDatabase();
+
+
+      updateButtons();
+
+
+      status.textContent =
+        "Élément enregistré.";
 
     }
 
-
-    if (
-      temporaryLayer &&
-      map.hasLayer(
-        temporaryLayer
-      )
-    ) {
-
-      map.removeLayer(
-        temporaryLayer
-      );
-
-    }
-
-
-    selectedLeafletLayer =
-      null;
-
-
-    selectedShapeRecord =
-      null;
-
-
-    temporaryLayer =
-      null;
-
-
-    await loadDatabase();
-
-
-    updateButtons();
-
-
-    status.textContent =
-      "Élément enregistré.";
-
-  }
-);
+  );
 
 
 
@@ -6164,107 +6869,109 @@ saveShapeButton.addEventListener(
    EDIT VERTICES
 ========================================================= */
 
-editShapeButton.addEventListener(
-  "click",
-  () => {
+editShapeButton
+  .addEventListener(
 
-    if (
-      !selectedLeafletLayer?.pm
-    ) {
-      return;
+    "click",
+
+    () => {
+
+
+      if (
+        !selectedLeafletLayer?.pm
+      ) {
+
+        return;
+
+      }
+
+
+      selectedLeafletLayer
+        .pm
+        .enable({
+
+          snappable:
+            true,
+
+          snapDistance:
+            30,
+
+          snapVertex:
+            true,
+
+          snapSegment:
+            true,
+
+          snapMiddle:
+            false,
+
+          allowSelfIntersection:
+            false
+
+        });
+
+
+      const refresh =
+        () =>
+          scheduleInnerOutline(
+            selectedLeafletLayer
+          );
+
+
+      selectedLeafletLayer.on(
+
+        "pm:change pm:markerdrag pm:snap",
+
+        refresh
+
+      );
+
+
+      status.textContent =
+        "Modification active. Les points s'accrochent aux zones existantes.";
+
+
+      updateButtons();
+
     }
 
-
-    selectedLeafletLayer.pm.enable({
-
-      snappable:
-        true,
-
-      snapDistance:
-        30,
-
-      snapVertex:
-        true,
-
-      snapSegment:
-        true,
-
-      snapMiddle:
-        false,
-
-      allowSelfIntersection:
-        false
-
-    });
+  );
 
 
-    const refresh =
-      () => {
+
+finishEditButton
+  .addEventListener(
+
+    "click",
+
+    () => {
+
+
+      selectedLeafletLayer
+        ?.pm
+        ?.disable();
+
+
+      if (
+        selectedLeafletLayer
+      ) {
 
         scheduleInnerOutline(
           selectedLeafletLayer
         );
 
-      };
+      }
 
 
-    selectedLeafletLayer.on(
-      "pm:change",
-      refresh
-    );
+      status.textContent =
+        "Modification terminée. Clique sur Enregistrer.";
 
 
-    selectedLeafletLayer.on(
-      "pm:markerdrag",
-      refresh
-    );
-
-
-    selectedLeafletLayer.on(
-      "pm:snap",
-      refresh
-    );
-
-
-    status.textContent =
-      "Modification active. Les points s'accrochent aux sommets et segments existants.";
-
-
-    updateButtons();
-
-  }
-);
-
-
-
-finishEditButton.addEventListener(
-  "click",
-  () => {
-
-    selectedLeafletLayer
-      ?.pm
-      ?.disable();
-
-
-    if (
-      selectedLeafletLayer
-    ) {
-
-      scheduleInnerOutline(
-        selectedLeafletLayer
-      );
+      updateButtons();
 
     }
 
-
-    status.textContent =
-      "Modification terminée. Clique sur Enregistrer.";
-
-
-    updateButtons();
-
-  }
-);
+  );
 
 
 
@@ -6319,18 +7026,23 @@ function cancelSelection() {
 
 
 
-cancelSelectionButton.addEventListener(
-  "click",
-  () => {
+cancelSelectionButton
+  .addEventListener(
 
-    cancelSelection();
+    "click",
+
+    () => {
 
 
-    status.textContent =
-      "Sélection annulée.";
+      cancelSelection();
 
-  }
-);
+
+      status.textContent =
+        "Sélection annulée.";
+
+    }
+
+  );
 
 
 
@@ -6338,126 +7050,80 @@ cancelSelectionButton.addEventListener(
    DELETE
 ========================================================= */
 
-deleteShapeButton.addEventListener(
-  "click",
-  async () => {
+deleteShapeButton
+  .addEventListener(
 
-    if (
-      !selectedShapeRecord
-    ) {
-      return;
-    }
+    "click",
+
+    async () => {
 
 
-    if (
-      !confirm(
-        "Supprimer définitivement cet élément ?"
-      )
-    ) {
-      return;
-    }
+      if (
+        !selectedShapeRecord
+      ) {
+
+        return;
+
+      }
 
 
-    const {
-      error
-    } =
-      await db
-        .from(
-          "map_shapes"
+      if (
+        !confirm(
+          "Supprimer définitivement cet élément ?"
         )
-        .delete()
-        .eq(
-          "id",
-          selectedShapeRecord.id
-        );
+      ) {
+
+        return;
+
+      }
 
 
-    if (
-      error
-    ) {
+      const {
+        error
+      } =
+        await db
+          .from(
+            "map_shapes"
+          )
+          .delete()
+          .eq(
+            "id",
+            selectedShapeRecord.id
+          );
+
+
+      if (
+        error
+      ) {
+
+        status.textContent =
+          "Erreur : " +
+          error.message;
+
+
+        return;
+
+      }
+
+
+      cancelSelection();
+
+
+      await loadDatabase();
+
 
       status.textContent =
-        "Erreur : " +
-        error.message;
-
-
-      return;
+        "Élément supprimé.";
 
     }
 
-
-    cancelSelection();
-
-
-    await loadDatabase();
-
-
-    status.textContent =
-      "Élément supprimé.";
-
-  }
-);
+  );
 
 
 
 /* =========================================================
-   FACTIONS
+   FACTION PANEL
 ========================================================= */
-
-const factionList =
-  document.getElementById(
-    "faction-list"
-  );
-
-
-const factionNameInput =
-  document.getElementById(
-    "faction-name"
-  );
-
-
-const factionDescriptionInput =
-  document.getElementById(
-    "faction-description"
-  );
-
-
-const factionColorInput =
-  document.getElementById(
-    "faction-color"
-  );
-
-
-const factionLogoInput =
-  document.getElementById(
-    "faction-logo"
-  );
-
-
-const factionVisibleInput =
-  document.getElementById(
-    "faction-visible"
-  );
-
-
-const paintFactionButton =
-  document.getElementById(
-    "paint-faction"
-  );
-
-
-const deleteFactionButton =
-  document.getElementById(
-    "delete-faction"
-  );
-
-
-const paintInfo =
-  document.getElementById(
-    "paint-info"
-  );
-
-
 
 function renderFactionPanel() {
 
@@ -6475,20 +7141,22 @@ function renderFactionPanel() {
 
 
   if (
-    mapFactions.length ===
-    0
+    !mapFactions.length
   ) {
 
-    factionList.innerHTML =
-      `
-        <div style="
+    factionList.innerHTML = `
+
+      <div
+        style="
           color:#68736d;
           font-size:10px;
           padding:8px;
-        ">
-          Aucune faction.
-        </div>
-      `;
+        "
+      >
+        Aucune faction.
+      </div>
+
+    `;
 
   }
 
@@ -6498,7 +7166,8 @@ function renderFactionPanel() {
     of mapFactions
   ) {
 
-    const quartierCount =
+
+    const count =
       mapShapes.filter(
         shape =>
           shape.faction_id ===
@@ -6517,19 +7186,13 @@ function renderFactionPanel() {
 
 
     item.className =
-      "faction-item";
-
-
-    if (
-      selectedFaction?.id ===
-      faction.id
-    ) {
-
-      item.classList.add(
-        "active"
+      "faction-item" +
+      (
+        selectedFaction?.id ===
+          faction.id
+          ? " active"
+          : ""
       );
-
-    }
 
 
     const dot =
@@ -6561,36 +7224,40 @@ function renderFactionPanel() {
       faction.name;
 
 
-    const count =
+    const countElement =
       document.createElement(
         "span"
       );
 
 
-    count.className =
+    countElement.className =
       "faction-count";
 
 
-    count.textContent =
-      quartierCount;
+    countElement.textContent =
+      count;
 
 
     item.append(
+
       dot,
+
       name,
-      count
+
+      countElement
+
     );
 
 
     item.addEventListener(
-      "click",
-      () => {
 
+      "click",
+
+      () =>
         selectFaction(
           faction
-        );
+        )
 
-      }
     );
 
 
@@ -6678,13 +7345,13 @@ function selectFaction(
    NEW FACTION
 ========================================================= */
 
-document
-  .getElementById(
-    "new-faction"
-  )
+$("new-faction")
   .addEventListener(
+
     "click",
+
     () => {
+
 
       if (
         paintMode
@@ -6726,6 +7393,7 @@ document
         "Nouvelle faction.";
 
     }
+
   );
 
 
@@ -6734,13 +7402,13 @@ document
    SAVE FACTION
 ========================================================= */
 
-document
-  .getElementById(
-    "save-faction"
-  )
+$("save-faction")
   .addEventListener(
+
     "click",
+
     async () => {
+
 
       const name =
         factionNameInput
@@ -6754,6 +7422,7 @@ document
 
         status.textContent =
           "Entre un nom pour la faction.";
+
 
         return;
 
@@ -6855,6 +7524,7 @@ document
         "Faction enregistrée.";
 
     }
+
   );
 
 
@@ -6865,8 +7535,11 @@ document
 
 deleteFactionButton
   .addEventListener(
+
     "click",
+
     async () => {
+
 
       if (
         !selectedFaction
@@ -6877,14 +7550,10 @@ deleteFactionButton
       }
 
 
-      const confirmation =
-        confirm(
-          `Supprimer la faction "${selectedFaction.name}" ?`
-        );
-
-
       if (
-        !confirmation
+        !confirm(
+          `Supprimer la faction "${selectedFaction.name}" ?`
+        )
       ) {
 
         return;
@@ -6952,12 +7621,13 @@ deleteFactionButton
         "Faction supprimée.";
 
     }
+
   );
 
 
 
 /* =========================================================
-   START PAINT MODE
+   START PAINT
 ========================================================= */
 
 function startPaintMode() {
@@ -6968,6 +7638,7 @@ function startPaintMode() {
 
     status.textContent =
       "Sélectionne d'abord une faction.";
+
 
     return;
 
@@ -6984,29 +7655,36 @@ function startPaintMode() {
     true;
 
 
-  document.body.classList.add(
-    "painting"
-  );
+  document.body
+    .classList.add(
+      "painting"
+    );
 
 
-  paintFactionButton.classList.add(
-    "active"
-  );
+  paintFactionButton
+    .classList.add(
+      "active"
+    );
 
 
-  paintInfo.classList.add(
-    "visible"
-  );
+  paintInfo
+    .classList.add(
+      "visible"
+    );
 
 
-  document
-    .getElementById(
-      "paint-faction-title"
-    )
+  $("paint-faction-title")
     .textContent =
       "Pot de peinture : " +
       selectedFaction.name;
 
+
+  /*
+    Re-rendu immédiat.
+
+    Repères/Bâtiments masqués.
+    Quartiers visibles.
+  */
 
   renderLayers();
 
@@ -7027,7 +7705,7 @@ function startPaintMode() {
 
 
 /* =========================================================
-   STOP PAINT MODE
+   STOP PAINT
 ========================================================= */
 
 function stopPaintMode() {
@@ -7045,19 +7723,22 @@ function stopPaintMode() {
     false;
 
 
-  document.body.classList.remove(
-    "painting"
-  );
+  document.body
+    .classList.remove(
+      "painting"
+    );
 
 
-  paintFactionButton.classList.remove(
-    "active"
-  );
+  paintFactionButton
+    .classList.remove(
+      "active"
+    );
 
 
-  paintInfo.classList.remove(
-    "visible"
-  );
+  paintInfo
+    .classList.remove(
+      "visible"
+    );
 
 
   renderLayers();
@@ -7082,14 +7763,13 @@ function stopPaintMode() {
 
 
 
-/* =========================================================
-   PAINT BUTTONS
-========================================================= */
-
 paintFactionButton
   .addEventListener(
+
     "click",
+
     () => {
+
 
       if (
         paintMode
@@ -7105,16 +7785,17 @@ paintFactionButton
       }
 
     }
+
   );
 
 
-document
-  .getElementById(
-    "stop-paint"
-  )
+$("stop-paint")
   .addEventListener(
+
     "click",
+
     stopPaintMode
+
   );
 
 
@@ -7136,6 +7817,14 @@ async function paintQuartier(
 
   }
 
+
+  /*
+    Même faction :
+    clic = retirer.
+
+    Autre faction :
+    clic = remplacer.
+  */
 
   const nextFactionId =
     quartier.faction_id ===
@@ -7230,8 +7919,10 @@ function updateButtons() {
 
   finishEditButton.disabled =
     !(
-      selectedLeafletLayer &&
-      selectedLeafletLayer.pm &&
+      selectedLeafletLayer
+      &&
+      selectedLeafletLayer.pm
+      &&
       selectedLeafletLayer.pm.enabled()
     );
 
@@ -7244,6 +7935,66 @@ function updateButtons() {
     !selectedShapeRecord;
 
 }
+
+
+
+/* =========================================================
+   ESCAPE
+========================================================= */
+
+document.addEventListener(
+
+  "keydown",
+
+  event => {
+
+
+    if (
+      event.key !==
+      "Escape"
+    ) {
+
+      return;
+
+    }
+
+
+    if (
+      paintMode
+    ) {
+
+      stopPaintMode();
+
+
+      return;
+
+    }
+
+
+    stopDrawing();
+
+
+    if (
+      selectedLeafletLayer
+    ) {
+
+      cancelSelection();
+
+    }
+
+
+    if (
+      editMode
+    ) {
+
+      status.textContent =
+        "Outil annulé.";
+
+    }
+
+  }
+
+);
 
 
 
@@ -7261,7 +8012,9 @@ updateButtons();
 
 
 setTimeout(
+
   () => {
+
 
     map.invalidateSize();
 
@@ -7269,14 +8022,15 @@ setTimeout(
     syncAllInnerOutlines();
 
   },
+
   300
+
 );
 
 
 })();
 
 </script>
-
 
 </body>
 </html>
