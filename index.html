@@ -671,11 +671,7 @@ button:disabled {
     var(--right-panel);
 
   max-height:
-    calc(
-      100vh
-      - var(--top-height)
-      - 36px
-    );
+    255px;
 
 }
 
@@ -690,11 +686,7 @@ button:disabled {
 #layers-panel .panel-scroll {
 
   max-height:
-    calc(
-      100vh
-      - var(--top-height)
-      - 108px
-    );
+    190px;
 
   padding: 12px;
 
@@ -1527,6 +1519,263 @@ body.layers-open {
 
 
 /* =========================================================
+   FACTIONS PANEL
+========================================================= */
+
+#factions-panel {
+
+  top:
+    calc(
+      var(--top-height)
+      + 18px
+      + 265px
+    );
+
+  right:
+    var(--panel-gap);
+
+  bottom:
+    18px;
+
+  width:
+    var(--right-panel);
+
+  display:
+    none;
+
+}
+
+
+body.editing #factions-panel {
+
+  display:
+    block;
+
+}
+
+
+#factions-panel .panel-scroll {
+
+  max-height:
+    calc(
+      100vh
+      - var(--top-height)
+      - 370px
+    );
+
+  padding:
+    12px;
+
+}
+
+
+#faction-list {
+
+  display:
+    grid;
+
+  gap:
+    7px;
+
+}
+
+
+.faction-item {
+
+  width:
+    100%;
+
+  display:
+    grid;
+
+  grid-template-columns:
+    11px 1fr auto;
+
+  align-items:
+    center;
+
+  gap:
+    9px;
+
+  min-height:
+    44px;
+
+  padding:
+    8px 10px;
+
+  border:
+    1px solid rgba(255,255,255,.045);
+
+  border-radius:
+    9px;
+
+  background:
+    rgba(255,255,255,.018);
+
+  cursor:
+    pointer;
+
+}
+
+
+.faction-item:hover {
+
+  border-color:
+    var(--border-strong);
+
+  background:
+    rgba(81,118,96,.08);
+
+}
+
+
+.faction-item.active {
+
+  border-color:
+    rgba(198,164,67,.42);
+
+  background:
+    rgba(198,164,67,.08);
+
+}
+
+
+.faction-dot {
+
+  width:
+    10px;
+
+  height:
+    10px;
+
+  border-radius:
+    50%;
+
+}
+
+
+.faction-name {
+
+  overflow:
+    hidden;
+
+  text-overflow:
+    ellipsis;
+
+  white-space:
+    nowrap;
+
+  font-size:
+    10px;
+
+  font-weight:
+    700;
+
+}
+
+
+.faction-count {
+
+  color:
+    var(--muted);
+
+  font-size:
+    9px;
+
+}
+
+
+.faction-form {
+
+  margin-top:
+    15px;
+
+  padding-top:
+    15px;
+
+  border-top:
+    1px solid var(--border);
+
+}
+
+
+#paint-info {
+
+  display:
+    none;
+
+  margin-top:
+    12px;
+
+  padding:
+    10px;
+
+  border:
+    1px solid rgba(198,164,67,.30);
+
+  border-radius:
+    9px;
+
+  background:
+    rgba(198,164,67,.08);
+
+  color:
+    var(--gold-light);
+
+  font-size:
+    9px;
+
+  line-height:
+    1.5;
+
+}
+
+
+#paint-info.visible {
+
+  display:
+    block;
+
+}
+
+
+body.painting #map {
+
+  cursor:
+    crosshair;
+
+}
+
+
+body.painting #draw-toolbar {
+
+  display:
+    none;
+
+}
+
+
+body.painting #editor-panel {
+
+  opacity:
+    .45;
+
+  pointer-events:
+    none;
+
+}
+
+
+body.painting .leaflet-interactive {
+
+  cursor:
+    crosshair !important;
+
+}
+
+
+
+/* =========================================================
    RESPONSIVE
 ========================================================= */
 
@@ -1651,6 +1900,19 @@ body.layers-open {
     right: 8px;
 
     bottom: 78px;
+
+  }
+
+
+  #factions-panel {
+
+    top: 330px;
+
+    right: 8px;
+
+    width: 245px;
+
+    bottom: 80px;
 
   }
 
@@ -1817,6 +2079,234 @@ body.layers-open {
 
     <div id="layers-list">
       Chargement...
+    </div>
+
+  </div>
+
+</aside>
+
+
+
+<!-- FACTIONS -->
+
+<aside
+  id="factions-panel"
+  class="panel"
+>
+
+  <div class="panel-header">
+
+    <div>
+
+      <div class="panel-kicker">
+        TERRITOIRES
+      </div>
+
+      <div class="panel-title">
+        Factions
+      </div>
+
+    </div>
+
+
+    <i
+      data-lucide="paint-bucket"
+      style="
+        width:18px;
+        color:#c6a443;
+      "
+    ></i>
+
+  </div>
+
+
+  <div class="panel-scroll">
+
+
+    <div id="faction-list">
+
+      <div
+        style="
+          color:#68736d;
+          font-size:10px;
+          padding:8px;
+        "
+      >
+        Chargement...
+      </div>
+
+    </div>
+
+
+    <div
+      class="action-grid"
+      style="margin-top:12px;"
+    >
+
+      <button
+        id="new-faction"
+        class="gold wide"
+      >
+
+        <i data-lucide="plus"></i>
+
+        Nouvelle faction
+
+      </button>
+
+    </div>
+
+
+    <div class="faction-form">
+
+
+      <label>
+        Nom
+      </label>
+
+      <input
+        id="faction-name"
+        type="text"
+        placeholder="Ex. Ballas"
+      >
+
+
+      <label>
+        Description
+      </label>
+
+      <textarea
+        id="faction-description"
+        placeholder="Description optionnelle..."
+      ></textarea>
+
+
+      <div class="form-grid">
+
+        <div>
+
+          <label>
+            Couleur
+          </label>
+
+          <input
+            id="faction-color"
+            type="color"
+            value="#8f6cff"
+          >
+
+        </div>
+
+
+        <div>
+
+          <label>
+            Visible
+          </label>
+
+          <select id="faction-visible">
+
+            <option value="true">
+              Oui
+            </option>
+
+            <option value="false">
+              Non
+            </option>
+
+          </select>
+
+        </div>
+
+      </div>
+
+
+      <label>
+        Logo - URL
+      </label>
+
+      <input
+        id="faction-logo"
+        type="url"
+        placeholder="https://.../logo.png"
+      >
+
+
+      <div class="action-grid">
+
+
+        <button
+          id="save-faction"
+          class="primary wide"
+        >
+
+          <i data-lucide="save"></i>
+
+          Enregistrer
+
+        </button>
+
+
+        <button
+          id="paint-faction"
+          class="gold wide"
+          disabled
+        >
+
+          <i data-lucide="paint-bucket"></i>
+
+          Pot de peinture
+
+        </button>
+
+
+        <button
+          id="delete-faction"
+          class="danger wide"
+          disabled
+        >
+
+          <i data-lucide="trash-2"></i>
+
+          Supprimer
+
+        </button>
+
+      </div>
+
+
+      <div id="paint-info">
+
+        <strong id="paint-faction-title">
+          Pot de peinture actif
+        </strong>
+
+        <br><br>
+
+        Clique directement sur les quartiers
+        pour les attribuer à cette faction.
+
+        <br>
+
+        Repères et bâtiments sont temporairement masqués.
+
+        <br><br>
+
+        <button
+          id="stop-paint"
+          class="danger"
+          style="width:100%;"
+        >
+
+          <i data-lucide="x"></i>
+
+          Terminer le placement
+
+        </button>
+
+      </div>
+
+
     </div>
 
   </div>
@@ -2036,113 +2526,6 @@ body.layers-open {
       </div>
 
     </section>
-
-
-
-    <section class="editor-section">
-
-      <div class="section-head">
-
-        <span class="section-name">
-          NOUVELLE COUCHE
-        </span>
-
-      </div>
-
-
-      <label>
-        Nom
-      </label>
-
-      <input
-        id="new-layer-name"
-        type="text"
-        placeholder="Ex. Quartiers"
-      >
-
-
-      <label>
-        Type
-      </label>
-
-      <select id="new-layer-kind">
-
-        <option value="quartier">
-          Quartiers
-        </option>
-
-        <option value="faction">
-          Factions
-        </option>
-
-        <option value="frontiere">
-          Frontières
-        </option>
-
-        <option value="autre">
-          Autre
-        </option>
-
-      </select>
-
-
-      <div class="form-grid">
-
-        <div>
-
-          <label>
-            Couleur
-          </label>
-
-          <input
-            id="new-layer-color"
-            type="color"
-            value="#86ad96"
-          >
-
-        </div>
-
-
-        <div>
-
-          <label>
-            Opacité
-          </label>
-
-          <input
-            id="new-layer-opacity"
-            type="range"
-            min="0"
-            max=".85"
-            step=".05"
-            value=".30"
-          >
-
-        </div>
-
-      </div>
-
-
-      <div
-        class="action-grid"
-        style="margin-top:14px;"
-      >
-
-        <button
-          id="create-layer"
-          class="gold wide"
-        >
-
-          <i data-lucide="layers-3"></i>
-
-          Créer la couche
-
-        </button>
-
-      </div>
-
-    </section>
-
 
   </div>
 
@@ -2495,6 +2878,22 @@ let mapShapes =
   [];
 
 
+/* =========================================================
+   FACTIONS STATE
+========================================================= */
+
+let mapFactions =
+  [];
+
+
+let selectedFaction =
+  null;
+
+
+let paintMode =
+  false;
+
+
 let layerGroups =
   {};
 
@@ -2518,17 +2917,6 @@ const layerVisibility =
 
 /* =========================================================
    INNER OUTLINE SYSTEM
-
-   Le stroke Leaflet est normalement centré.
-
-   Ici on crée un masque SVG identique au polygone.
-   Tout ce qui dépasse à l'extérieur est coupé.
-
-   Ça fonctionne :
-   - sur les zones sauvegardées
-   - pendant la création
-   - pendant un snap
-   - pendant la modification des sommets
 ========================================================= */
 
 const SVG_NS =
@@ -2646,11 +3034,6 @@ function installInnerOutline(
       layer
     );
 
-
-  /*
-    Leaflet / Geoman peut remplacer
-    complètement le PATH SVG.
-  */
 
   if (
     record &&
@@ -2869,11 +3252,6 @@ function syncInnerOutline(
   );
 
 
-  /*
-    Geoman peut retirer l'attribut,
-    on le réapplique systématiquement.
-  */
-
   path.setAttribute(
     "clip-path",
     `url(#${record.id})`
@@ -2897,9 +3275,6 @@ function syncInnerOutline(
 
 /* =========================================================
    SCHEDULE CLIP
-
-   Plusieurs passages car Geoman effectue parfois
-   plusieurs redraws après un événement.
 ========================================================= */
 
 function scheduleInnerOutline(
@@ -3102,7 +3477,7 @@ function loadImageSize(
 
 
       image.src =
-        src + "?v=100";
+        src;
 
     }
   );
@@ -3174,7 +3549,7 @@ L.control
 
 L.imageOverlay(
 
-  MAP_IMAGE + "?v=100",
+  MAP_IMAGE,
 
   initialBounds,
 
@@ -3275,11 +3650,7 @@ map.pm.setGlobalOptions({
 
 
 /* =========================================================
-   CRITICAL FIX:
    INNER OUTLINE WHILE DRAWING
-
-   Geoman utilise un workingLayer temporaire.
-   C'était lui qui remettait le contour centré.
 ========================================================= */
 
 map.on(
@@ -3748,6 +4119,15 @@ function enableEditMode() {
 
 function disableEditMode() {
 
+  if (
+    paintMode
+  ) {
+
+    stopPaintMode();
+
+  }
+
+
   editMode =
     false;
 
@@ -3952,12 +4332,6 @@ function startDrawing(
             ? .25
             : 0,
 
-        /*
-          6px total.
-          Avec le masque, environ 3px restent visibles
-          À L'INTÉRIEUR.
-        */
-
         weight:
           isArea
             ? 6
@@ -4072,6 +4446,20 @@ async function loadDatabase() {
       );
 
 
+  let factionsQuery =
+    db
+      .from(
+        "factions"
+      )
+      .select("*")
+      .order(
+        "sort_order"
+      )
+      .order(
+        "name"
+      );
+
+
   if (
     !admin ||
     !editMode
@@ -4090,22 +4478,26 @@ async function loadDatabase() {
         true
       );
 
+
+    factionsQuery =
+      factionsQuery.eq(
+        "visible",
+        true
+      );
+
   }
 
 
   const [
     layersResponse,
-    shapesResponse
+    shapesResponse,
+    factionsResponse
   ] =
-    await Promise.all(
-      [
-
-        layersQuery,
-
-        shapesQuery
-
-      ]
-    );
+    await Promise.all([
+      layersQuery,
+      shapesQuery,
+      factionsQuery
+    ]);
 
 
   if (
@@ -4158,7 +4550,47 @@ async function loadDatabase() {
   }
 
 
-  mapLayers =
+  if (
+    factionsResponse.error
+  ) {
+
+    console.error(
+      factionsResponse.error
+    );
+
+
+    mapFactions =
+      [];
+
+
+    if (
+      editMode
+    ) {
+
+      status.textContent =
+        "Erreur factions : " +
+        factionsResponse.error.message;
+
+    }
+
+  }
+  else {
+
+    mapFactions =
+      factionsResponse.data ||
+      [];
+
+  }
+
+
+  const allowedKinds = [
+    "repere",
+    "batiment",
+    "quartier"
+  ];
+
+
+  const allLayers =
     layersResponse.data ||
     [];
 
@@ -4166,6 +4598,95 @@ async function loadDatabase() {
   mapShapes =
     shapesResponse.data ||
     [];
+
+
+  mapLayers =
+    allowedKinds
+      .map(
+        kind => {
+
+          const candidates =
+            allLayers.filter(
+              layer =>
+                layer.kind ===
+                kind
+            );
+
+
+          if (
+            candidates.length ===
+            0
+          ) {
+
+            return null;
+
+          }
+
+
+          candidates.sort(
+            (
+              a,
+              b
+            ) => {
+
+              const countA =
+                mapShapes.filter(
+                  shape =>
+                    shape.layer_id ===
+                    a.id
+                ).length;
+
+
+              const countB =
+                mapShapes.filter(
+                  shape =>
+                    shape.layer_id ===
+                    b.id
+                ).length;
+
+
+              return (
+                countB -
+                countA
+              );
+
+            }
+          );
+
+
+          return candidates[0];
+
+        }
+      )
+      .filter(
+        Boolean
+      )
+      .sort(
+        (
+          a,
+          b
+        ) =>
+          (a.sort_order ?? 0) -
+          (b.sort_order ?? 0)
+      );
+
+
+  if (
+    selectedFaction
+  ) {
+
+    const factionId =
+      selectedFaction.id;
+
+
+    selectedFaction =
+      mapFactions.find(
+        faction =>
+          faction.id ===
+          factionId
+      ) || null;
+
+  }
 
 
   renderLayers();
@@ -4177,12 +4698,16 @@ async function loadDatabase() {
   updateShapeLayerSelect();
 
 
+  renderFactionPanel();
+
+
   if (
-    editMode
+    editMode &&
+    !paintMode
   ) {
 
     status.textContent =
-      `${mapLayers.length} couche(s) • ${mapShapes.length} élément(s)`;
+      `${mapShapes.length} élément(s) • ${mapFactions.length} faction(s)`;
 
   }
 
@@ -4267,7 +4792,6 @@ function renderLayers() {
     of mapLayers
   ) {
 
-
     const group =
       L.layerGroup();
 
@@ -4278,7 +4802,7 @@ function renderLayers() {
       group;
 
 
-    const previousVisible =
+    const savedVisible =
       layerVisibility.has(
         layer.id
       )
@@ -4288,8 +4812,42 @@ function renderLayers() {
         : true;
 
 
+    let currentVisible =
+      savedVisible;
+
+
     if (
-      previousVisible
+      paintMode
+    ) {
+
+      if (
+        layer.kind ===
+          "repere" ||
+        layer.kind ===
+          "batiment"
+      ) {
+
+        currentVisible =
+          false;
+
+      }
+
+
+      if (
+        layer.kind ===
+          "quartier"
+      ) {
+
+        currentVisible =
+          true;
+
+      }
+
+    }
+
+
+    if (
+      currentVisible
     ) {
 
       group.addTo(
@@ -4328,7 +4886,11 @@ function renderLayers() {
 
 
     checkbox.checked =
-      previousVisible;
+      currentVisible;
+
+
+    checkbox.disabled =
+      paintMode;
 
 
     const swatch =
@@ -4342,13 +4904,17 @@ function renderLayers() {
 
 
     swatch.style.background =
-      layer.color ||
-      "#86ad96";
+      layer.kind ===
+        "quartier"
+        ? "#ffffff"
+        : (
+            layer.color ||
+            "#86ad96"
+          );
 
 
     swatch.style.color =
-      layer.color ||
-      "#86ad96";
+      swatch.style.background;
 
 
     const title =
@@ -4361,8 +4927,28 @@ function renderLayers() {
       "layer-name";
 
 
-    title.textContent =
+    let titleText =
       layer.name;
+
+
+    if (
+      paintMode &&
+      (
+        layer.kind ===
+          "repere" ||
+        layer.kind ===
+          "batiment"
+      )
+    ) {
+
+      titleText +=
+        " • masqué";
+
+    }
+
+
+    title.textContent =
+      titleText;
 
 
     const countElement =
@@ -4545,7 +5131,7 @@ function configureShapeLayer(
 
   leafletLayer.on(
     "click",
-    event => {
+    async event => {
 
       if (
         !editMode
@@ -4557,6 +5143,42 @@ function configureShapeLayer(
       L.DomEvent.stopPropagation(
         event
       );
+
+
+      if (
+        paintMode
+      ) {
+
+        map.closePopup();
+
+
+        if (
+          parentLayer.kind !==
+          "quartier"
+        ) {
+
+          return;
+
+        }
+
+
+        if (
+          !selectedFaction
+        ) {
+
+          return;
+
+        }
+
+
+        await paintQuartier(
+          shape
+        );
+
+
+        return;
+
+      }
 
 
       selectExistingShape(
@@ -4662,16 +5284,60 @@ function renderShapes() {
     }
 
 
+    const faction =
+      shape.faction_id
+        ? mapFactions.find(
+            item =>
+              item.id ===
+              shape.faction_id
+          )
+        : null;
+
+
+    const quartier =
+      parentLayer.kind ===
+      "quartier";
+
+
     const color =
-      shape.style?.color ||
-      parentLayer.color ||
-      "#86ad96";
+      quartier
+        ? "#ffffff"
+        : (
+            shape.style?.color ||
+            parentLayer.color ||
+            "#86ad96"
+          );
+
+
+    const fillColor =
+      quartier
+        ? (
+            faction?.color ||
+            "#ffffff"
+          )
+        : color;
 
 
     const opacity =
-      shape.style?.opacity ??
-      parentLayer.opacity ??
-      .30;
+      quartier
+        ? (
+            faction
+              ? (
+                  paintMode
+                    ? .36
+                    : .22
+                )
+              : (
+                  paintMode
+                    ? .04
+                    : 0
+                )
+          )
+        : (
+            shape.style?.opacity ??
+            parentLayer.opacity ??
+            .30
+          );
 
 
     const geometryType =
@@ -4706,17 +5372,12 @@ function renderShapes() {
               color,
 
             fillColor:
-              color,
+              fillColor,
 
             fillOpacity:
               polygon
                 ? opacity
                 : 0,
-
-            /*
-              On FORCE 6px pour les zones.
-              Le clip en garde environ 3px à l'intérieur.
-            */
 
             weight:
               polygon
@@ -4919,11 +5580,6 @@ map.on(
 
     applyShapePreview();
 
-
-    /*
-      Réapplication agressive après pm:create.
-      C'est ici que Geoman refaisait parfois le PATH.
-    */
 
     if (
       isAreaLayer(
@@ -5166,7 +5822,7 @@ saveShapeButton.addEventListener(
     ) {
 
       status.textContent =
-        "Crée d'abord une couche.";
+        "Aucune couche disponible.";
 
       return;
 
@@ -5572,22 +6228,349 @@ deleteShapeButton.addEventListener(
 
 
 /* =========================================================
-   CREATE LAYER
+   FACTIONS
+========================================================= */
+
+const factionList =
+  document.getElementById(
+    "faction-list"
+  );
+
+
+const factionNameInput =
+  document.getElementById(
+    "faction-name"
+  );
+
+
+const factionDescriptionInput =
+  document.getElementById(
+    "faction-description"
+  );
+
+
+const factionColorInput =
+  document.getElementById(
+    "faction-color"
+  );
+
+
+const factionLogoInput =
+  document.getElementById(
+    "faction-logo"
+  );
+
+
+const factionVisibleInput =
+  document.getElementById(
+    "faction-visible"
+  );
+
+
+const paintFactionButton =
+  document.getElementById(
+    "paint-faction"
+  );
+
+
+const deleteFactionButton =
+  document.getElementById(
+    "delete-faction"
+  );
+
+
+const paintInfo =
+  document.getElementById(
+    "paint-info"
+  );
+
+
+
+function renderFactionPanel() {
+
+  if (
+    !factionList
+  ) {
+
+    return;
+
+  }
+
+
+  factionList.innerHTML =
+    "";
+
+
+  if (
+    mapFactions.length ===
+    0
+  ) {
+
+    factionList.innerHTML =
+      `
+        <div style="
+          color:#68736d;
+          font-size:10px;
+          padding:8px;
+        ">
+          Aucune faction.
+        </div>
+      `;
+
+  }
+
+
+  for (
+    const faction
+    of mapFactions
+  ) {
+
+    const quartierCount =
+      mapShapes.filter(
+        shape =>
+          shape.faction_id ===
+          faction.id
+      ).length;
+
+
+    const item =
+      document.createElement(
+        "button"
+      );
+
+
+    item.type =
+      "button";
+
+
+    item.className =
+      "faction-item";
+
+
+    if (
+      selectedFaction?.id ===
+      faction.id
+    ) {
+
+      item.classList.add(
+        "active"
+      );
+
+    }
+
+
+    const dot =
+      document.createElement(
+        "span"
+      );
+
+
+    dot.className =
+      "faction-dot";
+
+
+    dot.style.background =
+      faction.color ||
+      "#8f6cff";
+
+
+    const name =
+      document.createElement(
+        "span"
+      );
+
+
+    name.className =
+      "faction-name";
+
+
+    name.textContent =
+      faction.name;
+
+
+    const count =
+      document.createElement(
+        "span"
+      );
+
+
+    count.className =
+      "faction-count";
+
+
+    count.textContent =
+      quartierCount;
+
+
+    item.append(
+      dot,
+      name,
+      count
+    );
+
+
+    item.addEventListener(
+      "click",
+      () => {
+
+        selectFaction(
+          faction
+        );
+
+      }
+    );
+
+
+    factionList.appendChild(
+      item
+    );
+
+  }
+
+
+  paintFactionButton.disabled =
+    !selectedFaction;
+
+
+  deleteFactionButton.disabled =
+    !selectedFaction;
+
+
+  lucide.createIcons();
+
+}
+
+
+
+/* =========================================================
+   SELECT FACTION
+========================================================= */
+
+function selectFaction(
+  faction
+) {
+
+  if (
+    paintMode
+  ) {
+
+    stopPaintMode();
+
+  }
+
+
+  selectedFaction =
+    faction;
+
+
+  factionNameInput.value =
+    faction.name ||
+    "";
+
+
+  factionDescriptionInput.value =
+    faction.description ||
+    "";
+
+
+  factionColorInput.value =
+    faction.color ||
+    "#8f6cff";
+
+
+  factionLogoInput.value =
+    faction.logo_url ||
+    "";
+
+
+  factionVisibleInput.value =
+    String(
+      faction.visible !==
+      false
+    );
+
+
+  renderFactionPanel();
+
+
+  status.textContent =
+    "Faction sélectionnée : " +
+    faction.name;
+
+}
+
+
+
+/* =========================================================
+   NEW FACTION
 ========================================================= */
 
 document
   .getElementById(
-    "create-layer"
+    "new-faction"
+  )
+  .addEventListener(
+    "click",
+    () => {
+
+      if (
+        paintMode
+      ) {
+
+        stopPaintMode();
+
+      }
+
+
+      selectedFaction =
+        null;
+
+
+      factionNameInput.value =
+        "";
+
+
+      factionDescriptionInput.value =
+        "";
+
+
+      factionColorInput.value =
+        "#8f6cff";
+
+
+      factionLogoInput.value =
+        "";
+
+
+      factionVisibleInput.value =
+        "true";
+
+
+      renderFactionPanel();
+
+
+      status.textContent =
+        "Nouvelle faction.";
+
+    }
+  );
+
+
+
+/* =========================================================
+   SAVE FACTION
+========================================================= */
+
+document
+  .getElementById(
+    "save-faction"
   )
   .addEventListener(
     "click",
     async () => {
 
       const name =
-        document
-          .getElementById(
-            "new-layer-name"
-          )
+        factionNameInput
           .value
           .trim();
 
@@ -5597,9 +6580,150 @@ document
       ) {
 
         status.textContent =
-          "Entre un nom pour la couche.";
+          "Entre un nom pour la faction.";
 
         return;
+
+      }
+
+
+      const payload = {
+
+        name:
+          name,
+
+        description:
+          factionDescriptionInput
+            .value
+            .trim(),
+
+        color:
+          factionColorInput.value,
+
+        logo_url:
+          factionLogoInput
+            .value
+            .trim() ||
+          null,
+
+        visible:
+          factionVisibleInput.value ===
+          "true"
+
+      };
+
+
+      let response;
+
+
+      if (
+        selectedFaction
+      ) {
+
+        response =
+          await db
+            .from(
+              "factions"
+            )
+            .update(
+              payload
+            )
+            .eq(
+              "id",
+              selectedFaction.id
+            )
+            .select()
+            .single();
+
+      }
+      else {
+
+        response =
+          await db
+            .from(
+              "factions"
+            )
+            .insert(
+              payload
+            )
+            .select()
+            .single();
+
+      }
+
+
+      if (
+        response.error
+      ) {
+
+        console.error(
+          response.error
+        );
+
+
+        status.textContent =
+          "Erreur faction : " +
+          response.error.message;
+
+
+        return;
+
+      }
+
+
+      selectedFaction =
+        response.data;
+
+
+      await loadDatabase();
+
+
+      status.textContent =
+        "Faction enregistrée.";
+
+    }
+  );
+
+
+
+/* =========================================================
+   DELETE FACTION
+========================================================= */
+
+deleteFactionButton
+  .addEventListener(
+    "click",
+    async () => {
+
+      if (
+        !selectedFaction
+      ) {
+
+        return;
+
+      }
+
+
+      const confirmation =
+        confirm(
+          `Supprimer la faction "${selectedFaction.name}" ?`
+        );
+
+
+      if (
+        !confirmation
+      ) {
+
+        return;
+
+      }
+
+
+      if (
+        paintMode
+      ) {
+
+        stopPaintMode();
 
       }
 
@@ -5609,45 +6733,13 @@ document
       } =
         await db
           .from(
-            "map_layers"
+            "factions"
           )
-          .insert({
-
-            name:
-
-              name,
-
-            kind:
-
-              document
-                .getElementById(
-                  "new-layer-kind"
-                )
-                .value,
-
-            color:
-
-              document
-                .getElementById(
-                  "new-layer-color"
-                )
-                .value,
-
-            opacity:
-
-              Number(
-                document
-                  .getElementById(
-                    "new-layer-opacity"
-                  )
-                  .value
-              ),
-
-            visible:
-
-              true
-
-          });
+          .delete()
+          .eq(
+            "id",
+            selectedFaction.id
+          );
 
 
       if (
@@ -5664,22 +6756,288 @@ document
       }
 
 
-      document
-        .getElementById(
-          "new-layer-name"
-        )
-        .value =
-          "";
+      selectedFaction =
+        null;
+
+
+      factionNameInput.value =
+        "";
+
+
+      factionDescriptionInput.value =
+        "";
+
+
+      factionLogoInput.value =
+        "";
 
 
       await loadDatabase();
 
 
       status.textContent =
-        "Couche créée.";
+        "Faction supprimée.";
 
     }
   );
+
+
+
+/* =========================================================
+   START PAINT MODE
+========================================================= */
+
+function startPaintMode() {
+
+  if (
+    !selectedFaction
+  ) {
+
+    status.textContent =
+      "Sélectionne d'abord une faction.";
+
+    return;
+
+  }
+
+
+  stopDrawing();
+
+
+  cancelSelection();
+
+
+  paintMode =
+    true;
+
+
+  document.body.classList.add(
+    "painting"
+  );
+
+
+  paintFactionButton.classList.add(
+    "active"
+  );
+
+
+  paintInfo.classList.add(
+    "visible"
+  );
+
+
+  document
+    .getElementById(
+      "paint-faction-title"
+    )
+    .textContent =
+      "Pot de peinture : " +
+      selectedFaction.name;
+
+
+  renderLayers();
+
+
+  renderShapes();
+
+
+  status.textContent =
+    "Clique sur les quartiers à attribuer à " +
+    selectedFaction.name +
+    ".";
+
+
+  lucide.createIcons();
+
+}
+
+
+
+/* =========================================================
+   STOP PAINT MODE
+========================================================= */
+
+function stopPaintMode() {
+
+  if (
+    !paintMode
+  ) {
+
+    return;
+
+  }
+
+
+  paintMode =
+    false;
+
+
+  document.body.classList.remove(
+    "painting"
+  );
+
+
+  paintFactionButton.classList.remove(
+    "active"
+  );
+
+
+  paintInfo.classList.remove(
+    "visible"
+  );
+
+
+  renderLayers();
+
+
+  renderShapes();
+
+
+  if (
+    editMode
+  ) {
+
+    status.textContent =
+      "Placement des factions terminé.";
+
+  }
+
+
+  lucide.createIcons();
+
+}
+
+
+
+/* =========================================================
+   PAINT BUTTONS
+========================================================= */
+
+paintFactionButton
+  .addEventListener(
+    "click",
+    () => {
+
+      if (
+        paintMode
+      ) {
+
+        stopPaintMode();
+
+      }
+      else {
+
+        startPaintMode();
+
+      }
+
+    }
+  );
+
+
+document
+  .getElementById(
+    "stop-paint"
+  )
+  .addEventListener(
+    "click",
+    stopPaintMode
+  );
+
+
+
+/* =========================================================
+   PAINT QUARTIER
+========================================================= */
+
+async function paintQuartier(
+  quartier
+) {
+
+  if (
+    !paintMode ||
+    !selectedFaction
+  ) {
+
+    return;
+
+  }
+
+
+  const nextFactionId =
+    quartier.faction_id ===
+      selectedFaction.id
+      ? null
+      : selectedFaction.id;
+
+
+  status.textContent =
+    "Attribution...";
+
+
+  const {
+    error
+  } =
+    await db
+      .from(
+        "map_shapes"
+      )
+      .update({
+
+        faction_id:
+          nextFactionId
+
+      })
+      .eq(
+        "id",
+        quartier.id
+      );
+
+
+  if (
+    error
+  ) {
+
+    console.error(
+      error
+    );
+
+
+    status.textContent =
+      "Erreur attribution : " +
+      error.message;
+
+
+    return;
+
+  }
+
+
+  quartier.faction_id =
+    nextFactionId;
+
+
+  await loadDatabase();
+
+
+  if (
+    nextFactionId
+  ) {
+
+    status.textContent =
+      "Quartier attribué à " +
+      selectedFaction.name +
+      ".";
+
+  }
+  else {
+
+    status.textContent =
+      "Quartier libéré.";
+
+  }
+
+}
 
 
 
