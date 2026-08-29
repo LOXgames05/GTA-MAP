@@ -1814,40 +1814,23 @@ body.painting .leaflet-interactive {
 .faction-map-badge {
   transform: translate(-50%, -50%);
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 5px;
+  justify-content: center;
   pointer-events: none;
 }
 
-.faction-map-logo {
-  width: 44px;
-  height: 44px;
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-  border: 2px solid currentColor;
-  border-radius: 50%;
-  background: rgba(4,8,6,.90);
-  box-shadow: 0 8px 25px rgba(0,0,0,.55);
-  font-size: 16px;
-  font-weight: 900;
-}
-
-.faction-map-logo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
+/*
+  Le logo de faction n'est plus affiché au centre du territoire.
+  Le nom reste seul, plus discret et plus lisible.
+*/
 .faction-map-name {
-  max-width: 140px;
+  max-width: 170px;
   overflow: hidden;
-  padding: 4px 8px;
+  padding: 4px 9px;
   border: 1px solid rgba(255,255,255,.08);
   border-radius: 999px;
-  background: rgba(4,8,6,.86);
-  box-shadow: 0 5px 15px rgba(0,0,0,.35);
+  background: rgba(4,8,6,.82);
+  box-shadow: 0 5px 15px rgba(0,0,0,.30);
   color: #ffffff;
   font-size: 8px;
   font-weight: 900;
@@ -2040,21 +2023,33 @@ body.painting .overlay-toggle {
 
 .zone-map-label {
   transform: translate(-50%, -50%);
-  max-width: 155px;
-  padding: 4px 7px;
-  border: 1px solid rgba(255,255,255,.09);
-  border-radius: 7px;
-  background: rgba(3,7,5,.72);
-  box-shadow: 0 4px 15px rgba(0,0,0,.28);
-  color: rgba(255,255,255,.93);
-  font-size: 8px;
-  font-weight: 900;
-  letter-spacing: .8px;
-  line-height: 1.15;
+
+  /* Valeurs recalculées en JS selon l'espace réellement disponible. */
+  width: var(--quartier-label-width, 120px);
+  max-width: none;
+  padding: 0;
+
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+
+  color: rgba(255,255,255,.95);
+  font-size: var(--quartier-label-size, 8px);
+  font-weight: 950;
+  letter-spacing: .7px;
+  line-height: 1.02;
   text-align: center;
   text-transform: uppercase;
   white-space: normal;
+  overflow-wrap: normal;
+  text-wrap: balance;
+
+  text-shadow:
+    0 1px 2px rgba(0,0,0,.95),
+    0 0 5px rgba(0,0,0,.82);
+
   pointer-events: none;
+  transform-origin: center center;
 }
 
 .map-point-wrap {
@@ -2105,6 +2100,31 @@ body.painting .overlay-toggle {
   line-height: 1.1;
   text-align: center;
   white-space: nowrap;
+}
+
+/* Bâtiments : uniquement un numéro posé sur la carte. */
+.building-number-marker {
+  transform: translate(-50%, -50%);
+  min-width: 24px;
+  height: 24px;
+  padding: 0 6px;
+
+  display: grid;
+  place-items: center;
+
+  border: 1px solid rgba(227,200,104,.62);
+  border-radius: 6px;
+  background: rgba(5,8,7,.92);
+  box-shadow: 0 5px 14px rgba(0,0,0,.42);
+
+  color: #f3dc82;
+  font-size: 9px;
+  font-weight: 950;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+
+  pointer-events: auto;
 }
 
 body.painting .zone-map-label {
@@ -2272,8 +2292,8 @@ body.painting .zone-map-label {
   }
 
   .zone-map-label {
-    font-size: 7px;
-    max-width: 110px;
+    /* Taille pilotée dynamiquement selon le quartier. */
+    max-width: none;
   }
 
   .map-point-name {
@@ -2946,7 +2966,6 @@ button svg {
   font-size: 8px !important;
 }
 
-.zone-map-label,
 .marker-map-name,
 .building-map-name {
   font-size: 7px !important;
@@ -3607,7 +3626,7 @@ button svg {
       <select id="shape-layer"></select>
 
 
-      <label>
+      <label id="shape-name-label">
         Nom
       </label>
 
@@ -4213,6 +4232,14 @@ let temporaryLayer =
 
 const layerVisibility =
   new Map();
+
+
+/*
+  Étiquettes des quartiers.
+  On garde leurs marqueurs afin de recalculer leur taille après un zoom.
+*/
+const quartierLabelMarkers =
+  new Set();
 
 
 
@@ -4960,6 +4987,8 @@ map.on(
       );
 
     }
+
+    refreshQuartierLabels();
 
   }
 );
@@ -6051,6 +6080,9 @@ function clearGroups() {
     {};
 
 
+  quartierLabelMarkers.clear();
+
+
   clearInnerClips();
 
 }
@@ -6411,15 +6443,14 @@ function buildFactionPopup(faction) {
 }
 
 function factionLabelHtml(faction) {
-  const initial = (faction.name || "?").trim().charAt(0).toUpperCase();
-  const logo = faction.logo_url
-    ? `<img src="${escapeHtml(faction.logo_url)}" alt="">`
-    : escapeHtml(initial);
-
   return `
-    <div class="faction-map-badge" style="color:${escapeHtml(faction.color || "#8f6cff")}">
-      <div class="faction-map-logo">${logo}</div>
-      <div class="faction-map-name">${escapeHtml(faction.name)}</div>
+    <div
+      class="faction-map-badge"
+      style="color:${escapeHtml(faction.color || "#8f6cff")}"
+    >
+      <div class="faction-map-name">
+        ${escapeHtml(faction.name || "Faction")}
+      </div>
     </div>
   `;
 }
@@ -6572,46 +6603,584 @@ function quartierLabelHtml(
 }
 
 
+/* =========================================================
+   POLE D'INACCESSIBILITÉ
+
+   Cherche le point intérieur du quartier ayant la plus grande
+   distance possible avec TOUS les segments du contour.
+
+   C'est le même principe que "polylabel" : le texte n'est donc
+   plus placé sur un simple centre géométrique qui peut tomber
+   près d'une rue, d'une frontière ou dans une partie étroite.
+========================================================= */
+
+function segmentDistanceSquared(
+  px,
+  py,
+  ax,
+  ay,
+  bx,
+  by
+) {
+  let x = ax;
+  let y = ay;
+
+  let dx = bx - ax;
+  let dy = by - ay;
+
+  if (dx !== 0 || dy !== 0) {
+    const t =
+      ((px - ax) * dx + (py - ay) * dy) /
+      (dx * dx + dy * dy);
+
+    if (t > 1) {
+      x = bx;
+      y = by;
+    }
+    else if (t > 0) {
+      x = ax + dx * t;
+      y = ay + dy * t;
+    }
+  }
+
+  dx = px - x;
+  dy = py - y;
+
+  return dx * dx + dy * dy;
+}
+
+
+function pointToPolygonDistance(
+  x,
+  y,
+  polygon
+) {
+  let inside = false;
+  let minDistanceSquared = Infinity;
+
+  for (
+    const ring
+    of polygon
+  ) {
+
+    for (
+      let i = 0,
+          j = ring.length - 1;
+      i < ring.length;
+      j = i++
+    ) {
+      const a = ring[i];
+      const b = ring[j];
+
+      if (
+        ((a[1] > y) !== (b[1] > y)) &&
+        (
+          x <
+          (b[0] - a[0]) *
+          (y - a[1]) /
+          (b[1] - a[1]) +
+          a[0]
+        )
+      ) {
+        inside = !inside;
+      }
+
+      minDistanceSquared = Math.min(
+        minDistanceSquared,
+        segmentDistanceSquared(
+          x,
+          y,
+          a[0],
+          a[1],
+          b[0],
+          b[1]
+        )
+      );
+    }
+  }
+
+  const distance =
+    Math.sqrt(minDistanceSquared);
+
+  return inside
+    ? distance
+    : -distance;
+}
+
+
+function polygonCentroidCell(
+  polygon
+) {
+  const ring = polygon[0];
+
+  let area = 0;
+  let x = 0;
+  let y = 0;
+
+  for (
+    let i = 0,
+        j = ring.length - 1;
+    i < ring.length;
+    j = i++
+  ) {
+    const a = ring[i];
+    const b = ring[j];
+
+    const factor =
+      a[0] * b[1] -
+      b[0] * a[1];
+
+    x +=
+      (a[0] + b[0]) *
+      factor;
+
+    y +=
+      (a[1] + b[1]) *
+      factor;
+
+    area += factor;
+  }
+
+  if (area === 0) {
+    const first = ring[0];
+
+    return {
+      x: first[0],
+      y: first[1],
+      d: pointToPolygonDistance(
+        first[0],
+        first[1],
+        polygon
+      )
+    };
+  }
+
+  area *= 3;
+
+  const cx = x / area;
+  const cy = y / area;
+
+  return {
+    x: cx,
+    y: cy,
+    d: pointToPolygonDistance(
+      cx,
+      cy,
+      polygon
+    )
+  };
+}
+
+
+function makePolylabelCell(
+  x,
+  y,
+  h,
+  polygon
+) {
+  const d =
+    pointToPolygonDistance(
+      x,
+      y,
+      polygon
+    );
+
+  return {
+    x,
+    y,
+    h,
+    d,
+    max:
+      d + h * Math.SQRT2
+  };
+}
+
+
+function poleOfInaccessibilityForPolygon(
+  polygon,
+  precision = 1
+) {
+  const outer = polygon[0];
+
+  if (
+    !outer ||
+    outer.length < 3
+  ) {
+    return null;
+  }
+
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+
+  for (
+    const point
+    of outer
+  ) {
+    minX = Math.min(minX, point[0]);
+    minY = Math.min(minY, point[1]);
+    maxX = Math.max(maxX, point[0]);
+    maxY = Math.max(maxY, point[1]);
+  }
+
+  const width = maxX - minX;
+  const height = maxY - minY;
+  const cellSize = Math.min(width, height);
+
+  if (cellSize <= 0) {
+    return null;
+  }
+
+  let h = cellSize / 2;
+  const cells = [];
+
+  for (
+    let x = minX;
+    x < maxX;
+    x += cellSize
+  ) {
+    for (
+      let y = minY;
+      y < maxY;
+      y += cellSize
+    ) {
+      cells.push(
+        makePolylabelCell(
+          x + h,
+          y + h,
+          h,
+          polygon
+        )
+      );
+    }
+  }
+
+  let best =
+    polygonCentroidCell(
+      polygon
+    );
+
+  const bboxCell =
+    makePolylabelCell(
+      minX + width / 2,
+      minY + height / 2,
+      0,
+      polygon
+    );
+
+  if (
+    bboxCell.d > best.d
+  ) {
+    best = bboxCell;
+  }
+
+  while (
+    cells.length
+  ) {
+    cells.sort(
+      (a, b) =>
+        b.max - a.max
+    );
+
+    const cell =
+      cells.shift();
+
+    if (
+      cell.d > best.d
+    ) {
+      best = cell;
+    }
+
+    if (
+      cell.max - best.d <= precision
+    ) {
+      continue;
+    }
+
+    h = cell.h / 2;
+
+    cells.push(
+      makePolylabelCell(
+        cell.x - h,
+        cell.y - h,
+        h,
+        polygon
+      ),
+      makePolylabelCell(
+        cell.x + h,
+        cell.y - h,
+        h,
+        polygon
+      ),
+      makePolylabelCell(
+        cell.x - h,
+        cell.y + h,
+        h,
+        polygon
+      ),
+      makePolylabelCell(
+        cell.x + h,
+        cell.y + h,
+        h,
+        polygon
+      )
+    );
+  }
+
+  return {
+    x: best.x,
+    y: best.y,
+    radius: Math.max(0, best.d)
+  };
+}
+
+
+function quartierPole(
+  geometry
+) {
+  if (
+    !geometry
+  ) {
+    return null;
+  }
+
+  const polygons =
+    geometry.type === "Polygon"
+      ? [geometry.coordinates]
+      : geometry.type === "MultiPolygon"
+        ? geometry.coordinates
+        : [];
+
+  let best = null;
+
+  for (
+    const polygon
+    of polygons
+  ) {
+    const candidate =
+      poleOfInaccessibilityForPolygon(
+        polygon,
+        1
+      );
+
+    if (
+      candidate &&
+      (
+        !best ||
+        candidate.radius > best.radius
+      )
+    ) {
+      best = candidate;
+    }
+  }
+
+  return best;
+}
+
+
+/* =========================================================
+   TAILLE DU NOM DU QUARTIER
+
+   On convertit le rayon libre en pixels à l'écran et on adapte
+   automatiquement la police + largeur du texte.
+========================================================= */
+
+function updateQuartierLabelMarker(
+  record
+) {
+  const marker = record.marker;
+  const element = marker.getElement();
+
+  if (
+    !element ||
+    !record.pole
+  ) {
+    return;
+  }
+
+  const label =
+    element.querySelector(
+      ".zone-map-label"
+    );
+
+  if (
+    !label
+  ) {
+    return;
+  }
+
+  const pole = record.pole;
+
+  const centerPoint =
+    map.latLngToLayerPoint(
+      [pole.y, pole.x]
+    );
+
+  const horizontalPoint =
+    map.latLngToLayerPoint(
+      [pole.y, pole.x + pole.radius]
+    );
+
+  const verticalPoint =
+    map.latLngToLayerPoint(
+      [pole.y + pole.radius, pole.x]
+    );
+
+  const radiusPx = Math.max(
+    1,
+    Math.min(
+      Math.abs(horizontalPoint.x - centerPoint.x),
+      Math.abs(verticalPoint.y - centerPoint.y)
+    )
+  );
+
+  const name =
+    String(
+      record.name ||
+      "Quartier"
+    ).trim();
+
+  /*
+    Le cercle de rayon radiusPx est garanti à l'intérieur du quartier.
+    On reste volontairement en-dessous du diamètre pour ne pas toucher
+    les contours, même avec des lettres larges.
+  */
+  const safeWidth =
+    Math.max(
+      24,
+      radiusPx * 1.62
+    );
+
+  const charCount =
+    Math.max(
+      4,
+      name.length
+    );
+
+  const fontByHeight =
+    radiusPx * .56;
+
+  const fontByWidth =
+    safeWidth /
+    (charCount * .57);
+
+  const fontSize =
+    Math.max(
+      5,
+      Math.min(
+        18,
+        fontByHeight,
+        fontByWidth * 1.65
+      )
+    );
+
+  label.style.setProperty(
+    "--quartier-label-size",
+    `${fontSize.toFixed(2)}px`
+  );
+
+  label.style.setProperty(
+    "--quartier-label-width",
+    `${Math.max(30, safeWidth).toFixed(1)}px`
+  );
+
+  /*
+    Si la zone devient microscopique au zoom arrière,
+    on masque le texte plutôt que de le laisser dépasser.
+  */
+  label.style.display =
+    radiusPx < 7
+      ? "none"
+      : "block";
+}
+
+
+function refreshQuartierLabels() {
+  for (
+    const record
+    of quartierLabelMarkers
+  ) {
+    updateQuartierLabelMarker(
+      record
+    );
+  }
+}
+
+
 function addQuartierLabel(
   shape,
   group
 ) {
-
   if (
     !shape.name ||
-    !isPolygonGeometry(shape.geometry)
+    !isPolygonGeometry(
+      shape.geometry
+    )
   ) {
     return;
   }
 
   try {
-    const feature = {
-      type: "Feature",
-      properties: {},
-      geometry: shape.geometry
+    const pole =
+      quartierPole(
+        shape.geometry
+      );
+
+    if (
+      !pole
+    ) {
+      return;
+    }
+
+    const marker =
+      L.marker(
+        [pole.y, pole.x],
+        {
+          pane: "zoneLabelPane",
+          interactive: false,
+          icon: L.divIcon({
+            className: "",
+            html: quartierLabelHtml(
+              shape
+            ),
+            iconSize: [1, 1],
+            iconAnchor: [0, 0]
+          })
+        }
+      );
+
+    const record = {
+      marker,
+      pole,
+      name:
+        shape.name ||
+        "Quartier"
     };
 
-    const point =
-      turf.pointOnFeature(feature);
+    quartierLabelMarkers.add(
+      record
+    );
 
-    const [x, y] =
-      point.geometry.coordinates;
-
-    L.marker(
-      [y, x],
-      {
-        pane: "zoneLabelPane",
-        interactive: false,
-        icon: L.divIcon({
-          className: "",
-          html: quartierLabelHtml(shape),
-          iconSize: [1, 1],
-          iconAnchor: [0, 0]
-        })
+    marker.on(
+      "add",
+      () => {
+        requestAnimationFrame(
+          () =>
+            updateQuartierLabelMarker(
+              record
+            )
+        );
       }
-    ).addTo(group);
+    );
+
+    marker.addTo(
+      group
+    );
   }
-  catch (error) {
+  catch (
+    error
+  ) {
     console.warn(
       "Nom du quartier impossible à positionner :",
       error
@@ -6625,13 +7194,37 @@ function pointMarkerHtml(
   kind
 ) {
 
+  /*
+    BÂTIMENT : uniquement un chiffre.
+    Le champ "Nom" de l'éditeur sert de numéro de bâtiment.
+  */
+  if (
+    kind === "batiment"
+  ) {
+    const number =
+      String(
+        shape.name ||
+        "?"
+      ).trim();
+
+    return `
+      <div class="building-number-marker">
+        ${escapeHtml(number)}
+      </div>
+    `;
+  }
+
+
+  /*
+    REPÈRE : logo / symbole + nom dessous.
+  */
   const logo =
     shape.style?.logo_url ||
     "";
 
   const fallback =
     shape.style?.icon ||
-    (kind === "batiment" ? "▣" : "◆");
+    "◆";
 
   const visual =
     logo
@@ -6639,12 +7232,12 @@ function pointMarkerHtml(
       : escapeHtml(fallback);
 
   return `
-    <div class="map-point-wrap ${kind === "batiment" ? "building" : "repere"}">
+    <div class="map-point-wrap repere">
       <div class="map-point-logo">
         ${visual}
       </div>
       <div class="map-point-name">
-        ${escapeHtml(shape.name || (kind === "batiment" ? "Bâtiment" : "Repère"))}
+        ${escapeHtml(shape.name || "Repère")}
       </div>
     </div>
   `;
@@ -7235,18 +7828,63 @@ function updateMarkerFieldsVisibility() {
   const kind =
     selectedEditorKind();
 
-  const visible =
-    kind === "repere" ||
-    kind === "batiment";
+  const shapeNameLabel =
+    document.getElementById(
+      "shape-name-label"
+    );
 
+  /*
+    Repères : logo / symbole disponibles.
+    Bâtiments : seulement un numéro, donc aucun champ logo/symbole.
+  */
   shapeMarkerFields.style.display =
-    visible ? "" : "none";
+    kind === "repere"
+      ? ""
+      : "none";
 
-  if (visible && !shapeIconInput.value) {
-    shapeIconInput.value =
-      kind === "batiment"
-        ? "▣"
-        : "◆";
+  if (
+    kind === "repere"
+  ) {
+    if (
+      shapeNameLabel
+    ) {
+      shapeNameLabel.textContent =
+        "Nom";
+    }
+
+    shapeNameInput.placeholder =
+      "Ex. Commissariat";
+
+    if (
+      !shapeIconInput.value
+    ) {
+      shapeIconInput.value =
+        "◆";
+    }
+  }
+  else if (
+    kind === "batiment"
+  ) {
+    if (
+      shapeNameLabel
+    ) {
+      shapeNameLabel.textContent =
+        "Numéro";
+    }
+
+    shapeNameInput.placeholder =
+      "Ex. 12";
+  }
+  else {
+    if (
+      shapeNameLabel
+    ) {
+      shapeNameLabel.textContent =
+        "Nom";
+    }
+
+    shapeNameInput.placeholder =
+      "Ex. Vinewood Hills";
   }
 }
 
@@ -7412,12 +8050,14 @@ saveShapeButton.addEventListener(
             : 3,
 
         logo_url:
-          shapeLogoInput.value.trim() ||
-          null,
+          selectedEditorKind() === "repere"
+            ? (shapeLogoInput.value.trim() || null)
+            : null,
 
         icon:
-          shapeIconInput.value.trim() ||
-          null
+          selectedEditorKind() === "repere"
+            ? (shapeIconInput.value.trim() || null)
+            : null
 
       },
 
