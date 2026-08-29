@@ -2392,7 +2392,7 @@ body.painting .zone-map-label {
     flex-wrap: wrap;
   }
 }
-\n\n/* =========================================================
+/* =========================================================
    UI LAYOUT ANTI-CHEVAUCHEMENT
 
    Les panneaux utilisent une vraie grille au lieu de positions
@@ -3010,6 +3010,61 @@ button svg {
   #editor-panel textarea,
   #factions-panel textarea {
     min-height: 36px !important;
+  }
+}
+
+
+
+/* =========================================================
+   DESKTOP SIDE COLUMNS - FINAL SAFEGUARD
+========================================================= */
+@media (min-width: 761px) {
+  #ui-panels {
+    position: fixed !important;
+    top: calc(var(--top-height) + var(--panel-gap)) !important;
+    left: var(--panel-gap) !important;
+    right: var(--panel-gap) !important;
+    bottom: var(--panel-gap) !important;
+    display: grid !important;
+    grid-template-columns: var(--left-panel) minmax(0, 1fr) var(--right-panel) !important;
+    column-gap: 18px !important;
+    align-items: start !important;
+    pointer-events: none !important;
+  }
+
+  #right-ui-stack {
+    grid-column: 3 !important;
+    grid-row: 1 !important;
+    width: var(--right-panel) !important;
+    max-width: var(--right-panel) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    pointer-events: auto !important;
+  }
+
+  #right-ui-stack > #layers-panel,
+  #right-ui-stack > #factions-panel {
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+  }
+
+  #ui-panels > #editor-panel {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    position: relative !important;
+    inset: auto !important;
+    width: var(--left-panel) !important;
+    max-width: var(--left-panel) !important;
+    margin: 0 !important;
+    pointer-events: auto !important;
+  }
+
+  #ui-panels .panel {
+    box-sizing: border-box !important;
   }
 }
 
