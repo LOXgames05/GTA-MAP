@@ -2392,6 +2392,287 @@ body.painting .zone-map-label {
     flex-wrap: wrap;
   }
 }
+\n\n/* =========================================================
+   UI LAYOUT ANTI-CHEVAUCHEMENT
+
+   Les panneaux utilisent une vraie grille au lieu de positions
+   verticales calculées à la main. Ils ne peuvent donc plus se
+   recouvrir entre eux.
+========================================================= */
+
+#ui-panels {
+  position: fixed;
+  top: calc(var(--top-height) + var(--panel-gap));
+  left: var(--panel-gap);
+  right: var(--panel-gap);
+  bottom: var(--panel-gap);
+  z-index: 6000;
+
+  display: grid;
+  grid-template-columns:
+    var(--left-panel)
+    minmax(0, 1fr)
+    var(--right-panel);
+  column-gap: 18px;
+  align-items: start;
+
+  pointer-events: none;
+}
+
+#ui-panels .panel,
+#right-ui-stack {
+  pointer-events: auto;
+}
+
+#right-ui-stack {
+  grid-column: 3;
+  grid-row: 1;
+
+  width: 100%;
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-self: start;
+}
+
+#right-ui-stack > #layers-panel,
+#right-ui-stack > #factions-panel {
+  position: relative !important;
+  top: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+
+  width: 100% !important;
+  max-height: none !important;
+  margin: 0 !important;
+}
+
+#ui-panels > #editor-panel {
+  grid-column: 1;
+  grid-row: 1;
+
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+
+  width: 100% !important;
+  max-height: none !important;
+  margin: 0 !important;
+}
+
+/* Aucun panneau n'a son propre scroll. */
+#ui-panels .panel-scroll {
+  overflow: visible !important;
+  overflow-x: visible !important;
+  overflow-y: visible !important;
+  max-height: none !important;
+}
+
+/* La toolbar reste dans la zone centrale et ne passe pas sous les panneaux. */
+body.editing {
+  --left-safe:
+    calc(
+      var(--left-panel)
+      + var(--panel-gap)
+      + 18px
+    );
+}
+
+body.layers-open {
+  --right-safe:
+    calc(
+      var(--right-panel)
+      + var(--panel-gap)
+      + 18px
+    );
+}
+
+/* Écrans moins hauts : compaction automatique, toujours sans scroll interne. */
+@media (max-height: 900px) and (min-width: 761px) {
+
+  #ui-panels {
+    top: calc(var(--top-height) + 10px);
+    bottom: 10px;
+  }
+
+  #right-ui-stack {
+    gap: 8px;
+  }
+
+  .panel-header {
+    min-height: 46px;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .panel-title {
+    font-size: 13px;
+  }
+
+  .display-panel-scroll,
+  #factions-panel .panel-scroll,
+  #editor-panel .panel-scroll {
+    padding: 9px !important;
+  }
+
+  .display-panel-scroll {
+    gap: 8px;
+  }
+
+  .display-section {
+    padding-bottom: 8px;
+  }
+
+  .map-mode-button {
+    min-height: 40px;
+  }
+
+  .overlay-toggle {
+    min-height: 39px;
+    margin-top: 5px;
+    padding: 5px 7px;
+  }
+
+  .display-note {
+    padding: 6px 8px;
+  }
+
+  #faction-list {
+    gap: 5px;
+  }
+
+  .faction-item {
+    min-height: 34px;
+    padding: 4px 6px;
+  }
+
+  .faction-form {
+    margin-top: 7px;
+    padding-top: 7px;
+  }
+
+  #factions-panel label,
+  #editor-panel label {
+    margin-top: 5px;
+    margin-bottom: 2px;
+  }
+
+  #factions-panel input,
+  #factions-panel select,
+  #editor-panel input,
+  #editor-panel select {
+    min-height: 31px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+
+  #factions-panel textarea,
+  #editor-panel textarea {
+    min-height: 42px;
+  }
+
+  #factions-panel .action-grid,
+  #editor-panel .action-grid {
+    margin-top: 6px;
+    gap: 5px;
+  }
+
+  #factions-panel button,
+  #editor-panel button {
+    min-height: 32px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+
+  #editor-panel .editor-section {
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+  }
+
+  #status {
+    padding: 7px 8px;
+  }
+}
+
+/*
+   Mobile : les panneaux passent dans un flux vertical unique.
+   Si l'écran est trop petit, c'est la page entière qui peut défiler.
+   Aucun menu n'a un scroll interne et aucun panneau n'en recouvre un autre.
+*/
+@media (max-width: 760px) {
+
+  html,
+  body {
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+  }
+
+  #ui-panels {
+    position: absolute;
+    top: calc(var(--top-height) + 10px);
+    left: 8px;
+    right: 8px;
+    bottom: auto;
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    padding-bottom: 95px;
+  }
+
+  #right-ui-stack {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    order: 1;
+  }
+
+  #ui-panels > #editor-panel {
+    width: 100% !important;
+    order: 2;
+  }
+
+  #right-ui-stack > #layers-panel,
+  #right-ui-stack > #factions-panel,
+  #ui-panels > #editor-panel {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    width: 100% !important;
+    max-height: none !important;
+  }
+
+  #draw-toolbar {
+    position: fixed;
+    left: 8px !important;
+    right: 8px !important;
+    bottom: 8px !important;
+    width: auto;
+    transform: none !important;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  body.editing,
+  body.layers-open {
+    --left-safe: 0px;
+    --right-safe: 0px;
+  }
+
+  .leaflet-bottom.leaflet-right {
+    right: 8px;
+    bottom: 82px;
+  }
+}
 
 </style>
 
@@ -2518,6 +2799,11 @@ body.painting .zone-map-label {
 </header>
 
 
+
+<!-- UI PANELS : disposition anti-chevauchement -->
+<div id="ui-panels">
+
+  <div id="right-ui-stack">
 
 <!-- AFFICHAGE -->
 
@@ -2851,6 +3137,8 @@ body.painting .zone-map-label {
 
 </aside>
 
+  </div><!-- /#right-ui-stack -->
+
 
 <!-- EDITOR -->
 
@@ -3100,6 +3388,11 @@ body.painting .zone-map-label {
   </div>
 
 </aside>
+
+</div><!-- /#ui-panels -->
+
+
+
 
 
 
