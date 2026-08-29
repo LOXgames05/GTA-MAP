@@ -2045,6 +2045,15 @@ body.painting .overlay-toggle {
   font-weight: 900;
   letter-spacing: var(--quartier-label-letter-spacing, .35px);
   line-height: var(--quartier-label-line-height, 1.02);
+
+  transition:
+    font-size 70ms linear,
+    letter-spacing 70ms linear,
+    opacity 120ms ease;
+
+  will-change:
+    font-size,
+    letter-spacing;
   text-align: center;
   text-transform: uppercase;
   white-space: nowrap;
@@ -3181,6 +3190,8 @@ button svg {
 
   cursor: pointer;
   background: transparent;
+
+  touch-action: none;
 }
 
 #zoom-slider::-webkit-slider-runnable-track {
@@ -3243,6 +3254,26 @@ button svg {
   box-shadow:
     0 0 0 4px rgba(198,164,67,.28),
     0 3px 8px rgba(0,0,0,.45);
+}
+
+#zoom-slider::-webkit-slider-thumb {
+  transition:
+    transform 90ms ease,
+    box-shadow 90ms ease;
+}
+
+#zoom-slider:active::-webkit-slider-thumb {
+  transform: scale(1.12);
+}
+
+#zoom-slider::-moz-range-thumb {
+  transition:
+    transform 90ms ease,
+    box-shadow 90ms ease;
+}
+
+#zoom-slider:active::-moz-range-thumb {
+  transform: scale(1.12);
 }
 
 /* En édition la barre d'outils monte pour laisser le zoom en bas. */
@@ -5182,9 +5213,87 @@ map.setMaxBounds(
 
 /* =========================================================
    ZOOM SLIDER
+
+   Le curseur suit immédiatement le doigt / la souris.
+   La carte rejoint la cible avec une interpolation RAF pour
+   supprimer l'effet "cran par cran".
 ========================================================= */
 
-function syncZoomSlider() {
+let smoothZoomFrame =
+  null;
+
+let smoothZoomTarget =
+  null;
+
+let zoomSliderOwnsValue =
+  false;
+
+
+function clampZoomValue(
+  value
+) {
+
+  return Math.max(
+    map.getMinZoom(),
+    Math.min(
+      map.getMaxZoom(),
+      value
+    )
+  );
+
+}
+
+
+function setZoomSliderProgress(
+  value
+) {
+
+  if (
+    !zoomSlider ||
+    !map
+  ) {
+    return;
+  }
+
+
+  const minimum =
+    map.getMinZoom();
+
+
+  const maximum =
+    map.getMaxZoom();
+
+
+  const range =
+    maximum - minimum;
+
+
+  const progress =
+    range > 0
+      ? (
+          (value - minimum) /
+          range
+        ) * 100
+      : 0;
+
+
+  zoomSlider.style.setProperty(
+    "--zoom-progress",
+    `${Math.max(0, Math.min(100, progress)).toFixed(2)}%`
+  );
+
+
+  zoomSlider.setAttribute(
+    "aria-valuetext",
+    `Zoom ${value.toFixed(2)}`
+  );
+
+}
+
+
+function syncZoomSlider(
+  force = false
+) {
 
   if (
     !zoomSlider ||
@@ -5214,32 +5323,27 @@ function syncZoomSlider() {
     String(maximum);
 
 
-  zoomSlider.value =
-    String(current);
+  if (
+    force ||
+    !zoomSliderOwnsValue
+  ) {
+
+    zoomSlider.value =
+      String(current);
+
+  }
 
 
-  const range =
-    maximum - minimum;
+  const displayedValue =
+    zoomSliderOwnsValue
+      ? Number(zoomSlider.value)
+      : current;
 
 
-  const progress =
-    range > 0
-      ? (
-          (current - minimum) /
-          range
-        ) * 100
-      : 0;
-
-
-  zoomSlider.style.setProperty(
-    "--zoom-progress",
-    `${Math.max(0, Math.min(100, progress)).toFixed(2)}%`
-  );
-
-
-  zoomSlider.setAttribute(
-    "aria-valuetext",
-    `Zoom ${current.toFixed(2)}`
+  setZoomSliderProgress(
+    Number.isFinite(displayedValue)
+      ? displayedValue
+      : current
   );
 
 }
@@ -5270,6 +5374,129 @@ function scheduleQuartierLabelRefresh() {
 }
 
 
+function animateSmoothZoom() {
+
+  if (
+    !map ||
+    !Number.isFinite(
+      smoothZoomTarget
+    )
+  ) {
+
+    smoothZoomFrame =
+      null;
+
+    return;
+
+  }
+
+
+  const current =
+    map.getZoom();
+
+
+  const delta =
+    smoothZoomTarget - current;
+
+
+  if (
+    Math.abs(delta) < .002
+  ) {
+
+    map.setZoom(
+      smoothZoomTarget,
+      {
+        animate: false
+      }
+    );
+
+
+    smoothZoomFrame =
+      null;
+
+
+    zoomSliderOwnsValue =
+      false;
+
+
+    syncZoomSlider(
+      true
+    );
+
+
+    refreshQuartierLabels();
+
+
+    return;
+
+  }
+
+
+  /*
+    Interpolation exponentielle.
+    0.24 donne un mouvement fluide tout en restant réactif.
+  */
+  const nextZoom =
+    current +
+    delta * .24;
+
+
+  map.setZoom(
+    nextZoom,
+    {
+      animate: false
+    }
+  );
+
+
+  scheduleQuartierLabelRefresh();
+
+
+  smoothZoomFrame =
+    requestAnimationFrame(
+      animateSmoothZoom
+    );
+
+}
+
+
+function requestSmoothZoom(
+  target
+) {
+
+  if (
+    !Number.isFinite(
+      target
+    )
+  ) {
+    return;
+  }
+
+
+  smoothZoomTarget =
+    clampZoomValue(
+      target
+    );
+
+
+  zoomSliderOwnsValue =
+    true;
+
+
+  if (
+    !smoothZoomFrame
+  ) {
+
+    smoothZoomFrame =
+      requestAnimationFrame(
+        animateSmoothZoom
+      );
+
+  }
+
+}
+
+
 zoomSlider?.addEventListener(
   "input",
   event => {
@@ -5290,27 +5517,25 @@ zoomSlider?.addEventListener(
 
 
     /*
-      Pas d'animation ici : le curseur et la carte suivent
-      exactement le doigt / la souris en temps réel.
+      Le point de la barre suit immédiatement le curseur.
+      La carte, elle, rejoint la valeur en douceur.
     */
-    map.setZoom(
-      nextZoom,
-      {
-        animate: false
-      }
+    setZoomSliderProgress(
+      nextZoom
     );
 
 
-    syncZoomSlider();
-
-
-    scheduleQuartierLabelRefresh();
+    requestSmoothZoom(
+      nextZoom
+    );
 
   }
 );
 
 
-syncZoomSlider();
+syncZoomSlider(
+  true
+);
 
 
 /* =========================================================
@@ -7408,8 +7633,40 @@ const quartierLabelMeasureContext =
   quartierLabelMeasureCanvas.getContext("2d");
 
 
+function quartierLabelMaxFontSize() {
+
+  const siteTitle =
+    document.querySelector(
+      ".brand-name"
+    );
+
+
+  const computedSize =
+    siteTitle
+      ? parseFloat(
+          getComputedStyle(
+            siteTitle
+          ).fontSize
+        )
+      : 11;
+
+
+  /*
+    Le nom d'un quartier ne devient jamais plus gros
+    que le titre GTA MAP visible dans l'en-tête.
+  */
+  return Number.isFinite(
+    computedSize
+  )
+    ? Math.max(7, computedSize)
+    : 11;
+
+}
+
+
 function updateQuartierLabelMarker(
-  record
+  record,
+  maxFontSize = quartierLabelMaxFontSize()
 ) {
   const marker = record.marker;
   const element = marker.getElement();
@@ -7539,7 +7796,7 @@ function updateQuartierLabelMarker(
 
     const fontSize =
       Math.min(
-        42,
+        maxFontSize,
         100 *
         usableRadius /
         halfDiagonalAt100
@@ -7658,14 +7915,23 @@ function updateQuartierLabelMarker(
 }
 
 function refreshQuartierLabels() {
+
+  const maxFontSize =
+    quartierLabelMaxFontSize();
+
+
   for (
     const record
     of quartierLabelMarkers
   ) {
+
     updateQuartierLabelMarker(
-      record
+      record,
+      maxFontSize
     );
+
   }
+
 }
 
 
