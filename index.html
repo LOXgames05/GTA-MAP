@@ -2037,7 +2037,7 @@ body.painting .overlay-toggle {
   font-size: var(--quartier-label-size, 8px);
   font-weight: 950;
   letter-spacing: .7px;
-  line-height: 1.02;
+  line-height: var(--quartier-label-line-height, 1.02);
   text-align: center;
   text-transform: uppercase;
   white-space: normal;
@@ -6443,6 +6443,10 @@ function buildFactionPopup(faction) {
 }
 
 function factionLabelHtml(faction) {
+  /*
+    Aucun logo / aucune icône au centre des territoires de faction.
+    Seul le nom reste affiché.
+  */
   return `
     <div
       class="faction-map-badge"
@@ -6454,6 +6458,7 @@ function factionLabelHtml(faction) {
     </div>
   `;
 }
+
 
 function splitTerritoryPieces(feature) {
   if (!feature?.geometry) return [];
@@ -6986,6 +6991,59 @@ function quartierPole(
    automatiquement la police + largeur du texte.
 ========================================================= */
 
+function quartierLabelLayouts(
+  name
+) {
+  const words = String(name || "Quartier")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+
+  if (!words.length) {
+    return [["Quartier"]];
+  }
+
+  const layouts = [
+    [words.join(" ")]
+  ];
+
+  /*
+    On teste aussi toutes les coupures possibles sur 2 puis 3 lignes.
+    Le meilleur arrangement sera celui qui permet la plus grande police
+    tout en restant dans le cercle libre calculé par le polylabel.
+  */
+  if (words.length >= 2) {
+    for (let i = 1; i < words.length; i++) {
+      layouts.push([
+        words.slice(0, i).join(" "),
+        words.slice(i).join(" ")
+      ]);
+    }
+  }
+
+  if (words.length >= 3) {
+    for (let i = 1; i < words.length - 1; i++) {
+      for (let j = i + 1; j < words.length; j++) {
+        layouts.push([
+          words.slice(0, i).join(" "),
+          words.slice(i, j).join(" "),
+          words.slice(j).join(" ")
+        ]);
+      }
+    }
+  }
+
+  return layouts;
+}
+
+
+const quartierLabelMeasureCanvas =
+  document.createElement("canvas");
+
+const quartierLabelMeasureContext =
+  quartierLabelMeasureCanvas.getContext("2d");
+
+
 function updateQuartierLabelMarker(
   record
 ) {
@@ -7004,9 +7062,7 @@ function updateQuartierLabelMarker(
       ".zone-map-label"
     );
 
-  if (
-    !label
-  ) {
+  if (!label) {
     return;
   }
 
@@ -7042,57 +7098,114 @@ function updateQuartierLabelMarker(
     ).trim();
 
   /*
-    Le cercle de rayon radiusPx est garanti à l'intérieur du quartier.
-    On reste volontairement en-dessous du diamètre pour ne pas toucher
-    les contours, même avec des lettres larges.
+    Le point utilisé est le pôle d'inaccessibilité : le centre du plus
+    grand cercle entièrement contenu dans le quartier. Le rayon de ce
+    cercle est donc la distance minimale jusqu'à N'IMPORTE QUELLE ligne
+    du contour. On inscrit ensuite le texte dans un carré lui-même contenu
+    dans ce cercle. Le nom ne peut donc pas traverser une frontière.
   */
-  const safeWidth =
-    Math.max(
-      24,
-      radiusPx * 1.62
+  const safeSide = Math.max(
+    18,
+    radiusPx * Math.SQRT2 * .82
+  );
+
+  if (radiusPx < 6) {
+    label.style.display = "none";
+    return;
+  }
+
+  label.style.display = "block";
+
+  const layouts =
+    quartierLabelLayouts(name);
+
+  let best = null;
+
+  if (quartierLabelMeasureContext) {
+    quartierLabelMeasureContext.font =
+      '950 100px Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+  }
+
+  for (const lines of layouts) {
+    let maxWidthAt100 = 0;
+
+    for (const line of lines) {
+      const measured =
+        quartierLabelMeasureContext
+          ? quartierLabelMeasureContext.measureText(line).width
+          : line.length * 57;
+
+      maxWidthAt100 = Math.max(
+        maxWidthAt100,
+        measured
+      );
+    }
+
+    const widthScale =
+      maxWidthAt100 > 0
+        ? safeSide / maxWidthAt100
+        : 1;
+
+    const lineHeightFactor = 1.05;
+
+    const heightScale =
+      safeSide /
+      (lines.length * 100 * lineHeightFactor);
+
+    const fontSize = Math.min(
+      22,
+      100 * widthScale,
+      100 * heightScale
     );
 
-  const charCount =
-    Math.max(
-      4,
-      name.length
-    );
+    if (
+      !best ||
+      fontSize > best.fontSize
+    ) {
+      best = {
+        lines,
+        fontSize
+      };
+    }
+  }
 
-  const fontByHeight =
-    radiusPx * .56;
+  if (!best) {
+    return;
+  }
 
-  const fontByWidth =
-    safeWidth /
-    (charCount * .57);
+  const finalFontSize = Math.max(
+    5,
+    best.fontSize
+  );
 
-  const fontSize =
-    Math.max(
-      5,
-      Math.min(
-        18,
-        fontByHeight,
-        fontByWidth * 1.65
-      )
-    );
+  /*
+    Si même la meilleure disposition tombe sous 5px, on masque le nom
+    plutôt que de le faire déborder hors du quartier.
+  */
+  if (best.fontSize < 4.5) {
+    label.style.display = "none";
+    return;
+  }
+
+  label.innerHTML =
+    best.lines
+      .map(escapeHtml)
+      .join("<br>");
 
   label.style.setProperty(
     "--quartier-label-size",
-    `${fontSize.toFixed(2)}px`
+    `${finalFontSize.toFixed(2)}px`
   );
 
   label.style.setProperty(
     "--quartier-label-width",
-    `${Math.max(30, safeWidth).toFixed(1)}px`
+    `${safeSide.toFixed(1)}px`
   );
 
-  /*
-    Si la zone devient microscopique au zoom arrière,
-    on masque le texte plutôt que de le laisser dépasser.
-  */
-  label.style.display =
-    radiusPx < 7
-      ? "none"
-      : "block";
+  label.style.setProperty(
+    "--quartier-label-line-height",
+    "1.05"
+  );
 }
 
 
