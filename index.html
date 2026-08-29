@@ -2024,29 +2024,46 @@ body.painting .overlay-toggle {
 .zone-map-label {
   transform: translate(-50%, -50%);
 
-  /* Valeurs recalculées en JS selon l'espace réellement disponible. */
+  /*
+    Box adaptative : le JS calcule sa taille à partir du plus grand
+    espace libre autour du pôle d'inaccessibilité du quartier.
+  */
   width: var(--quartier-label-width, 120px);
   max-width: none;
-  padding: 0;
 
-  border: 0;
-  background: transparent;
-  box-shadow: none;
+  padding:
+    var(--quartier-label-padding-y, 3px)
+    var(--quartier-label-padding-x, 6px);
 
-  color: rgba(255,255,255,.95);
+  border:
+    var(--quartier-label-border, 1px)
+    solid rgba(255,255,255,.15);
+
+  border-radius:
+    var(--quartier-label-radius, 6px);
+
+  background:
+    rgba(4,8,6,.72);
+
+  box-shadow:
+    0 3px 10px rgba(0,0,0,.34),
+    inset 0 0 0 1px rgba(0,0,0,.18);
+
+  backdrop-filter: blur(2px);
+
+  color: rgba(255,255,255,.96);
   font-size: var(--quartier-label-size, 8px);
-  font-weight: 950;
-  letter-spacing: .7px;
-  line-height: var(--quartier-label-line-height, 1.02);
+  font-weight: 900;
+  letter-spacing: var(--quartier-label-letter-spacing, .55px);
+  line-height: var(--quartier-label-line-height, 1.04);
   text-align: center;
   text-transform: uppercase;
-  white-space: normal;
-  overflow-wrap: normal;
-  text-wrap: balance;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
 
   text-shadow:
-    0 1px 2px rgba(0,0,0,.95),
-    0 0 5px rgba(0,0,0,.82);
+    0 1px 2px rgba(0,0,0,.92);
 
   pointer-events: none;
   transform-origin: center center;
@@ -7098,18 +7115,15 @@ function updateQuartierLabelMarker(
     ).trim();
 
   /*
-    Le point utilisé est le pôle d'inaccessibilité : le centre du plus
-    grand cercle entièrement contenu dans le quartier. Le rayon de ce
-    cercle est donc la distance minimale jusqu'à N'IMPORTE QUELLE ligne
-    du contour. On inscrit ensuite le texte dans un carré lui-même contenu
-    dans ce cercle. Le nom ne peut donc pas traverser une frontière.
+    Le pôle d'inaccessibilité fournit le point le plus éloigné de toutes
+    les frontières. Le rayon associé correspond au plus grand cercle
+    libre autour de ce point. La box entière, pas seulement le texte,
+    est dimensionnée pour rester dans ce cercle avec une marge de sécurité.
   */
-  const safeSide = Math.max(
-    18,
-    radiusPx * Math.SQRT2 * .82
-  );
+  const usableRadius =
+    radiusPx * .86;
 
-  if (radiusPx < 6) {
+  if (usableRadius < 6) {
     label.style.display = "none";
     return;
   }
@@ -7123,7 +7137,7 @@ function updateQuartierLabelMarker(
 
   if (quartierLabelMeasureContext) {
     quartierLabelMeasureContext.font =
-      '950 100px Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+      '900 100px Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
   }
 
   for (const lines of layouts) {
@@ -7133,7 +7147,7 @@ function updateQuartierLabelMarker(
       const measured =
         quartierLabelMeasureContext
           ? quartierLabelMeasureContext.measureText(line).width
-          : line.length * 57;
+          : line.length * 55;
 
       maxWidthAt100 = Math.max(
         maxWidthAt100,
@@ -7141,21 +7155,37 @@ function updateQuartierLabelMarker(
       );
     }
 
-    const widthScale =
-      maxWidthAt100 > 0
-        ? safeSide / maxWidthAt100
-        : 1;
+    /*
+      Dimensions normalisées à 100px de police. Padding et hauteur suivent
+      donc naturellement le scale du texte.
+    */
+    const normalizedPaddingX = 52;
+    const normalizedPaddingY = 28;
+    const normalizedLineHeight = 104;
 
-    const lineHeightFactor = 1.05;
+    const normalizedBoxWidth =
+      maxWidthAt100 +
+      normalizedPaddingX * 2 +
+      2;
 
-    const heightScale =
-      safeSide /
-      (lines.length * 100 * lineHeightFactor);
+    const normalizedBoxHeight =
+      lines.length * normalizedLineHeight +
+      normalizedPaddingY * 2 +
+      2;
+
+    const normalizedHalfDiagonal =
+      Math.hypot(
+        normalizedBoxWidth,
+        normalizedBoxHeight
+      ) / 2;
+
+    if (normalizedHalfDiagonal <= 0) {
+      continue;
+    }
 
     const fontSize = Math.min(
       22,
-      100 * widthScale,
-      100 * heightScale
+      100 * usableRadius / normalizedHalfDiagonal
     );
 
     if (
@@ -7164,25 +7194,101 @@ function updateQuartierLabelMarker(
     ) {
       best = {
         lines,
-        fontSize
+        fontSize,
+        maxWidthAt100
       };
     }
   }
 
-  if (!best) {
+  if (!best || best.fontSize < 4.5) {
+    label.style.display = "none";
     return;
   }
 
-  const finalFontSize = Math.max(
-    5,
-    best.fontSize
-  );
+  let finalFontSize =
+    best.fontSize;
+
+  const computeBox =
+    fontSize => {
+      const scale =
+        fontSize / 100;
+
+      const textWidth =
+        best.maxWidthAt100 * scale;
+
+      const paddingX = Math.max(
+        3,
+        Math.min(
+          10,
+          fontSize * .52
+        )
+      );
+
+      const paddingY = Math.max(
+        2,
+        Math.min(
+          6,
+          fontSize * .28
+        )
+      );
+
+      const border =
+        fontSize >= 8
+          ? 1
+          : .75;
+
+      const lineHeight = 1.04;
+
+      const width =
+        textWidth +
+        paddingX * 2 +
+        border * 2;
+
+      const height =
+        best.lines.length *
+          fontSize *
+          lineHeight +
+        paddingY * 2 +
+        border * 2;
+
+      return {
+        width,
+        height,
+        paddingX,
+        paddingY,
+        border,
+        lineHeight,
+        halfDiagonal:
+          Math.hypot(
+            width,
+            height
+          ) / 2
+      };
+    };
+
+  let box =
+    computeBox(
+      finalFontSize
+    );
 
   /*
-    Si même la meilleure disposition tombe sous 5px, on masque le nom
-    plutôt que de le faire déborder hors du quartier.
+    Sécurité finale pour les noms atypiquement larges.
   */
-  if (best.fontSize < 4.5) {
+  if (
+    box.halfDiagonal >
+    usableRadius
+  ) {
+    finalFontSize *=
+      usableRadius /
+      box.halfDiagonal;
+
+    box =
+      computeBox(
+        finalFontSize
+      );
+  }
+
+  if (finalFontSize < 4.5) {
     label.style.display = "none";
     return;
   }
@@ -7199,12 +7305,51 @@ function updateQuartierLabelMarker(
 
   label.style.setProperty(
     "--quartier-label-width",
-    `${safeSide.toFixed(1)}px`
+    `${box.width.toFixed(1)}px`
+  );
+
+  label.style.setProperty(
+    "--quartier-label-padding-x",
+    `${box.paddingX.toFixed(1)}px`
+  );
+
+  label.style.setProperty(
+    "--quartier-label-padding-y",
+    `${box.paddingY.toFixed(1)}px`
+  );
+
+  label.style.setProperty(
+    "--quartier-label-border",
+    `${box.border.toFixed(2)}px`
+  );
+
+  label.style.setProperty(
+    "--quartier-label-radius",
+    `${Math.max(
+      3,
+      Math.min(
+        8,
+        finalFontSize * .42
+      )
+    ).toFixed(1)}px`
+  );
+
+  label.style.setProperty(
+    "--quartier-label-letter-spacing",
+    `${Math.max(
+      .15,
+      Math.min(
+        .7,
+        finalFontSize * .04
+      )
+    ).toFixed(2)}px`
   );
 
   label.style.setProperty(
     "--quartier-label-line-height",
-    "1.05"
+    String(
+      box.lineHeight
+    )
   );
 }
 
