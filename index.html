@@ -2282,6 +2282,117 @@ body.painting .zone-map-label {
   }
 }
 
+
+
+/* =========================================================
+   NO INTERNAL MENU SCROLL
+   Les panneaux grandissent avec leur contenu.
+========================================================= */
+
+.panel-scroll {
+  overflow: visible !important;
+  overflow-x: visible !important;
+  overflow-y: visible !important;
+  max-height: none !important;
+}
+
+.panel-scroll::-webkit-scrollbar {
+  display: none !important;
+}
+
+#layers-panel,
+#editor-panel,
+#factions-panel {
+  max-height: none !important;
+}
+
+#layers-panel .panel-scroll,
+#editor-panel .panel-scroll,
+#factions-panel .panel-scroll {
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+#factions-panel {
+  bottom: auto !important;
+}
+
+/* Factions plus compactes pour éviter d'avoir besoin d'un scroll */
+#faction-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.faction-item {
+  min-height: 38px;
+  padding: 6px 8px;
+}
+
+.faction-form {
+  margin-top: 10px;
+  padding-top: 10px;
+}
+
+#factions-panel label,
+#editor-panel label {
+  margin-top: 7px;
+  margin-bottom: 3px;
+}
+
+#factions-panel input,
+#factions-panel select,
+#editor-panel input,
+#editor-panel select {
+  min-height: 35px;
+  padding-top: 7px;
+  padding-bottom: 7px;
+}
+
+#factions-panel textarea,
+#editor-panel textarea {
+  min-height: 52px;
+}
+
+#factions-panel .action-grid,
+#editor-panel .action-grid {
+  margin-top: 9px;
+}
+
+#editor-panel .editor-section {
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+}
+
+#editor-panel .marker-fields {
+  margin-top: 8px;
+  padding: 8px;
+}
+
+/* La barre d'outils passe à la ligne au lieu de défiler horizontalement */
+#draw-toolbar {
+  overflow: visible !important;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 760px) {
+  #layers-panel,
+  #editor-panel,
+  #factions-panel {
+    max-height: none !important;
+  }
+
+  #layers-panel .panel-scroll,
+  #editor-panel .panel-scroll,
+  #factions-panel .panel-scroll {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  #draw-toolbar {
+    overflow-x: visible !important;
+    flex-wrap: wrap;
+  }
+}
+
 </style>
 
 </head>
