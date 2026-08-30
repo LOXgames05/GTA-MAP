@@ -1972,7 +1972,7 @@ body.painting #layers-panel {
 
 .map-mode-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 7px;
 }
 
@@ -3224,8 +3224,8 @@ button svg {
    ADMIN CONTEXTUEL : QUARTIERS / FACTIONS
 
    À gauche, un seul menu admin est visible :
-   - vue Quartiers  -> Éditeur territorial
-   - vue Factions   -> Gestion des factions
+   - carte Bâtiments -> Éditeur territorial
+   - carte Factions  -> Gestion des factions
 ========================================================= */
 
 #faction-status {
@@ -3263,10 +3263,7 @@ button svg {
 }
 
 /* En édition, on affiche uniquement le menu correspondant à la carte. */
-body.editing.map-view-quartiers #editor-panel {
-  display: block !important;
-}
-
+/* Quartiers n'est plus une carte principale. */
 body.editing.map-view-factions #factions-panel {
   display: block !important;
 }
@@ -3280,6 +3277,17 @@ body.editing.map-view-batiments #editor-panel {
 /* La colonne droite ne contient plus que le menu Affichage. */
 #right-ui-stack > #layers-panel {
   width: 100% !important;
+}
+
+/* Architecture actuelle :
+   - cartes principales : Bâtiments / Factions
+   - calques : Quartiers / Repères
+   - les factions sont liées aux bâtiments, plus aux quartiers.
+*/
+#view-quartiers,
+#paint-faction,
+#paint-info {
+  display: none !important;
 }
 
 @media (max-width: 760px) {
@@ -3734,10 +3742,13 @@ body.painting .faction-item.active {
 
       <div class="map-mode-grid">
 
+        <!-- Ancien bouton conservé dans le DOM pour compatibilité, mais Quartiers est désormais un calque. -->
         <button
           id="view-quartiers"
-          class="map-mode-button active"
+          class="map-mode-button"
           type="button"
+          aria-hidden="true"
+          tabindex="-1"
         >
           <i data-lucide="map"></i>
           <span>Quartiers</span>
@@ -3754,7 +3765,7 @@ body.painting .faction-item.active {
 
         <button
           id="view-batiments"
-          class="map-mode-button"
+          class="map-mode-button active"
           type="button"
         >
           <i data-lucide="building-2"></i>
@@ -3788,23 +3799,23 @@ body.painting .faction-item.active {
 
       <label class="overlay-toggle">
         <input
-          id="toggle-batiments"
+          id="toggle-quartiers"
           type="checkbox"
           checked
         >
         <span class="overlay-icon">
-          <i data-lucide="building-2"></i>
+          <i data-lucide="map"></i>
         </span>
         <span class="overlay-copy">
-          <strong>Bâtiments</strong>
-          <small>Numéros sur la carte</small>
+          <strong>Quartiers</strong>
+          <small>Limites et noms en superposition</small>
         </span>
       </label>
 
     </section>
 
     <div id="display-note" class="display-note">
-      Vue Quartiers : chaque zone reste individuelle et son nom est affiché.
+      Carte Bâtiments : les bâtiments sont affichés avec leur style propre. Les quartiers sont un calque indépendant.
     </div>
 
   </div>
@@ -4025,6 +4036,7 @@ body.painting .faction-item.active {
         <button
           id="paint-faction"
           class="gold wide"
+          style="display:none"
           disabled
         >
 
@@ -4050,7 +4062,7 @@ body.painting .faction-item.active {
       </div>
 
 
-      <div id="paint-info">
+      <div id="paint-info" style="display:none">
 
         <strong id="paint-faction-title">
           Pot de peinture actif
@@ -4180,7 +4192,7 @@ body.painting .faction-item.active {
         </select>
 
         <div class="field-help">
-          Sur la carte Bâtiments, le polygone prend la couleur de la faction sélectionnée.
+          La faction est rattachée au bâtiment. Sur la carte Factions, le bâtiment prend la couleur de cette faction.
         </div>
       </div>
 
@@ -4595,9 +4607,9 @@ const toggleReperesInput =
   );
 
 
-const toggleBatimentsInput =
+const toggleQuartiersInput =
   document.getElementById(
-    "toggle-batiments"
+    "toggle-quartiers"
   );
 
 
@@ -4857,11 +4869,13 @@ let factionLogoPlacementPreviousViewMode =
 
 
 let mapViewMode =
-  "quartiers";
+  "batiments";
 
 
 const overlayVisibility = {
+  quartier: true,
   repere: true,
+  /* conservé uniquement pour les anciens états internes ; Bâtiments n'est plus un calque. */
   batiment: true
 };
 
@@ -6496,7 +6510,7 @@ function enableEditMode() {
 
 
   mapViewMode =
-    "quartiers";
+    "batiments";
 
 
   document.body.classList.add(
@@ -6694,12 +6708,15 @@ function startDrawing(
     mapViewMode =
       "batiments";
 
+    overlayVisibility.quartier =
+      true;
+
     rerenderMapDisplay();
 
     map.closePopup();
 
     status.textContent =
-      "Carte Bâtiments active : dessine le polygone dans un quartier, puis choisis sa faction dans l’éditeur.";
+      "Carte Bâtiments active : dessine le polygone sur le calque Quartiers. La faction du bâtiment sera visible sur la carte Factions.";
   }
 
   button.classList.add(
@@ -7124,13 +7141,14 @@ function updateBuildingQuartierInfo() {
 function updateDisplayControls() {
 
   /*
-    Le mode de carte pilote aussi le menu d'administration à gauche.
-    Quartiers = éditeur territorial.
-    Factions = gestion des factions.
+    Deux cartes principales distinctes :
+    - Bâtiments : style propre des bâtiments.
+    - Factions : mêmes bâtiments, colorés selon leur faction.
+
+    Quartiers n'est plus une carte principale : c'est un calque.
   */
-  document.body.classList.toggle(
-    "map-view-quartiers",
-    mapViewMode === "quartiers"
+  document.body.classList.remove(
+    "map-view-quartiers"
   );
 
   document.body.classList.toggle(
@@ -7143,9 +7161,8 @@ function updateDisplayControls() {
     mapViewMode === "batiments"
   );
 
-  viewQuartiersButton.classList.toggle(
-    "active",
-    mapViewMode === "quartiers"
+  viewQuartiersButton.classList.remove(
+    "active"
   );
 
   viewFactionsButton.classList.toggle(
@@ -7158,35 +7175,27 @@ function updateDisplayControls() {
     mapViewMode === "batiments"
   );
 
+  toggleQuartiersInput.checked =
+    overlayVisibility.quartier;
+
   toggleReperesInput.checked =
     overlayVisibility.repere;
 
-  toggleBatimentsInput.checked =
-    mapViewMode === "batiments"
-      ? true
-      : overlayVisibility.batiment;
-
   const locked =
-    paintMode === true ||
     factionLogoPlacementMode === true;
 
-  viewQuartiersButton.disabled = locked;
+  viewQuartiersButton.disabled = true;
   viewFactionsButton.disabled = locked;
   viewBatimentsButton.disabled = locked;
+  toggleQuartiersInput.disabled = locked;
   toggleReperesInput.disabled = locked;
-  toggleBatimentsInput.disabled =
-    locked || mapViewMode === "batiments";
 
   displayNote.textContent =
-    paintMode
-      ? "Pot de peinture actif : vue Quartiers forcée, Repères et Bâtiments masqués."
-      : factionLogoPlacementMode
-        ? "Placement du logo actif : vue Factions forcée. Clique sur la carte pour placer le logo."
-        : mapViewMode === "quartiers"
-          ? "Vue Quartiers : chaque zone reste individuelle et son nom est affiché au centre."
-          : mapViewMode === "factions"
-            ? "Vue Factions : les quartiers voisins d’une même faction sont fusionnés visuellement."
-            : "Vue Bâtiments : les bâtiments sont prioritaires et prennent la couleur de leur faction lorsqu’ils en ont une.";
+    factionLogoPlacementMode
+      ? "Placement du logo actif : carte Factions forcée. Clique sur la carte pour placer le logo."
+      : mapViewMode === "factions"
+        ? "Carte Factions : les factions sont liées aux bâtiments. Les bâtiments prennent la couleur de leur faction ; les quartiers restent un calque indépendant."
+        : "Carte Bâtiments : les bâtiments utilisent leur style propre. Active ou masque le calque Quartiers indépendamment.";
 }
 
 
@@ -7207,7 +7216,6 @@ function setMapViewMode(
   ) return;
 
   if (
-    mode !== "quartiers" &&
     mode !== "factions" &&
     mode !== "batiments"
   ) {
@@ -7229,7 +7237,7 @@ function setMapViewMode(
 
 viewQuartiersButton.addEventListener(
   "click",
-  () => setMapViewMode("quartiers")
+  () => setMapViewMode("batiments")
 );
 
 
@@ -7255,11 +7263,11 @@ toggleReperesInput.addEventListener(
 );
 
 
-toggleBatimentsInput.addEventListener(
+toggleQuartiersInput.addEventListener(
   "change",
   () => {
-    overlayVisibility.batiment =
-      toggleBatimentsInput.checked;
+    overlayVisibility.quartier =
+      toggleQuartiersInput.checked;
     rerenderMapDisplay();
   }
 );
@@ -7520,46 +7528,28 @@ function renderLayers() {
 
   clearGroups();
 
-  for (
-    const layer
-    of mapLayers
-  ) {
+  for (const layer of mapLayers) {
+    const group = L.layerGroup();
 
-    const group =
-      L.layerGroup();
-
-    layerGroups[layer.id] =
-      group;
+    layerGroups[layer.id] = group;
 
     let visible = true;
 
+    if (layer.kind === "quartier") {
+      /* Quartiers est désormais un calque indépendant. */
+      visible = overlayVisibility.quartier;
+    }
+
     if (layer.kind === "repere") {
-      visible =
-        overlayVisibility.repere;
+      visible = overlayVisibility.repere;
     }
 
     if (layer.kind === "batiment") {
       /*
-        En vue Bâtiments, cette couche devient la carte principale :
-        elle reste donc visible même si la superposition avait été coupée.
+        Bâtiments n'est plus une superposition : c'est le contenu principal
+        des cartes Bâtiments et Factions, donc toujours visible.
       */
-      visible =
-        mapViewMode === "batiments"
-          ? true
-          : overlayVisibility.batiment;
-    }
-
-    if (paintMode) {
-      if (
-        layer.kind === "repere" ||
-        layer.kind === "batiment"
-      ) {
-        visible = false;
-      }
-
-      if (layer.kind === "quartier") {
-        visible = true;
-      }
+      visible = true;
     }
 
     if (visible) {
@@ -7569,6 +7559,7 @@ function renderLayers() {
 
   updateDisplayControls();
 }
+
 
 
 /* =========================================================
@@ -7626,9 +7617,11 @@ function buildPopup(
 
 
   const popupFaction =
-    findFaction(
-      shape.faction_id
-    );
+    parentLayer?.kind === "batiment"
+      ? findFaction(
+          shape.faction_id
+        )
+      : null;
 
   if (popupFaction) {
     const factionLine =
@@ -8049,136 +8042,66 @@ function renderFactionTerritories() {
     return;
   }
 
-  const quartierLayer =
-    getLayerByKind("quartier");
+  /*
+    Les factions ne sont plus calculées à partir des quartiers.
+    Leur représentation territoriale vient maintenant des bâtiments
+    colorés dans renderShapes(). Ici on conserve seulement les logos
+    placés manuellement.
+  */
+  const hostLayer =
+    getLayerByKind("batiment") ||
+    getLayerByKind("quartier") ||
+    getLayerByKind("repere") ||
+    mapLayers[0];
 
-  if (!quartierLayer) return;
+  if (!hostLayer) return;
 
   const group =
-    layerGroups[quartierLayer.id];
+    layerGroups[hostLayer.id];
 
   if (!group) return;
 
-  for (
-    const faction
-    of mapFactions
-  ) {
-
-    const factionQuartiers =
-      mapShapes.filter(
-        shape =>
-          shape.layer_id === quartierLayer.id &&
-          shape.faction_id === faction.id &&
-          isPolygonGeometry(shape.geometry)
-      );
-
-    if (!factionQuartiers.length) {
-      continue;
-    }
-
-    const features =
-      factionQuartiers.map(
-        shape => ({
-          type: "Feature",
-          properties: { id: shape.id },
-          geometry: shape.geometry
-        })
-      );
-
-    const merged =
-      mergeFactionFeatures(features);
-
-    if (!merged) continue;
-
-    const factionColor =
-      faction.color ||
-      "#8f6cff";
-
-    const territory =
-      L.geoJSON(
-        merged,
-        {
-          pane: "territoryPane",
-          style: {
-            color: factionColor,
-            fillColor: factionColor,
-            weight: 3,
-            opacity: .92,
-            fillOpacity: .28,
-            lineJoin: "round",
-            lineCap: "round"
-          }
-        }
-      );
-
-    territory.eachLayer(
-      leafletLayer => {
-        leafletLayer.options.pmIgnore = true;
-        leafletLayer.bindPopup(
-          buildFactionPopup(faction)
-        );
-        scheduleInnerOutline(leafletLayer);
-        leafletLayer.addTo(group);
-      }
-    );
-
-    /*
-      Aucun point, nom ou icône automatique au centre du territoire.
-      Seul le logo placé manuellement par clic est affiché.
-    */
-
-    /*
-      Le logo est un point séparé. Il n'est affiché que si
-      une position manuelle a été enregistrée.
-    */
+  for (const faction of mapFactions) {
     if (
-      faction.logo_url &&
-      validFactionLogoPosition(faction.logo_position) &&
-      !(
+      !faction.logo_url ||
+      !validFactionLogoPosition(faction.logo_position) ||
+      (
         factionLogoPlacementMode &&
         selectedFaction?.id === faction.id
       )
     ) {
-      const logoLatLng =
-        factionLogoLatLng(
-          faction
-        );
-
-      if (logoLatLng) {
-        /*
-        Le logo n'est plus déplaçable à la souris.
-        Sa position se change uniquement avec un clic sur la carte.
-      */
-      const logoMarker =
-        L.marker(
-          logoLatLng,
-          {
-            pane: "factionLabelPane",
-            interactive: false,
-            draggable: false,
-            keyboard: false,
-            icon: L.divIcon({
-              className: "",
-              html: factionLogoHtml(
-                faction,
-                false
-              ),
-              /*
-                Le point Leaflet correspond exactement au centre
-                du rond de 38px.
-              */
-              iconSize: [38, 38],
-              iconAnchor: [19, 19]
-            })
-          }
-        );
-
-
-      logoMarker.addTo(group);
-      }
+      continue;
     }
+
+    const logoLatLng =
+      factionLogoLatLng(faction);
+
+    if (!logoLatLng) continue;
+
+    const logoMarker =
+      L.marker(
+        logoLatLng,
+        {
+          pane: "factionLabelPane",
+          interactive: false,
+          draggable: false,
+          keyboard: false,
+          icon: L.divIcon({
+            className: "",
+            html: factionLogoHtml(
+              faction,
+              false
+            ),
+            iconSize: [38, 38],
+            iconAnchor: [19, 19]
+          })
+        }
+      );
+
+    logoMarker.addTo(group);
   }
 }
+
 
 
 function quartierLabelHtml(
@@ -8927,8 +8850,11 @@ function renderShapes() {
     const batiment =
       kind === "batiment";
 
+    /* Les factions sont liées uniquement aux bâtiments. */
     const faction =
-      findFaction(shape.faction_id);
+      batiment
+        ? findFaction(shape.faction_id)
+        : null;
 
     /*
       Le groupe d'affichage suit la couche résolue ci-dessus, pas forcément
@@ -8939,19 +8865,6 @@ function renderShapes() {
       layerGroups[parentLayer.id];
 
     if (!group) continue;
-
-    /*
-      Vue Factions :
-      les quartiers possédés sont déjà dans la fusion.
-    */
-    if (
-      quartier &&
-      mapViewMode === "factions" &&
-      !paintMode &&
-      faction
-    ) {
-      continue;
-    }
 
     const polygon =
       isPolygonGeometry(shape.geometry);
@@ -8975,74 +8888,56 @@ function renderShapes() {
     let opacity = 1;
 
     if (quartier) {
+      /*
+        Quartiers est un simple calque géographique.
+        Il ne prend plus jamais la couleur d'une faction.
+      */
       color = "#ffffff";
-      weight = 3;
+      fillColor = "#ffffff";
+      fillOpacity = 0;
+      weight = editMode ? 3 : 2;
+      opacity =
+        editMode
+          ? .88
+          : (mapViewMode === "factions" ? .34 : .58);
+    }
 
-      if (
-        mapViewMode === "factions" &&
-        !paintMode
-      ) {
-        /* Quartiers sans faction, visibles très discrètement. */
-        color = "#9ca7a1";
-        fillColor = "#ffffff";
-        fillOpacity = 0;
-        weight = 2;
-        opacity = .30;
-      }
-      else if (
-        mapViewMode === "batiments" &&
-        !paintMode
-      ) {
-        /*
-          Sur la carte Bâtiments, les quartiers servent uniquement
-          de repère géographique. Ils restent sous les bâtiments.
-        */
-        color = "#d7ddd9";
-        fillColor = "#ffffff";
-        fillOpacity = 0;
-        weight = 2;
-        opacity = .38;
-      }
-      else {
-        fillColor =
-          faction?.color ||
-          "#ffffff";
+    if (
+      batiment &&
+      mapViewMode === "factions"
+    ) {
+      /*
+        Carte Factions : l'appartenance est portée par le bâtiment.
+        Un bâtiment attribué prend la couleur de sa faction.
+      */
+      const factionColor =
+        faction?.color ||
+        "#7b8580";
 
-        if (paintMode) {
-          fillOpacity =
-            faction ? .34 : .045;
-        }
-        else if (editMode && faction) {
-          fillOpacity = .12;
-        }
-        else {
-          fillOpacity = 0;
-        }
-
-        opacity =
-          editMode ? .92 : .62;
-      }
+      color = factionColor;
+      fillColor = factionColor;
+      fillOpacity = faction ? .44 : .12;
+      weight = faction ? 4 : 3;
+      opacity = faction ? 1 : .58;
     }
 
     if (
       batiment &&
       mapViewMode === "batiments"
     ) {
-      /*
-        La faction est rattachée directement au bâtiment via map_shapes.faction_id.
-        Aucun nouveau champ SQL n'est nécessaire : la colonne existe déjà.
-      */
-      const factionColor =
-        faction?.color ||
+      /* Carte Bâtiments : aucune couleur de faction, uniquement le style du bâtiment. */
+      color =
         shape.style?.color ||
         parentLayer.color ||
-        "#c6a443";
+        "#86ad96";
 
-      color = factionColor;
-      fillColor = factionColor;
-      fillOpacity = faction ? .42 : .20;
-      weight = faction ? 4 : 3;
-      opacity = faction ? 1 : .78;
+      fillColor = color;
+      fillOpacity =
+        shape.style?.opacity ??
+        parentLayer.opacity ??
+        .30;
+      weight = 4;
+      opacity = 1;
     }
 
     const baseStyle = {
@@ -9105,19 +9000,9 @@ function renderShapes() {
             () => {
               if (!editMode) return;
 
-              if (
-                mapViewMode === "factions" &&
-                !paintMode
-              ) {
-                return;
-              }
-
               leafletLayer.setStyle({
-                weight: paintMode ? 5 : 4,
-                fillOpacity:
-                  faction
-                    ? (paintMode ? .48 : .23)
-                    : (paintMode ? .13 : .05)
+                weight: 4,
+                fillOpacity: .045
               });
             }
           );
@@ -9138,10 +9023,7 @@ function renderShapes() {
 
     if (
       quartier &&
-      (
-        mapViewMode === "quartiers" ||
-        paintMode
-      )
+      overlayVisibility.quartier
     ) {
       addQuartierLabel(
         shape,
@@ -9957,7 +9839,7 @@ saveShapeButton.addEventListener(
       faction_id:
         editorKind === "batiment"
           ? (shapeFactionInput.value || null)
-          : (selectedShapeRecord?.faction_id || null),
+          : null,
 
       geometry:
         geometry,
@@ -10481,9 +10363,24 @@ function renderFactionPanel() {
 
     const quartierCount =
       mapShapes.filter(
-        shape =>
-          shape.faction_id ===
-          faction.id
+        shape => {
+          if (shape.faction_id !== faction.id) {
+            return false;
+          }
+
+          const layer =
+            mapLayers.find(
+              item => item.id === shape.layer_id
+            );
+
+          return (
+            layer?.kind === "batiment" ||
+            (
+              isPolygonGeometry(shape.geometry) &&
+              !!shape.style?.quartier_id
+            )
+          );
+        }
       ).length;
 
 
@@ -10581,9 +10478,9 @@ function renderFactionPanel() {
   }
 
 
+  /* Les factions ne s'attribuent plus aux quartiers : le pot de peinture est retiré. */
   paintFactionButton.disabled =
-    !selectedFaction ||
-    factionLogoPlacementMode;
+    true;
 
 
   deleteFactionButton.disabled =
@@ -11517,65 +11414,10 @@ deleteFactionButton
 
 
 function startPaintMode() {
-
-  if (factionLogoPlacementMode) {
-    stopFactionLogoPlacement();
-  }
-
-  if (!selectedFaction) {
-    status.textContent =
-      "Sélectionne d'abord une faction.";
-    return;
-  }
-
-  stopDrawing();
-  cancelSelection();
-
-  paintPreviousDisplayState = {
-    mapViewMode,
-    repere: overlayVisibility.repere,
-    batiment: overlayVisibility.batiment
-  };
-
-  mapViewMode =
-    "quartiers";
-
-  overlayVisibility.repere =
-    false;
-
-  overlayVisibility.batiment =
-    false;
-
-  paintMode =
-    true;
-
-  document.body.classList.add(
-    "painting"
-  );
-
-  paintFactionButton.classList.add(
-    "active"
-  );
-
-  paintInfo.classList.add(
-    "visible"
-  );
-
-  document
-    .getElementById("paint-faction-title")
-    .textContent =
-      "Pot de peinture : " +
-      selectedFaction.name;
-
-  rerenderMapDisplay();
-
   status.textContent =
-    "Clique sur les quartiers à attribuer à " +
-    selectedFaction.name +
-    ".";
-
-  lucide.createIcons();
+    "Le pot de peinture Quartiers est désactivé. Attribue désormais la faction directement dans l’éditeur du bâtiment.";
 }
+
 
 
 function stopPaintMode() {
