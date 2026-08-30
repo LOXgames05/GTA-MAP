@@ -6620,8 +6620,10 @@ function startDrawing(
 
     rerenderMapDisplay();
 
+    map.closePopup();
+
     status.textContent =
-      "Dessine le contour du bâtiment entièrement à l’intérieur d’un quartier.";
+      "Dessine directement le polygone du bâtiment par-dessus le quartier. Il restera affiché au-dessus du quartier.";
   }
 
   button.classList.add(
@@ -6655,10 +6657,31 @@ function startDrawing(
       },
 
       pathOptions: {
+        /*
+          Important : les bâtiments sont dessinés dans le pane des
+          éléments superposés, donc AU-DESSUS des quartiers.
+          On peut ainsi tracer directement sur un polygone de quartier.
+        */
+        pane:
+          targetKind === "batiment"
+            ? "otherShapePane"
+            : targetKind === "quartier"
+              ? "quartierPane"
+              : "otherShapePane",
+
         color: "#ffffff",
-        fillColor: "#86ad96",
-        fillOpacity: isArea ? .12 : 0,
-        weight: isArea ? 3 : 3,
+        fillColor:
+          targetKind === "batiment"
+            ? "#c6a443"
+            : "#86ad96",
+        fillOpacity:
+          isArea
+            ? (targetKind === "batiment" ? .28 : .12)
+            : 0,
+        weight:
+          isArea
+            ? (targetKind === "batiment" ? 4 : 3)
+            : 3,
         lineJoin: "round",
         lineCap: "round"
       },
@@ -7018,7 +7041,7 @@ function updateBuildingQuartierInfo() {
   buildingQuartierInfo.textContent =
     quartier
       ? `Quartier : ${quartier.name || "Sans nom"}`
-      : "Le polygone du bâtiment doit rester entièrement à l’intérieur d’un quartier.";
+      : "Dessine le bâtiment directement sur un quartier. Le bâtiment sera affiché au-dessus de celui-ci.";
 }
 
 
@@ -7508,6 +7531,21 @@ function configureShapeLayer(
 
       if (
         !editMode
+      ) {
+        return;
+      }
+
+
+      /*
+        Quand un outil de dessin est actif, surtout BÂTIMENT, on ne
+        sélectionne pas le quartier situé sous la souris et on ne bloque
+        pas la propagation du clic vers la carte / Geoman.
+
+        Résultat : on peut tracer un bâtiment DIRECTEMENT par-dessus
+        le polygone d'un quartier.
+      */
+      if (
+        drawingTargetKind
       ) {
         return;
       }
@@ -9004,7 +9042,7 @@ map.on(
           null;
 
         status.textContent =
-          "Bâtiment refusé : le polygone doit être entièrement à l’intérieur d’un quartier.";
+          "Bâtiment refusé : dessine le polygone sur un quartier et garde-le à l’intérieur de ses limites.";
 
         updateButtons();
 
@@ -9535,7 +9573,7 @@ saveShapeButton.addEventListener(
         !buildingQuartier
       ) {
         status.textContent =
-          "Impossible d’enregistrer : le polygone du bâtiment doit rester entièrement à l’intérieur d’un quartier.";
+          "Impossible d’enregistrer : le bâtiment doit être dessiné sur un quartier et rester à l’intérieur de ses limites.";
 
         updateBuildingQuartierInfo();
 
