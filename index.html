@@ -7530,39 +7530,9 @@ function renderFactionTerritories() {
     );
 
     /*
-      Le nom reste automatiquement centré sur chaque morceau
-      de territoire continu.
+      Aucun point, nom ou icône automatique au centre du territoire.
+      Seul le logo placé manuellement par clic est affiché.
     */
-    for (
-      const piece
-      of splitTerritoryPieces(merged)
-    ) {
-      try {
-        const point = turf.pointOnFeature(piece);
-        const [x, y] = point.geometry.coordinates;
-
-        L.marker(
-          [y, x],
-          {
-            pane: "factionLabelPane",
-            interactive: false,
-            icon: L.divIcon({
-              className: "",
-              html: factionLabelHtml(faction),
-              iconSize: [1, 1],
-              iconAnchor: [0, 0]
-            })
-          }
-        ).addTo(group);
-      }
-      catch (error) {
-        console.warn(
-          "Position du nom de faction impossible :",
-          error
-        );
-      }
-    }
-
 
     /*
       Le logo est un point séparé. Il n'est affiché que si
