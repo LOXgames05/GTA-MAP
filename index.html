@@ -1869,12 +1869,12 @@ body.painting .leaflet-interactive {
   box-shadow:
     0 0 0 5px rgba(198,164,67,.12),
     0 10px 30px rgba(0,0,0,.62);
-  cursor: grab;
-  pointer-events: auto;
+  cursor: crosshair;
+  pointer-events: none;
 }
 
 .faction-logo-point.placement:active {
-  cursor: grabbing;
+  cursor: crosshair;
 }
 
 /*
@@ -6692,7 +6692,7 @@ function updateDisplayControls() {
     paintMode
       ? "Pot de peinture actif : vue Quartiers forcée, Repères et Bâtiments masqués."
       : factionLogoPlacementMode
-        ? "Placement du logo actif : vue Factions forcée. Clique sur la carte ou fais glisser le logo."
+        ? "Placement du logo actif : vue Factions forcée. Clique sur la carte pour placer le logo."
         : mapViewMode === "quartiers"
           ? "Vue Quartiers : chaque zone reste individuelle et son nom est affiché au centre."
           : "Vue Factions : les quartiers voisins d’une même faction sont fusionnés visuellement.";
@@ -7582,45 +7582,32 @@ function renderFactionTerritories() {
         );
 
       if (logoLatLng) {
-        const logoDraggable =
-          editMode &&
-          selectedFaction?.id === faction.id;
+        /*
+        Le logo n'est plus déplaçable à la souris.
+        Sa position se change uniquement avec un clic sur la carte.
+      */
+      const logoMarker =
+        L.marker(
+          logoLatLng,
+          {
+            pane: "factionLabelPane",
+            interactive: false,
+            draggable: false,
+            keyboard: false,
+            icon: L.divIcon({
+              className: "",
+              html: factionLogoHtml(
+                faction,
+                false
+              ),
+              iconSize: [48, 48],
+              iconAnchor: [24, 24]
+            })
+          }
+        );
 
 
-        const logoMarker =
-          L.marker(
-            logoLatLng,
-            {
-              pane: "factionLabelPane",
-              interactive: logoDraggable,
-              draggable: logoDraggable,
-              autoPan: logoDraggable,
-              icon: L.divIcon({
-                className: "",
-                html: factionLogoHtml(
-                  faction,
-                  logoDraggable
-                ),
-                iconSize: [48, 48],
-                iconAnchor: [24, 24]
-              })
-            }
-          );
-
-
-        if (logoDraggable) {
-          logoMarker.on(
-            "dragend",
-            async event => {
-              await saveFactionLogoPosition(
-                event.target.getLatLng()
-              );
-            }
-          );
-        }
-
-
-        logoMarker.addTo(group);
+      logoMarker.addTo(group);
       }
     }
   }
@@ -9657,7 +9644,7 @@ function renderFactionPanel() {
       ? "Sélectionne une faction."
       : !selectedFaction.logo_url
         ? "Ajoute un logo puis enregistre la faction. Ensuite, un simple clic sur la carte placera le logo."
-        : "Clique directement sur la carte pour placer ou déplacer le logo. Tu peux aussi faire glisser le logo une fois placé.";
+        : "Clique simplement sur la carte pour placer ou déplacer le logo. Aucun glisser-déposer n’est nécessaire.";
 
 
   document.body.classList.toggle(
@@ -9824,12 +9811,17 @@ function createFactionLogoPlacementMarker(latlng) {
     map.removeLayer(factionLogoPlacementMarker);
   }
 
+  /*
+    Marqueur d'aperçu uniquement.
+    Pas de glisser-déposer : un clic sur la carte définit la position.
+  */
   factionLogoPlacementMarker = L.marker(
     latlng,
     {
       pane: "factionLabelPane",
-      draggable: true,
-      autoPan: true,
+      interactive: false,
+      draggable: false,
+      keyboard: false,
       icon: L.divIcon({
         className: "faction-logo-placement-marker",
         html: factionLogoHtml(
@@ -9839,15 +9831,6 @@ function createFactionLogoPlacementMarker(latlng) {
         iconSize: [48, 48],
         iconAnchor: [24, 24]
       })
-    }
-  );
-
-  factionLogoPlacementMarker.on(
-    "dragend",
-    async event => {
-      await saveFactionLogoPosition(
-        event.target.getLatLng()
-      );
     }
   );
 
@@ -10066,13 +10049,13 @@ map.getContainer().addEventListener(
     }
 
     /*
-      Les contrôles Leaflet et le logo lui-même gardent leur
-      comportement normal. Un clic sur le reste de la carte
-      sert directement au placement.
+      Seuls les contrôles Leaflet sont exclus.
+      Même un clic sur un ancien logo ou sur un territoire peut donc
+      définir immédiatement la nouvelle position.
     */
     if (
       event.target.closest(
-        ".leaflet-control, .leaflet-marker-icon, .leaflet-marker-shadow"
+        ".leaflet-control"
       )
     ) {
       return;
@@ -10103,7 +10086,7 @@ map.getContainer().addEventListener(
     renderFactionPanel();
 
     status.textContent =
-      "Logo placé. Clique ailleurs sur la carte pour le déplacer.";
+      "Logo placé. Clique simplement ailleurs sur la carte pour changer sa position.";
   },
   true
 );
@@ -10190,7 +10173,7 @@ function startFactionLogoPlacement() {
 
   status.textContent =
     startLatLng
-      ? "Clique sur la carte ou fais glisser le logo pour le déplacer."
+      ? "Clique sur la carte pour déplacer le logo."
       : "Clique directement sur la carte pour placer le logo.";
 }
 
