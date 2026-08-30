@@ -9649,22 +9649,52 @@ async function saveFactionLogoPosition(latlng) {
     return false;
   }
 
+  const factionId =
+    selectedFaction.id;
+
   const position = {
     lat: Number(latlng.lat),
     lng: Number(latlng.lng)
   };
 
+  if (
+    !Number.isFinite(position.lat) ||
+    !Number.isFinite(position.lng)
+  ) {
+    return false;
+  }
+
   const previousPosition =
     selectedFaction.logo_position ||
     null;
 
+  /*
+    On met à jour À LA FOIS la faction sélectionnée et
+    l'objet présent dans mapFactions. Le rendu public lit
+    mapFactions, donc si on ne synchronise qu'un des deux,
+    le logo peut revenir à son ancienne position après le rendu.
+  */
   selectedFaction.logo_position =
     position;
+
+  const cachedFaction =
+    mapFactions.find(
+      faction =>
+        faction.id === factionId
+    );
+
+  if (cachedFaction) {
+    cachedFaction.logo_position =
+      position;
+  }
 
   factionLogoPlacementMarker
     ?.setLatLng(latlng);
 
-  const { error } =
+  const {
+    data,
+    error
+  } =
     await db
       .from("factions")
       .update({
@@ -9672,21 +9702,49 @@ async function saveFactionLogoPosition(latlng) {
       })
       .eq(
         "id",
-        selectedFaction.id
-      );
+        factionId
+      )
+      .select("id, logo_position")
+      .single();
 
-  if (error) {
+  if (error || !data) {
     console.error(error);
 
     selectedFaction.logo_position =
       previousPosition;
 
+    if (cachedFaction) {
+      cachedFaction.logo_position =
+        previousPosition;
+    }
+
     status.textContent =
       "Position non enregistrée : " +
-      error.message;
+      (error?.message || "mise à jour refusée par Supabase");
 
     return false;
   }
+
+  const savedPosition =
+    validFactionLogoPosition(
+      data.logo_position
+    )
+      ? {
+          lat: Number(data.logo_position.lat),
+          lng: Number(data.logo_position.lng)
+        }
+      : position;
+
+  selectedFaction.logo_position =
+    savedPosition;
+
+  if (cachedFaction) {
+    cachedFaction.logo_position =
+      savedPosition;
+  }
+
+  factionLogoPlacementMarker
+    ?.setLatLng(savedPosition);
 
   status.textContent =
     "Position du logo enregistrée.";
