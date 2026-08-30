@@ -3916,31 +3916,6 @@ body.editing #shape-layer {
         </button>
       </div>
 
-      <div class="overlay-toggle" data-layer-row="batiment">
-        <input
-          id="toggle-numeros"
-          type="checkbox"
-          checked
-          aria-label="Afficher les bâtiments"
-        >
-        <span class="overlay-icon">
-          <i data-lucide="building-2"></i>
-        </span>
-        <span class="overlay-copy">
-          <strong>Bâtiments</strong>
-          <small>Numéros des bâtiments</small>
-        </span>
-        <button
-          class="layer-edit-button"
-          type="button"
-          data-edit-layer="batiment"
-          title="Modifier les bâtiments"
-          aria-label="Modifier les bâtiments"
-        >
-          <i data-lucide="pencil"></i>
-        </button>
-      </div>
-
       <div class="overlay-toggle" data-layer-row="quartier">
         <input
           id="toggle-quartiers"
@@ -3953,7 +3928,7 @@ body.editing #shape-layer {
         </span>
         <span class="overlay-copy">
           <strong>Quartiers</strong>
-          <small>Calque le plus éloigné</small>
+          <small>Au-dessus des bâtiments</small>
         </span>
         <button
           class="layer-edit-button"
@@ -3961,6 +3936,31 @@ body.editing #shape-layer {
           data-edit-layer="quartier"
           title="Modifier les quartiers"
           aria-label="Modifier les quartiers"
+        >
+          <i data-lucide="pencil"></i>
+        </button>
+      </div>
+
+      <div class="overlay-toggle" data-layer-row="batiment">
+        <input
+          id="toggle-numeros"
+          type="checkbox"
+          checked
+          aria-label="Afficher les bâtiments"
+        >
+        <span class="overlay-icon">
+          <i data-lucide="building-2"></i>
+        </span>
+        <span class="overlay-copy">
+          <strong>Bâtiments</strong>
+          <small>Calque le plus éloigné</small>
+        </span>
+        <button
+          class="layer-edit-button"
+          type="button"
+          data-edit-layer="batiment"
+          title="Modifier les bâtiments"
+          aria-label="Modifier les bâtiments"
         >
           <i data-lucide="pencil"></i>
         </button>
@@ -3977,7 +3977,7 @@ body.editing #shape-layer {
     </div>
 
     <div id="display-note" class="display-note">
-      Ordre : Factions → Repères → Bâtiments → Quartiers.
+      Ordre : Factions → Repères → Quartiers → Bâtiments.
     </div>
 
   </div>
@@ -5776,26 +5776,26 @@ map =
 
 /*
   ORDRE DES CALQUES, du plus loin au plus proche :
-  Quartiers -> Bâtiments (numéros) -> Repères -> Factions.
+  Bâtiments -> Quartiers -> Repères -> Factions.
 
-  Chaque famille possède son propre pane SVG / marqueur.
-  Leaflet ne mélange donc plus les éléments de deux familles dans
-  le même conteneur de rendu.
+  Les contours/numéros des bâtiments restent derrière les quartiers.
+  Chaque famille possède son propre pane SVG / marqueur afin qu'aucune
+  couche ne partage le même niveau de rendu.
 */
-map.createPane("quartierPane");
-map.getPane("quartierPane").style.zIndex = 410;
-
-map.createPane("quartierLabelPane");
-map.getPane("quartierLabelPane").style.zIndex = 415;
-
 map.createPane("buildingPane");
-map.getPane("buildingPane").style.zIndex = 420;
-
-map.createPane("otherShapePane");
-map.getPane("otherShapePane").style.zIndex = 425;
+map.getPane("buildingPane").style.zIndex = 410;
 
 map.createPane("buildingNumberPane");
-map.getPane("buildingNumberPane").style.zIndex = 430;
+map.getPane("buildingNumberPane").style.zIndex = 415;
+
+map.createPane("otherShapePane");
+map.getPane("otherShapePane").style.zIndex = 420;
+
+map.createPane("quartierPane");
+map.getPane("quartierPane").style.zIndex = 430;
+
+map.createPane("quartierLabelPane");
+map.getPane("quartierLabelPane").style.zIndex = 435;
 
 map.createPane("reperePane");
 map.getPane("reperePane").style.zIndex = 440;
@@ -7579,7 +7579,7 @@ function updateDisplayControls() {
   displayNote.textContent =
     factionLogoPlacementMode
       ? "Placement du logo actif. Clique sur la carte pour enregistrer sa position."
-      : "Ordre : Factions → Repères → Bâtiments → Quartiers.";
+      : "Ordre : Factions → Repères → Quartiers → Bâtiments.";
 }
 
 
@@ -9437,11 +9437,18 @@ function renderShapes() {
       color = "#ffffff";
       fillColor = "#ffffff";
       fillOpacity = 0;
-      weight = editMode ? 3 : 2;
-      opacity =
-        editMode
-          ? .88
-          : (mapViewMode === "factions" ? .34 : .58);
+
+      /*
+        Seul le calque Quartiers s'éclaire quand SON crayon est actif.
+        Pendant l'édition d'un autre calque, les quartiers gardent leur
+        apparence normale et ne donnent plus l'impression d'être éditables.
+      */
+      const quartierEditActive =
+        editMode &&
+        activeEditorKind === "quartier";
+
+      weight = quartierEditActive ? 3 : 2;
+      opacity = quartierEditActive ? .88 : .34;
     }
 
     if (
@@ -9561,7 +9568,7 @@ function renderShapes() {
           leafletLayer.on(
             "mouseover",
             () => {
-              if (!editMode) return;
+              if (!canEditShapeKind("quartier")) return;
 
               leafletLayer.setStyle({
                 weight: 4,
@@ -9573,7 +9580,7 @@ function renderShapes() {
           leafletLayer.on(
             "mouseout",
             () => {
-              if (!editMode) return;
+              if (!canEditShapeKind("quartier")) return;
               leafletLayer.setStyle(baseStyle);
               scheduleInnerOutline(leafletLayer);
             }
