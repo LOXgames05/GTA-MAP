@@ -1877,6 +1877,24 @@ body.painting .leaflet-interactive {
   cursor: grabbing;
 }
 
+/*
+  Le marqueur de placement Leaflet possède maintenant une vraie
+  zone de clic 48x48. Le logo n'est donc plus un visuel qui déborde
+  d'un marqueur de 1 pixel, ce qui le rendait pénible à attraper.
+*/
+.faction-logo-placement-marker {
+  width: 48px !important;
+  height: 48px !important;
+}
+
+.faction-logo-placement-marker .faction-logo-point {
+  transform: none;
+}
+
+body.placing-faction-logo #map {
+  cursor: crosshair;
+}
+
 .faction-logo-help {
   margin-top: 8px;
   padding: 8px 9px;
@@ -4525,6 +4543,10 @@ let factionLogoPlacementMarker =
   null;
 
 
+let factionLogoPlacementHitLayer =
+  null;
+
+
 let factionLogoPlacementPreviousViewMode =
   null;
 
@@ -5242,6 +5264,14 @@ map.getPane("otherShapePane").style.zIndex = 430;
 
 map.createPane("zoneLabelPane");
 map.getPane("zoneLabelPane").style.zIndex = 438;
+
+/*
+  Couche transparente utilisée uniquement pendant le placement
+  du logo. Elle passe au-dessus des territoires et garantit que
+  chaque clic sur la carte est bien reçu, même sur un polygone.
+*/
+map.createPane("logoPlacementHitPane");
+map.getPane("logoPlacementHitPane").style.zIndex = 439;
 
 map.createPane("factionLabelPane");
 map.getPane("factionLabelPane").style.zIndex = 440;
@@ -9610,13 +9640,13 @@ function createFactionLogoPlacementMarker(latlng) {
       draggable: true,
       autoPan: true,
       icon: L.divIcon({
-        className: "",
+        className: "faction-logo-placement-marker",
         html: factionLogoHtml(
           selectedFaction,
           true
         ),
-        iconSize: [1, 1],
-        iconAnchor: [0, 0]
+        iconSize: [48, 48],
+        iconAnchor: [24, 24]
       })
     }
   );
@@ -9631,6 +9661,56 @@ function createFactionLogoPlacementMarker(latlng) {
   );
 
   factionLogoPlacementMarker.addTo(map);
+}
+
+
+function createFactionLogoPlacementHitLayer() {
+
+  if (
+    factionLogoPlacementHitLayer &&
+    map.hasLayer(factionLogoPlacementHitLayer)
+  ) {
+    map.removeLayer(
+      factionLogoPlacementHitLayer
+    );
+  }
+
+  /*
+    Rectangle pratiquement invisible couvrant toute l'image de carte.
+    Son pane est placé au-dessus des quartiers/factions, donc un clic
+    ne peut plus être avalé par un polygone ou un popup Leaflet.
+  */
+  factionLogoPlacementHitLayer =
+    L.rectangle(
+      initialBounds,
+      {
+        pane: "logoPlacementHitPane",
+        stroke: false,
+        fill: true,
+        fillColor: "#000000",
+        fillOpacity: 0.001,
+        interactive: true,
+        bubblingMouseEvents: false,
+        pmIgnore: true
+      }
+    );
+
+  factionLogoPlacementHitLayer.on(
+    "click",
+    async event => {
+      if (!factionLogoPlacementMode) {
+        return;
+      }
+
+      await moveFactionLogoTo(
+        event.latlng
+      );
+    }
+  );
+
+  factionLogoPlacementHitLayer.addTo(
+    map
+  );
 }
 
 
@@ -9806,6 +9886,10 @@ function startFactionLogoPlacement() {
 
   factionLogoPlacementMode = true;
 
+  document.body.classList.add(
+    "placing-faction-logo"
+  );
+
   factionLogoPlacementPreviousViewMode =
     mapViewMode;
 
@@ -9813,6 +9897,13 @@ function startFactionLogoPlacement() {
     "factions";
 
   rerenderMapDisplay();
+
+  /*
+    On installe une surface de clic dédiée APRÈS le rendu.
+    C'est elle qui reçoit le premier clic, peu importe ce qu'il y a
+    dessous sur la carte.
+  */
+  createFactionLogoPlacementHitLayer();
 
   const startLatLng =
     factionLogoLatLng(
@@ -9831,11 +9922,6 @@ function startFactionLogoPlacement() {
     );
   }
 
-  map.on(
-    "click",
-    factionLogoMapClick
-  );
-
   renderFactionPanel();
   updateDisplayControls();
 
@@ -9853,10 +9939,21 @@ function stopFactionLogoPlacement(
     return;
   }
 
-  map.off(
-    "click",
-    factionLogoMapClick
+  document.body.classList.remove(
+    "placing-faction-logo"
   );
+
+  if (
+    factionLogoPlacementHitLayer &&
+    map.hasLayer(factionLogoPlacementHitLayer)
+  ) {
+    map.removeLayer(
+      factionLogoPlacementHitLayer
+    );
+  }
+
+  factionLogoPlacementHitLayer =
+    null;
 
   if (
     factionLogoPlacementMarker &&
