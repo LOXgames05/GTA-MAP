@@ -3574,6 +3574,27 @@ body.painting .faction-item.active {
   }
 }
 
+
+
+/* =========================================================
+   CALQUES 2026-08 : ordre de rendu explicite
+========================================================= */
+
+/* Le + / - Leaflet ne doit jamais réapparaître, même après un rechargement CSS. */
+.leaflet-control-zoom {
+  display: none !important;
+}
+
+/* Bâtiments et Quartiers ne sont plus des cartes principales. */
+#view-quartiers,
+#view-batiments {
+  display: none !important;
+}
+
+.map-mode-grid {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
 </style>
 
 </head>
@@ -3742,7 +3763,7 @@ body.painting .faction-item.active {
 
       <div class="map-mode-grid">
 
-        <!-- Ancien bouton conservé dans le DOM pour compatibilité, mais Quartiers est désormais un calque. -->
+        <!-- Boutons historiques conservés uniquement pour ne casser aucune référence JS. -->
         <button
           id="view-quartiers"
           class="map-mode-button"
@@ -3756,7 +3777,7 @@ body.painting .faction-item.active {
 
         <button
           id="view-factions"
-          class="map-mode-button"
+          class="map-mode-button active"
           type="button"
         >
           <i data-lucide="shield"></i>
@@ -3765,8 +3786,10 @@ body.painting .faction-item.active {
 
         <button
           id="view-batiments"
-          class="map-mode-button active"
+          class="map-mode-button"
           type="button"
+          aria-hidden="true"
+          tabindex="-1"
         >
           <i data-lucide="building-2"></i>
           <span>Bâtiments</span>
@@ -3779,7 +3802,7 @@ body.painting .faction-item.active {
     <section class="display-section">
 
       <div class="display-section-title">
-        SUPERPOSITIONS
+        CALQUES
       </div>
 
       <label class="overlay-toggle">
@@ -3793,7 +3816,37 @@ body.painting .faction-item.active {
         </span>
         <span class="overlay-copy">
           <strong>Repères</strong>
-          <small>Icônes et noms sur la carte</small>
+          <small>Au-dessus des numéros</small>
+        </span>
+      </label>
+
+      <label class="overlay-toggle">
+        <input
+          id="toggle-numeros"
+          type="checkbox"
+          checked
+        >
+        <span class="overlay-icon">
+          <i data-lucide="hash"></i>
+        </span>
+        <span class="overlay-copy">
+          <strong>Numéros</strong>
+          <small>Numéros des bâtiments</small>
+        </span>
+      </label>
+
+      <label class="overlay-toggle">
+        <input
+          id="toggle-batiments"
+          type="checkbox"
+          checked
+        >
+        <span class="overlay-icon">
+          <i data-lucide="building-2"></i>
+        </span>
+        <span class="overlay-copy">
+          <strong>Bâtiments</strong>
+          <small>Polygones des bâtiments</small>
         </span>
       </label>
 
@@ -3808,14 +3861,14 @@ body.painting .faction-item.active {
         </span>
         <span class="overlay-copy">
           <strong>Quartiers</strong>
-          <small>Limites et noms en superposition</small>
+          <small>Calque le plus éloigné</small>
         </span>
       </label>
 
     </section>
 
     <div id="display-note" class="display-note">
-      Carte Bâtiments : les bâtiments sont affichés avec leur style propre. Les quartiers sont un calque indépendant.
+      Ordre : Factions → Repères → Numéros → Bâtiments → Quartiers. Chaque famille utilise un calque de rendu séparé.
     </div>
 
   </div>
@@ -4607,6 +4660,18 @@ const toggleReperesInput =
   );
 
 
+const toggleNumerosInput =
+  document.getElementById(
+    "toggle-numeros"
+  );
+
+
+const toggleBatimentsInput =
+  document.getElementById(
+    "toggle-batiments"
+  );
+
+
 const toggleQuartiersInput =
   document.getElementById(
     "toggle-quartiers"
@@ -4869,14 +4934,14 @@ let factionLogoPlacementPreviousViewMode =
 
 
 let mapViewMode =
-  "batiments";
+  "factions";
 
 
 const overlayVisibility = {
   quartier: true,
-  repere: true,
-  /* conservé uniquement pour les anciens états internes ; Bâtiments n'est plus un calque. */
-  batiment: true
+  batiment: true,
+  numero: true,
+  repere: true
 };
 
 
@@ -4894,6 +4959,14 @@ let paintPreviousDisplayState =
 
 let layerGroups =
   {};
+
+
+/* Groupes indépendants pour éviter qu'un calque en masque un autre. */
+let factionDisplayGroup =
+  null;
+
+let buildingNumberGroup =
+  null;
 
 
 let selectedLeafletLayer =
@@ -5576,49 +5649,47 @@ map =
    MAP PANES
 ========================================================= */
 
-map.createPane("territoryPane");
-map.getPane("territoryPane").style.zIndex = 410;
+/*
+  ORDRE DES CALQUES, du plus loin au plus proche :
+  Quartiers -> Bâtiments -> Numéros -> Repères -> Factions.
 
+  Chaque famille possède son propre pane SVG / marqueur.
+  Leaflet ne mélange donc plus les éléments de deux familles dans
+  le même conteneur de rendu.
+*/
 map.createPane("quartierPane");
-map.getPane("quartierPane").style.zIndex = 420;
+map.getPane("quartierPane").style.zIndex = 410;
+
+map.createPane("quartierLabelPane");
+map.getPane("quartierLabelPane").style.zIndex = 415;
+
+map.createPane("buildingPane");
+map.getPane("buildingPane").style.zIndex = 420;
 
 map.createPane("otherShapePane");
-map.getPane("otherShapePane").style.zIndex = 430;
+map.getPane("otherShapePane").style.zIndex = 425;
 
-/*
-  Couche dédiée aux bâtiments.
-  Elle est volontairement au-dessus des quartiers et des autres formes,
-  afin que les polygones de bâtiments ne se mélangent pas visuellement
-  avec les polygones de quartiers.
-*/
-map.createPane("buildingPane");
-map.getPane("buildingPane").style.zIndex = 435;
+map.createPane("buildingNumberPane");
+map.getPane("buildingNumberPane").style.zIndex = 430;
 
-map.createPane("zoneLabelPane");
-map.getPane("zoneLabelPane").style.zIndex = 438;
+map.createPane("reperePane");
+map.getPane("reperePane").style.zIndex = 440;
 
-/*
-  Couche transparente utilisée uniquement pendant le placement
-  du logo. Elle passe au-dessus des territoires et garantit que
-  chaque clic sur la carte est bien reçu, même sur un polygone.
-*/
-map.createPane("logoPlacementHitPane");
-map.getPane("logoPlacementHitPane").style.zIndex = 439;
+/* Territoires / contours de faction au-dessus de tous les calques métier. */
+map.createPane("territoryPane");
+map.getPane("territoryPane").style.zIndex = 450;
 
+/* Logos de faction légèrement au-dessus de leur territoire. */
 map.createPane("factionLabelPane");
-map.getPane("factionLabelPane").style.zIndex = 440;
+map.getPane("factionLabelPane").style.zIndex = 455;
+
+/* Couche temporaire uniquement pour capter le clic de placement d'un logo. */
+map.createPane("logoPlacementHitPane");
+map.getPane("logoPlacementHitPane").style.zIndex = 470;
 
 
-L.control
-  .zoom({
-
-    position:
-      "bottomright"
-
-  })
-  .addTo(
-    map
-  );
+/* Les boutons + / - de Leaflet sont volontairement désactivés.
+   Le zoom reste disponible via la molette, le pincement et le curseur bas. */
 
 
 L.imageOverlay(
@@ -6566,6 +6637,10 @@ function disableEditMode() {
     false;
 
 
+  mapViewMode =
+    "factions";
+
+
   stopDrawing();
 
 
@@ -6633,6 +6708,27 @@ document
 
         enableEditMode();
 
+        return;
+
+      }
+
+      if (
+        admin &&
+        editMode
+      ) {
+        mapViewMode =
+          "batiments";
+
+        overlayVisibility.batiment =
+          true;
+
+        overlayVisibility.numero =
+          true;
+
+        overlayVisibility.quartier =
+          true;
+
+        rerenderMapDisplay();
       }
 
     }
@@ -6708,6 +6804,12 @@ function startDrawing(
     mapViewMode =
       "batiments";
 
+    overlayVisibility.batiment =
+      true;
+
+    overlayVisibility.numero =
+      true;
+
     overlayVisibility.quartier =
       true;
 
@@ -6760,7 +6862,9 @@ function startDrawing(
             ? "buildingPane"
             : targetKind === "quartier"
               ? "quartierPane"
-              : "otherShapePane",
+              : targetKind === "repere"
+                ? "reperePane"
+                : "otherShapePane",
 
         color: "#ffffff",
         fillColor:
@@ -7178,6 +7282,12 @@ function updateDisplayControls() {
   toggleQuartiersInput.checked =
     overlayVisibility.quartier;
 
+  toggleBatimentsInput.checked =
+    overlayVisibility.batiment;
+
+  toggleNumerosInput.checked =
+    overlayVisibility.numero;
+
   toggleReperesInput.checked =
     overlayVisibility.repere;
 
@@ -7186,16 +7296,18 @@ function updateDisplayControls() {
 
   viewQuartiersButton.disabled = true;
   viewFactionsButton.disabled = locked;
-  viewBatimentsButton.disabled = locked;
+  viewBatimentsButton.disabled = true;
   toggleQuartiersInput.disabled = locked;
+  toggleBatimentsInput.disabled = locked;
+  toggleNumerosInput.disabled = locked;
   toggleReperesInput.disabled = locked;
 
   displayNote.textContent =
     factionLogoPlacementMode
-      ? "Placement du logo actif : carte Factions forcée. Clique sur la carte pour placer le logo."
+      ? "Placement du logo actif : Factions reste au premier plan. Clique sur la carte pour placer le logo."
       : mapViewMode === "factions"
-        ? "Carte Factions : les factions sont liées aux bâtiments. Les bâtiments prennent la couleur de leur faction ; les quartiers restent un calque indépendant."
-        : "Carte Bâtiments : les bâtiments utilisent leur style propre. Active ou masque le calque Quartiers indépendamment.";
+        ? "Ordre de rendu : Factions → Repères → Numéros → Bâtiments → Quartiers. Les bâtiments sont maintenant un calque indépendant."
+        : "Édition des bâtiments : les polygones, numéros et quartiers restent dans des calques séparés. Clique sur Factions pour revenir à la gestion des factions.";
 }
 
 
@@ -7258,6 +7370,26 @@ toggleReperesInput.addEventListener(
   () => {
     overlayVisibility.repere =
       toggleReperesInput.checked;
+    rerenderMapDisplay();
+  }
+);
+
+
+toggleNumerosInput.addEventListener(
+  "change",
+  () => {
+    overlayVisibility.numero =
+      toggleNumerosInput.checked;
+    rerenderMapDisplay();
+  }
+);
+
+
+toggleBatimentsInput.addEventListener(
+  "change",
+  () => {
+    overlayVisibility.batiment =
+      toggleBatimentsInput.checked;
     rerenderMapDisplay();
   }
 );
@@ -7511,6 +7643,27 @@ function clearGroups() {
     {};
 
 
+  if (
+    factionDisplayGroup &&
+    map.hasLayer(factionDisplayGroup)
+  ) {
+    map.removeLayer(factionDisplayGroup);
+  }
+
+  if (
+    buildingNumberGroup &&
+    map.hasLayer(buildingNumberGroup)
+  ) {
+    map.removeLayer(buildingNumberGroup);
+  }
+
+  factionDisplayGroup =
+    null;
+
+  buildingNumberGroup =
+    null;
+
+
   quartierLabelMarkers.clear();
 
 
@@ -7545,16 +7698,31 @@ function renderLayers() {
     }
 
     if (layer.kind === "batiment") {
-      /*
-        Bâtiments n'est plus une superposition : c'est le contenu principal
-        des cartes Bâtiments et Factions, donc toujours visible.
-      */
-      visible = true;
+      /* Bâtiments redevient un vrai calque activable / masquable. */
+      visible = overlayVisibility.batiment;
     }
 
     if (visible) {
       group.addTo(map);
     }
+  }
+
+  /*
+    Les numéros et les factions ont leur propre groupe.
+    Ils ne dépendent donc plus du groupe Bâtiments ou Quartiers.
+  */
+  buildingNumberGroup =
+    L.layerGroup();
+
+  if (overlayVisibility.numero) {
+    buildingNumberGroup.addTo(map);
+  }
+
+  factionDisplayGroup =
+    L.layerGroup();
+
+  if (mapViewMode === "factions") {
+    factionDisplayGroup.addTo(map);
   }
 
   updateDisplayControls();
@@ -8048,16 +8216,8 @@ function renderFactionTerritories() {
     colorés dans renderShapes(). Ici on conserve seulement les logos
     placés manuellement.
   */
-  const hostLayer =
-    getLayerByKind("batiment") ||
-    getLayerByKind("quartier") ||
-    getLayerByKind("repere") ||
-    mapLayers[0];
-
-  if (!hostLayer) return;
-
   const group =
-    layerGroups[hostLayer.id];
+    factionDisplayGroup;
 
   if (!group) return;
 
@@ -8587,7 +8747,7 @@ function addQuartierLabel(
       L.marker(
         [pole.y, pole.x],
         {
-          pane: "zoneLabelPane",
+          pane: "quartierLabelPane",
           interactive: false,
           icon: L.divIcon({
             className: "",
@@ -8706,8 +8866,10 @@ function pointToMapLayer(
     {
       pane:
         kind === "batiment"
-          ? "buildingPane"
-          : "otherShapePane",
+          ? "buildingNumberPane"
+          : kind === "repere"
+            ? "reperePane"
+            : "otherShapePane",
       icon: L.divIcon({
         className: "",
         html: pointMarkerHtml(shape, kind),
@@ -8764,7 +8926,7 @@ function addBuildingNumberLabel(
     L.marker(
       [pole.y, pole.x],
       {
-        pane: "zoneLabelPane",
+        pane: "buildingNumberPane",
         interactive: false,
         icon: L.divIcon({
           className: "",
@@ -8778,7 +8940,7 @@ function addBuildingNumberLabel(
         })
       }
     ).addTo(
-      group
+      buildingNumberGroup || group
     );
   }
   catch (error) {
@@ -8962,7 +9124,9 @@ function renderShapes() {
               ? "quartierPane"
               : kind === "batiment"
                 ? "buildingPane"
-                : "otherShapePane",
+                : kind === "repere"
+                  ? "reperePane"
+                  : "otherShapePane",
 
           style:
             baseStyle,
@@ -9033,7 +9197,8 @@ function renderShapes() {
 
     if (
       kind === "batiment" &&
-      polygon
+      polygon &&
+      overlayVisibility.numero
     ) {
       addBuildingNumberLabel(
         shape,
