@@ -7277,6 +7277,54 @@ async function loadDatabase() {
   mapShapes =
     shapesResponse.data || [];
 
+  /*
+    En mode public, Supabase peut masquer la ligne map_layers
+    « Bâtiments » si elle a visible = false, alors que les bâtiments
+    publiés de map_shapes sont bien renvoyés. Dans ce cas les formes
+    devenaient orphelines et renderShapes() les ignorait.
+
+    Les bâtiments récents conservent quartier_id dans style. On peut donc
+    reconstruire uniquement la couche d'affichage manquante, sans toucher
+    à la base et sans confondre les quartiers avec les bâtiments.
+  */
+  const effectiveLayers = [
+    ...allLayers
+  ];
+
+  for (const shape of mapShapes) {
+    if (
+      !shape?.layer_id ||
+      effectiveLayers.some(
+        layer =>
+          layer.id === shape.layer_id
+      )
+    ) {
+      continue;
+    }
+
+    const buildingWithoutVisibleLayer =
+      isPolygonGeometry(shape.geometry) &&
+      !!shape.style?.quartier_id;
+
+    if (!buildingWithoutVisibleLayer) {
+      continue;
+    }
+
+    effectiveLayers.push({
+      id: shape.layer_id,
+      name: "Bâtiments",
+      kind: "batiment",
+      color:
+        shape.style?.color ||
+        "#86ad96",
+      opacity:
+        shape.style?.opacity ??
+        .30,
+      visible: true,
+      __virtualPublicLayer: true
+    });
+  }
+
   const allowedKinds = [
     "quartier",
     "repere",
@@ -7288,7 +7336,7 @@ async function loadDatabase() {
       .map(kind => {
 
         const candidates =
-          allLayers.filter(
+          effectiveLayers.filter(
             layer =>
               layer.kind === kind
           );
