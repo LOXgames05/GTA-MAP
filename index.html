@@ -2041,19 +2041,12 @@ body.painting .overlay-toggle {
   backdrop-filter: none;
 
   color: rgba(255,255,255,.96);
-  font-size: var(--quartier-label-size, 8px);
+  font-size: 11px;
   font-weight: 900;
-  letter-spacing: var(--quartier-label-letter-spacing, .35px);
-  line-height: var(--quartier-label-line-height, 1.02);
+  letter-spacing: .35px;
+  line-height: 1.05;
 
-  transition:
-    font-size 70ms linear,
-    letter-spacing 70ms linear,
-    opacity 120ms ease;
-
-  will-change:
-    font-size,
-    letter-spacing;
+  transition: opacity 120ms ease;
   text-align: center;
   text-transform: uppercase;
   white-space: nowrap;
@@ -2310,7 +2303,7 @@ body.painting .zone-map-label {
   }
 
   .zone-map-label {
-    /* Taille pilotée dynamiquement selon le quartier. */
+    font-size: 9px;
     max-width: none;
   }
 
@@ -7580,101 +7573,13 @@ function quartierPole(
    automatiquement la police + largeur du texte.
 ========================================================= */
 
-function quartierLabelLayouts(
-  name
-) {
-  const words = String(name || "Quartier")
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean);
-
-  if (!words.length) {
-    return [["Quartier"]];
-  }
-
-  const layouts = [
-    [words.join(" ")]
-  ];
-
-  /*
-    On teste aussi toutes les coupures possibles sur 2 puis 3 lignes.
-    Le meilleur arrangement sera celui qui permet la plus grande police
-    tout en restant dans le cercle libre calculé par le polylabel.
-  */
-  if (words.length >= 2) {
-    for (let i = 1; i < words.length; i++) {
-      layouts.push([
-        words.slice(0, i).join(" "),
-        words.slice(i).join(" ")
-      ]);
-    }
-  }
-
-  if (words.length >= 3) {
-    for (let i = 1; i < words.length - 1; i++) {
-      for (let j = i + 1; j < words.length; j++) {
-        layouts.push([
-          words.slice(0, i).join(" "),
-          words.slice(i, j).join(" "),
-          words.slice(j).join(" ")
-        ]);
-      }
-    }
-  }
-
-  return layouts;
-}
-
-
-const quartierLabelMeasureCanvas =
-  document.createElement("canvas");
-
-const quartierLabelMeasureContext =
-  quartierLabelMeasureCanvas.getContext("2d");
-
-
-function quartierLabelMaxFontSize() {
-
-  const siteTitle =
-    document.querySelector(
-      ".brand-name"
-    );
-
-
-  const computedSize =
-    siteTitle
-      ? parseFloat(
-          getComputedStyle(
-            siteTitle
-          ).fontSize
-        )
-      : 11;
-
-
-  /*
-    Le nom d'un quartier ne devient jamais plus gros
-    que le titre GTA MAP visible dans l'en-tête.
-  */
-  return Number.isFinite(
-    computedSize
-  )
-    ? Math.max(7, computedSize)
-    : 11;
-
-}
-
-
 function updateQuartierLabelMarker(
-  record,
-  maxFontSize = quartierLabelMaxFontSize()
+  record
 ) {
   const marker = record.marker;
   const element = marker.getElement();
 
-  if (
-    !element ||
-    !record.pole
-  ) {
+  if (!element) {
     return;
   }
 
@@ -7687,251 +7592,44 @@ function updateQuartierLabelMarker(
     return;
   }
 
-  const pole = record.pole;
-
-  const centerPoint =
-    map.latLngToLayerPoint(
-      [pole.y, pole.x]
-    );
-
-  const horizontalPoint =
-    map.latLngToLayerPoint(
-      [pole.y, pole.x + pole.radius]
-    );
-
-  const verticalPoint =
-    map.latLngToLayerPoint(
-      [pole.y + pole.radius, pole.x]
-    );
-
   /*
-    Rayon disponible en pixels autour du pôle d'inaccessibilité.
-    Ce cercle est garanti à l'intérieur du quartier.
+    Le point de placement reste le pôle d'inaccessibilité,
+    mais le texte n'est plus contraint par les frontières.
+    Il peut donc dépasser librement sur les zones voisines.
   */
-  const radiusPx = Math.max(
-    1,
-    Math.min(
-      Math.abs(horizontalPoint.x - centerPoint.x),
-      Math.abs(verticalPoint.y - centerPoint.y)
-    )
-  );
-
-  const usableRadius =
-    radiusPx * .82;
-
-  if (usableRadius < 5) {
-    label.style.display = "none";
-    return;
-  }
-
-  const name =
-    String(
-      record.name ||
-      "Quartier"
-    ).trim();
-
-  const layouts =
-    quartierLabelLayouts(
-      name
-    );
-
-  if (quartierLabelMeasureContext) {
-    quartierLabelMeasureContext.font =
-      '900 100px Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-  }
-
-  let best = null;
-
-  /*
-    On mesure chaque découpage à une police virtuelle de 100px.
-    La taille finale est ensuite calculée pour que le RECTANGLE du texte
-    reste entièrement dans le cercle libre du quartier.
-
-    La boîte n'est jamais dessinée. Elle ne sert qu'aux maths.
-  */
-  for (const lines of layouts) {
-    let maxWidthAt100 = 0;
-
-    for (const line of lines) {
-      const measured =
-        quartierLabelMeasureContext
-          ? quartierLabelMeasureContext.measureText(line).width
-          : line.length * 55;
-
-      /*
-        On ajoute aussi l'espacement des lettres au calcul.
-        C'était la principale raison pour laquelle certaines lettres
-        pouvaient dépasser de la box précédente.
-      */
-      const letterSpacingAt100 =
-        Math.max(
-          0,
-          line.length - 1
-        ) * 3.2;
-
-      maxWidthAt100 = Math.max(
-        maxWidthAt100,
-        measured + letterSpacingAt100
-      );
-    }
-
-    const lineHeightAt100 =
-      102;
-
-    const textHeightAt100 =
-      lines.length *
-      lineHeightAt100;
-
-    const halfDiagonalAt100 =
-      Math.hypot(
-        maxWidthAt100,
-        textHeightAt100
-      ) / 2;
-
-    if (
-      halfDiagonalAt100 <= 0
-    ) {
-      continue;
-    }
-
-    const fontSize =
-      Math.min(
-        maxFontSize,
-        100 *
-        usableRadius /
-        halfDiagonalAt100
-      );
-
-    if (
-      !best ||
-      fontSize > best.fontSize
-    ) {
-      best = {
-        lines,
-        fontSize
-      };
-    }
-  }
-
-  if (
-    !best ||
-    best.fontSize < 4.5
-  ) {
-    label.style.display = "none";
-    return;
-  }
+  label.textContent =
+    record.name ||
+    "Quartier";
 
   label.style.display =
     "inline-block";
 
   label.style.visibility =
-    "hidden";
+    "visible";
 
-  label.innerHTML =
-    best.lines
-      .map(escapeHtml)
-      .join("<br>");
-
-  let finalFontSize =
-    best.fontSize;
-
-  const applyFont =
-    fontSize => {
-      const letterSpacing =
-        Math.max(
-          .08,
-          Math.min(
-            .65,
-            fontSize * .032
-          )
-        );
-
-      label.style.setProperty(
-        "--quartier-label-size",
-        `${fontSize.toFixed(2)}px`
-      );
-
-      label.style.setProperty(
-        "--quartier-label-letter-spacing",
-        `${letterSpacing.toFixed(2)}px`
-      );
-
-      label.style.setProperty(
-        "--quartier-label-line-height",
-        "1.02"
-      );
-    };
-
-  applyFont(
-    finalFontSize
+  label.style.removeProperty(
+    "--quartier-label-size"
   );
 
-  /*
-    Deuxième sécurité basée sur la taille RÉELLE du texte dans le navigateur.
-    Canvas et CSS ne mesurent pas toujours exactement la même chose selon
-    la police installée. On mesure donc le résultat final et on le réduit
-    jusqu'à ce qu'il tienne réellement dans la zone sûre.
-  */
-  for (
-    let attempt = 0;
-    attempt < 4;
-    attempt++
-  ) {
-    const rect =
-      label.getBoundingClientRect();
+  label.style.removeProperty(
+    "--quartier-label-letter-spacing"
+  );
 
-    const halfDiagonal =
-      Math.hypot(
-        rect.width,
-        rect.height
-      ) / 2;
-
-    if (
-      halfDiagonal <= usableRadius ||
-      halfDiagonal <= 0
-    ) {
-      break;
-    }
-
-    finalFontSize *=
-      usableRadius /
-      halfDiagonal * .97;
-
-    applyFont(
-      finalFontSize
-    );
-  }
-
-  if (
-    finalFontSize < 4.5
-  ) {
-    label.style.display = "none";
-    label.style.visibility = "";
-    return;
-  }
-
-  label.style.visibility =
-    "visible";
+  label.style.removeProperty(
+    "--quartier-label-line-height"
+  );
 }
 
+
 function refreshQuartierLabels() {
-
-  const maxFontSize =
-    quartierLabelMaxFontSize();
-
-
   for (
     const record
     of quartierLabelMarkers
   ) {
-
     updateQuartierLabelMarker(
-      record,
-      maxFontSize
+      record
     );
-
   }
-
 }
 
 
