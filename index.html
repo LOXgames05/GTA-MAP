@@ -1972,7 +1972,7 @@ body.painting #layers-panel {
 
 .map-mode-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 7px;
 }
 
@@ -3271,6 +3271,12 @@ body.editing.map-view-factions #factions-panel {
   display: block !important;
 }
 
+/* La carte Bâtiments réutilise l’éditeur territorial pour créer,
+   modifier et rattacher les bâtiments aux factions. */
+body.editing.map-view-batiments #editor-panel {
+  display: block !important;
+}
+
 /* La colonne droite ne contient plus que le menu Affichage. */
 #right-ui-stack > #layers-panel {
   width: 100% !important;
@@ -3746,6 +3752,15 @@ body.painting .faction-item.active {
           <span>Factions</span>
         </button>
 
+        <button
+          id="view-batiments"
+          class="map-mode-button"
+          type="button"
+        >
+          <i data-lucide="building-2"></i>
+          <span>Bâtiments</span>
+        </button>
+
       </div>
 
     </section>
@@ -4152,6 +4167,23 @@ body.painting .faction-item.active {
         aria-live="polite"
       ></div>
 
+      <div
+        id="building-faction-field"
+        style="display:none;"
+      >
+        <label>
+          Faction du bâtiment
+        </label>
+
+        <select id="shape-faction">
+          <option value="">Aucune faction</option>
+        </select>
+
+        <div class="field-help">
+          Sur la carte Bâtiments, le polygone prend la couleur de la faction sélectionnée.
+        </div>
+      </div>
+
 
       <label id="shape-name-label">
         Nom
@@ -4551,6 +4583,12 @@ const viewFactionsButton =
   );
 
 
+const viewBatimentsButton =
+  document.getElementById(
+    "view-batiments"
+  );
+
+
 const toggleReperesInput =
   document.getElementById(
     "toggle-reperes"
@@ -4650,6 +4688,18 @@ const shapeDescriptionInput =
 const buildingQuartierInfo =
   document.getElementById(
     "building-quartier-info"
+  );
+
+
+const buildingFactionField =
+  document.getElementById(
+    "building-faction-field"
+  );
+
+
+const shapeFactionInput =
+  document.getElementById(
+    "shape-faction"
   );
 
 
@@ -6637,15 +6687,19 @@ function startDrawing(
   if (
     targetKind === "batiment"
   ) {
+    /*
+      Le dessin des bâtiments se fait désormais sur sa carte dédiée.
+      Les quartiers restent visibles en dessous comme limites de référence.
+    */
     mapViewMode =
-      "quartiers";
+      "batiments";
 
     rerenderMapDisplay();
 
     map.closePopup();
 
     status.textContent =
-      "Dessine directement le polygone du bâtiment par-dessus le quartier. Il restera affiché au-dessus du quartier.";
+      "Carte Bâtiments active : dessine le polygone dans un quartier, puis choisis sa faction dans l’éditeur.";
   }
 
   button.classList.add(
@@ -7084,6 +7138,11 @@ function updateDisplayControls() {
     mapViewMode === "factions"
   );
 
+  document.body.classList.toggle(
+    "map-view-batiments",
+    mapViewMode === "batiments"
+  );
+
   viewQuartiersButton.classList.toggle(
     "active",
     mapViewMode === "quartiers"
@@ -7094,11 +7153,18 @@ function updateDisplayControls() {
     mapViewMode === "factions"
   );
 
+  viewBatimentsButton.classList.toggle(
+    "active",
+    mapViewMode === "batiments"
+  );
+
   toggleReperesInput.checked =
     overlayVisibility.repere;
 
   toggleBatimentsInput.checked =
-    overlayVisibility.batiment;
+    mapViewMode === "batiments"
+      ? true
+      : overlayVisibility.batiment;
 
   const locked =
     paintMode === true ||
@@ -7106,8 +7172,10 @@ function updateDisplayControls() {
 
   viewQuartiersButton.disabled = locked;
   viewFactionsButton.disabled = locked;
+  viewBatimentsButton.disabled = locked;
   toggleReperesInput.disabled = locked;
-  toggleBatimentsInput.disabled = locked;
+  toggleBatimentsInput.disabled =
+    locked || mapViewMode === "batiments";
 
   displayNote.textContent =
     paintMode
@@ -7116,7 +7184,9 @@ function updateDisplayControls() {
         ? "Placement du logo actif : vue Factions forcée. Clique sur la carte pour placer le logo."
         : mapViewMode === "quartiers"
           ? "Vue Quartiers : chaque zone reste individuelle et son nom est affiché au centre."
-          : "Vue Factions : les quartiers voisins d’une même faction sont fusionnés visuellement.";
+          : mapViewMode === "factions"
+            ? "Vue Factions : les quartiers voisins d’une même faction sont fusionnés visuellement."
+            : "Vue Bâtiments : les bâtiments sont prioritaires et prennent la couleur de leur faction lorsqu’ils en ont une.";
 }
 
 
@@ -7138,7 +7208,8 @@ function setMapViewMode(
 
   if (
     mode !== "quartiers" &&
-    mode !== "factions"
+    mode !== "factions" &&
+    mode !== "batiments"
   ) {
     return;
   }
@@ -7165,6 +7236,12 @@ viewQuartiersButton.addEventListener(
 viewFactionsButton.addEventListener(
   "click",
   () => setMapViewMode("factions")
+);
+
+
+viewBatimentsButton.addEventListener(
+  "click",
+  () => setMapViewMode("batiments")
 );
 
 
@@ -7365,6 +7442,8 @@ async function loadDatabase() {
       })
       .filter(Boolean);
 
+  populateBuildingFactionSelect();
+
   if (selectedFaction) {
     const selectedId =
       selectedFaction.id;
@@ -7460,8 +7539,14 @@ function renderLayers() {
     }
 
     if (layer.kind === "batiment") {
+      /*
+        En vue Bâtiments, cette couche devient la carte principale :
+        elle reste donc visible même si la superposition avait été coupée.
+      */
       visible =
-        overlayVisibility.batiment;
+        mapViewMode === "batiments"
+          ? true
+          : overlayVisibility.batiment;
     }
 
     if (paintMode) {
@@ -7538,6 +7623,30 @@ function buildPopup(
   popup.appendChild(
     title
   );
+
+
+  const popupFaction =
+    findFaction(
+      shape.faction_id
+    );
+
+  if (popupFaction) {
+    const factionLine =
+      document.createElement(
+        "p"
+      );
+
+    factionLine.className =
+      "zone-description";
+
+    factionLine.textContent =
+      "Faction : " +
+      popupFaction.name;
+
+    popup.appendChild(
+      factionLine
+    );
+  }
 
 
   if (
@@ -8815,6 +8924,9 @@ function renderShapes() {
     const quartier =
       kind === "quartier";
 
+    const batiment =
+      kind === "batiment";
+
     const faction =
       findFaction(shape.faction_id);
 
@@ -8877,6 +8989,20 @@ function renderShapes() {
         weight = 2;
         opacity = .30;
       }
+      else if (
+        mapViewMode === "batiments" &&
+        !paintMode
+      ) {
+        /*
+          Sur la carte Bâtiments, les quartiers servent uniquement
+          de repère géographique. Ils restent sous les bâtiments.
+        */
+        color = "#d7ddd9";
+        fillColor = "#ffffff";
+        fillOpacity = 0;
+        weight = 2;
+        opacity = .38;
+      }
       else {
         fillColor =
           faction?.color ||
@@ -8896,6 +9022,27 @@ function renderShapes() {
         opacity =
           editMode ? .92 : .62;
       }
+    }
+
+    if (
+      batiment &&
+      mapViewMode === "batiments"
+    ) {
+      /*
+        La faction est rattachée directement au bâtiment via map_shapes.faction_id.
+        Aucun nouveau champ SQL n'est nécessaire : la colonne existe déjà.
+      */
+      const factionColor =
+        faction?.color ||
+        shape.style?.color ||
+        parentLayer.color ||
+        "#c6a443";
+
+      color = factionColor;
+      fillColor = factionColor;
+      fillOpacity = faction ? .42 : .20;
+      weight = faction ? 4 : 3;
+      opacity = faction ? 1 : .78;
     }
 
     const baseStyle = {
@@ -9203,6 +9350,10 @@ map.on(
           : "";
 
 
+    shapeFactionInput.value =
+      "";
+
+
     shapePublishedInput.checked =
       true;
 
@@ -9341,7 +9492,19 @@ function selectExistingShape(
     null;
 
 
+  const selectedCanonicalLayer =
+    mapLayers.find(
+      layer => layer.id === shape.layer_id
+    ) ||
+    (
+      isPolygonGeometry(shape.geometry) &&
+      shape.style?.quartier_id
+        ? getLayerByKind("batiment")
+        : null
+    );
+
   shapeLayerInput.value =
+    selectedCanonicalLayer?.id ||
     shape.layer_id;
 
 
@@ -9372,6 +9535,11 @@ function selectExistingShape(
 
   shapeIconInput.value =
     shape.style?.icon ||
+    "";
+
+
+  shapeFactionInput.value =
+    shape.faction_id ||
     "";
 
 
@@ -9416,6 +9584,66 @@ function selectedEditorKind() {
     );
 
   return layer?.kind || null;
+}
+
+
+function populateBuildingFactionSelect() {
+  if (!shapeFactionInput) return;
+
+  const currentValue =
+    shapeFactionInput.value ||
+    selectedShapeRecord?.faction_id ||
+    "";
+
+  shapeFactionInput.innerHTML =
+    '<option value="">Aucune faction</option>';
+
+  for (const faction of mapFactions) {
+    const option =
+      document.createElement(
+        "option"
+      );
+
+    option.value =
+      faction.id;
+
+    option.textContent =
+      faction.name;
+
+    shapeFactionInput.appendChild(
+      option
+    );
+  }
+
+  shapeFactionInput.value =
+    mapFactions.some(
+      faction => faction.id === currentValue
+    )
+      ? currentValue
+      : "";
+}
+
+
+function updateBuildingFactionField() {
+  if (
+    !buildingFactionField ||
+    !shapeFactionInput
+  ) {
+    return;
+  }
+
+  const building =
+    selectedEditorKind() ===
+    "batiment";
+
+  buildingFactionField.style.display =
+    building
+      ? ""
+      : "none";
+
+  if (building) {
+    populateBuildingFactionSelect();
+  }
 }
 
 
@@ -9504,6 +9732,7 @@ function updateMarkerFieldsVisibility() {
     );
   }
 
+  updateBuildingFactionField();
   updateBuildingQuartierInfo();
 }
 
@@ -9533,16 +9762,30 @@ function applyShapePreview() {
   const quartier =
     kind === "quartier";
 
+  const buildingFaction =
+    kind === "batiment"
+      ? findFaction(
+          shapeFactionInput.value
+        )
+      : null;
+
+  const previewColor =
+    kind === "batiment" &&
+    mapViewMode === "batiments" &&
+    buildingFaction
+      ? (buildingFaction.color || shapeColorInput.value)
+      : shapeColorInput.value;
+
   selectedLeafletLayer.setStyle({
     color:
       quartier
         ? "#ffffff"
-        : shapeColorInput.value,
+        : previewColor,
 
     fillColor:
       quartier
         ? "#ffffff"
-        : shapeColorInput.value,
+        : previewColor,
 
     fillOpacity:
       isArea
@@ -9582,6 +9825,14 @@ shapeLayerInput.addEventListener(
   "change",
   () => {
     updateMarkerFieldsVisibility();
+    applyShapePreview();
+  }
+);
+
+
+shapeFactionInput.addEventListener(
+  "change",
+  () => {
     applyShapePreview();
   }
 );
@@ -9702,6 +9953,11 @@ saveShapeButton.addEventListener(
         shapeDescriptionInput
           .value
           .trim(),
+
+      faction_id:
+        editorKind === "batiment"
+          ? (shapeFactionInput.value || null)
+          : (selectedShapeRecord?.faction_id || null),
 
       geometry:
         geometry,
