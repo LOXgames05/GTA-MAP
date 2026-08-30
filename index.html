@@ -3595,6 +3595,101 @@ body.painting .faction-item.active {
   grid-template-columns: minmax(0, 1fr) !important;
 }
 
+
+
+/* =========================================================
+   CALQUES UNIQUEMENT + ÉDITION PAR CALQUE
+========================================================= */
+
+/* Plus de notion visible de carte principale. */
+.map-mode-grid,
+.legacy-display-controls {
+  display: none !important;
+}
+
+.layers-only-section {
+  border-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* Une colonne supplémentaire à droite pour le crayon d'administration. */
+.overlay-toggle {
+  grid-template-columns: 14px 27px minmax(0, 1fr) 27px !important;
+}
+
+.layer-edit-button {
+  width: 27px !important;
+  height: 27px !important;
+  min-width: 27px !important;
+  min-height: 27px !important;
+  padding: 0 !important;
+  display: none !important;
+  place-items: center !important;
+  border: 1px solid rgba(134,173,150,.16) !important;
+  border-radius: 7px !important;
+  background: rgba(4,8,6,.58) !important;
+  color: #9eb5a7 !important;
+}
+
+.layer-edit-button svg {
+  width: 12px !important;
+  height: 12px !important;
+}
+
+body.is-admin .layer-edit-button {
+  display: grid !important;
+}
+
+.layer-edit-button:hover,
+.layer-edit-button.active {
+  border-color: rgba(198,164,67,.48) !important;
+  background: rgba(198,164,67,.10) !important;
+  color: var(--gold-light) !important;
+}
+
+/* L'ancien bouton et l'ancien onglet d'édition du bandeau ne sont plus utilisés. */
+#edit-mode-button,
+#nav-editor {
+  display: none !important;
+}
+
+/* Les outils affichés suivent le calque choisi avec le crayon. */
+body.editing[data-editor-kind="factions"] #draw-toolbar {
+  display: none !important;
+}
+
+body.editing[data-editor-kind="repere"] #draw-polygon,
+body.editing[data-editor-kind="repere"] #draw-rectangle,
+body.editing[data-editor-kind="repere"] #draw-marker-batiment {
+  display: none !important;
+}
+
+body.editing[data-editor-kind="batiment"] #draw-polygon,
+body.editing[data-editor-kind="batiment"] #draw-rectangle,
+body.editing[data-editor-kind="batiment"] #draw-marker-repere {
+  display: none !important;
+}
+
+body.editing[data-editor-kind="quartier"] #draw-marker-repere,
+body.editing[data-editor-kind="quartier"] #draw-marker-batiment {
+  display: none !important;
+}
+
+/* Panneaux admin pilotés par le crayon du calque, pas par un bouton global. */
+#editor-panel,
+#factions-panel {
+  display: none !important;
+}
+
+body.editing[data-editor-kind="factions"] #factions-panel {
+  display: block !important;
+}
+
+body.editing[data-editor-kind="repere"] #editor-panel,
+body.editing[data-editor-kind="batiment"] #editor-panel,
+body.editing[data-editor-kind="quartier"] #editor-panel {
+  display: block !important;
+}
 </style>
 
 </head>
@@ -3738,11 +3833,11 @@ body.painting .faction-item.active {
     <div>
 
       <div class="panel-kicker">
-        CARTE
+        CALQUES
       </div>
 
       <div class="panel-title">
-        Affichage de la carte
+        Calques de la carte
       </div>
 
     </div>
@@ -3755,106 +3850,93 @@ body.painting .faction-item.active {
 
   <div class="panel-scroll display-panel-scroll">
 
-    <section class="display-section">
-
-      <div class="display-section-title">
-        CARTE PRINCIPALE
-      </div>
-
-      <div class="map-mode-grid">
-
-        <!-- Boutons historiques conservés uniquement pour ne casser aucune référence JS. -->
-        <button
-          id="view-quartiers"
-          class="map-mode-button"
-          type="button"
-          aria-hidden="true"
-          tabindex="-1"
-        >
-          <i data-lucide="map"></i>
-          <span>Quartiers</span>
-        </button>
-
-        <button
-          id="view-factions"
-          class="map-mode-button active"
-          type="button"
-        >
-          <i data-lucide="shield"></i>
-          <span>Factions</span>
-        </button>
-
-        <button
-          id="view-batiments"
-          class="map-mode-button"
-          type="button"
-          aria-hidden="true"
-          tabindex="-1"
-        >
-          <i data-lucide="building-2"></i>
-          <span>Bâtiments</span>
-        </button>
-
-      </div>
-
-    </section>
-
-    <section class="display-section">
+    <section class="display-section layers-only-section">
 
       <div class="display-section-title">
         CALQUES
       </div>
 
-      <label class="overlay-toggle">
+      <div class="overlay-toggle" data-layer-row="factions">
+        <input
+          id="toggle-factions"
+          type="checkbox"
+          checked
+          aria-label="Afficher les factions"
+        >
+        <span class="overlay-icon">
+          <i data-lucide="shield"></i>
+        </span>
+        <span class="overlay-copy">
+          <strong>Factions</strong>
+          <small>Calque le plus proche</small>
+        </span>
+        <button
+          class="layer-edit-button"
+          type="button"
+          data-edit-layer="factions"
+          title="Modifier les factions"
+          aria-label="Modifier les factions"
+        >
+          <i data-lucide="pencil"></i>
+        </button>
+      </div>
+
+      <div class="overlay-toggle" data-layer-row="repere">
         <input
           id="toggle-reperes"
           type="checkbox"
           checked
+          aria-label="Afficher les repères"
         >
         <span class="overlay-icon">
           <i data-lucide="map-pin"></i>
         </span>
         <span class="overlay-copy">
           <strong>Repères</strong>
-          <small>Au-dessus des numéros</small>
+          <small>Au-dessus des bâtiments</small>
         </span>
-      </label>
+        <button
+          class="layer-edit-button"
+          type="button"
+          data-edit-layer="repere"
+          title="Modifier les repères"
+          aria-label="Modifier les repères"
+        >
+          <i data-lucide="pencil"></i>
+        </button>
+      </div>
 
-      <label class="overlay-toggle">
+      <div class="overlay-toggle" data-layer-row="batiment">
         <input
           id="toggle-numeros"
           type="checkbox"
           checked
-        >
-        <span class="overlay-icon">
-          <i data-lucide="hash"></i>
-        </span>
-        <span class="overlay-copy">
-          <strong>Numéros</strong>
-          <small>Numéros des bâtiments</small>
-        </span>
-      </label>
-
-      <label class="overlay-toggle">
-        <input
-          id="toggle-batiments"
-          type="checkbox"
-          checked
+          aria-label="Afficher les bâtiments"
         >
         <span class="overlay-icon">
           <i data-lucide="building-2"></i>
         </span>
         <span class="overlay-copy">
           <strong>Bâtiments</strong>
-          <small>Polygones des bâtiments</small>
+          <small>Numéros des bâtiments</small>
         </span>
-      </label>
+        <button
+          class="layer-edit-button"
+          type="button"
+          data-edit-layer="batiment"
+          title="Modifier les bâtiments"
+          aria-label="Modifier les bâtiments"
+        >
+          <i data-lucide="pencil"></i>
+        </button>
+      </div>
 
-      <label class="overlay-toggle">
+      <div class="overlay-toggle" data-layer-row="quartier">
         <input
           id="toggle-quartiers"
           type="checkbox"
           checked
+          aria-label="Afficher les quartiers"
         >
         <span class="overlay-icon">
           <i data-lucide="map"></i>
@@ -3863,12 +3945,29 @@ body.painting .faction-item.active {
           <strong>Quartiers</strong>
           <small>Calque le plus éloigné</small>
         </span>
-      </label>
+        <button
+          class="layer-edit-button"
+          type="button"
+          data-edit-layer="quartier"
+          title="Modifier les quartiers"
+          aria-label="Modifier les quartiers"
+        >
+          <i data-lucide="pencil"></i>
+        </button>
+      </div>
 
     </section>
 
+    <!-- Références historiques gardées invisibles pour préserver les anciens handlers JS. -->
+    <div class="legacy-display-controls" aria-hidden="true">
+      <button id="view-quartiers" type="button" tabindex="-1"></button>
+      <button id="view-factions" type="button" tabindex="-1"></button>
+      <button id="view-batiments" type="button" tabindex="-1"></button>
+      <input id="toggle-batiments" type="checkbox" checked tabindex="-1">
+    </div>
+
     <div id="display-note" class="display-note">
-      Ordre : Factions → Repères → Numéros → Bâtiments → Quartiers. Chaque famille utilise un calque de rendu séparé.
+      Ordre : Factions → Repères → Bâtiments → Quartiers.
     </div>
 
   </div>
@@ -4654,6 +4753,12 @@ const viewBatimentsButton =
   );
 
 
+const toggleFactionsInput =
+  document.getElementById(
+    "toggle-factions"
+  );
+
+
 const toggleReperesInput =
   document.getElementById(
     "toggle-reperes"
@@ -4937,7 +5042,17 @@ let mapViewMode =
   "factions";
 
 
+/*
+  L'interface publique n'a plus de « carte principale ».
+  Tout est traité comme un calque indépendant.
+  mapViewMode reste uniquement comme état interne de l'éditeur admin.
+*/
+let activeEditorKind =
+  null;
+
+
 const overlayVisibility = {
+  faction: true,
   quartier: true,
   batiment: true,
   numero: true,
@@ -5651,7 +5766,7 @@ map =
 
 /*
   ORDRE DES CALQUES, du plus loin au plus proche :
-  Quartiers -> Bâtiments -> Numéros -> Repères -> Factions.
+  Quartiers -> Bâtiments (numéros) -> Repères -> Factions.
 
   Chaque famille possède son propre pane SVG / marqueur.
   Leaflet ne mélange donc plus les éléments de deux familles dans
@@ -6336,14 +6451,19 @@ async function refreshAuth() {
   }
 
 
+  document.body.classList.toggle(
+    "is-admin",
+    admin
+  );
+
+
+  /* L'édition se lance désormais depuis le crayon de chaque calque. */
   document
     .getElementById(
       "nav-editor"
     )
     .style.display =
-      admin
-        ? ""
-        : "none";
+      "none";
 
 
   if (
@@ -6355,7 +6475,7 @@ async function refreshAuth() {
 
 
     editModeButton.style.display =
-      "";
+      "none";
 
 
     logoutButton.style.display =
@@ -6567,7 +6687,63 @@ logoutButton.addEventListener(
    EDIT MODE
 ========================================================= */
 
-function enableEditMode() {
+function selectEditorLayerKind(
+  kind
+) {
+
+  if (kind === "factions") {
+    return;
+  }
+
+  const layer =
+    getLayerByKind(kind);
+
+  if (!layer) {
+    status.textContent =
+      `Calque ${kind} introuvable.`;
+    return;
+  }
+
+  shapeLayerInput.value =
+    layer.id;
+
+  updateMarkerFieldsVisibility();
+  applyShapePreview();
+}
+
+
+function setActiveEditorKind(
+  kind
+) {
+
+  activeEditorKind =
+    kind || "batiment";
+
+  document.body.dataset.editorKind =
+    activeEditorKind;
+
+  mapViewMode =
+    activeEditorKind === "factions"
+      ? "factions"
+      : "batiments";
+
+  stopDrawing();
+
+  if (selectedLeafletLayer) {
+    cancelSelection();
+  }
+
+  rerenderMapDisplay();
+
+  selectEditorLayerKind(
+    activeEditorKind
+  );
+}
+
+
+function enableEditMode(
+  targetKind = "batiment"
+) {
 
   if (
     !admin
@@ -6580,13 +6756,22 @@ function enableEditMode() {
     true;
 
 
+  activeEditorKind =
+    targetKind || "batiment";
+
+
   mapViewMode =
-    "batiments";
+    activeEditorKind === "factions"
+      ? "factions"
+      : "batiments";
 
 
   document.body.classList.add(
     "editing"
   );
+
+  document.body.dataset.editorKind =
+    activeEditorKind;
 
 
   editModeButton.classList.add(
@@ -6607,10 +6792,17 @@ function enableEditMode() {
   lucide.createIcons();
 
 
-  loadDatabase();
+  loadDatabase().then(
+    () => {
+      selectEditorLayerKind(
+        activeEditorKind
+      );
+
+      updateDisplayControls();
+    }
+  );
 
 }
-
 
 
 function disableEditMode() {
@@ -6637,6 +6829,10 @@ function disableEditMode() {
     false;
 
 
+  activeEditorKind =
+    null;
+
+
   mapViewMode =
     "factions";
 
@@ -6650,6 +6846,8 @@ function disableEditMode() {
   document.body.classList.remove(
     "editing"
   );
+
+  delete document.body.dataset.editorKind;
 
 
   editModeButton.classList.remove(
@@ -6668,6 +6866,31 @@ function disableEditMode() {
 
   loadDatabase();
 
+}
+
+
+function openLayerEditor(
+  kind
+) {
+
+  if (!admin) {
+    return;
+  }
+
+  if (
+    editMode &&
+    activeEditorKind === kind
+  ) {
+    disableEditMode();
+    return;
+  }
+
+  if (!editMode) {
+    enableEditMode(kind);
+    return;
+  }
+
+  setActiveEditorKind(kind);
 }
 
 
@@ -6804,7 +7027,7 @@ function startDrawing(
     mapViewMode =
       "batiments";
 
-    overlayVisibility.batiment =
+    overlayVisibility.faction =
       true;
 
     overlayVisibility.numero =
@@ -6818,7 +7041,7 @@ function startDrawing(
     map.closePopup();
 
     status.textContent =
-      "Carte Bâtiments active : dessine le polygone sur le calque Quartiers. La faction du bâtiment sera visible sur la carte Factions.";
+      "Édition Bâtiments : dessine le polygone sur le calque Quartiers. Son numéro appartient au calque Bâtiments et sa faction au calque Factions.";
   }
 
   button.classList.add(
@@ -7245,11 +7468,9 @@ function updateBuildingQuartierInfo() {
 function updateDisplayControls() {
 
   /*
-    Deux cartes principales distinctes :
-    - Bâtiments : style propre des bâtiments.
-    - Factions : mêmes bâtiments, colorés selon leur faction.
-
-    Quartiers n'est plus une carte principale : c'est un calque.
+    Plus de carte principale visible : Factions, Repères, Bâtiments
+    et Quartiers sont quatre calques indépendants.
+    mapViewMode ne sert plus qu'à choisir le panneau d'administration.
   */
   document.body.classList.remove(
     "map-view-quartiers"
@@ -7265,25 +7486,11 @@ function updateDisplayControls() {
     mapViewMode === "batiments"
   );
 
-  viewQuartiersButton.classList.remove(
-    "active"
-  );
-
-  viewFactionsButton.classList.toggle(
-    "active",
-    mapViewMode === "factions"
-  );
-
-  viewBatimentsButton.classList.toggle(
-    "active",
-    mapViewMode === "batiments"
-  );
+  toggleFactionsInput.checked =
+    overlayVisibility.faction;
 
   toggleQuartiersInput.checked =
     overlayVisibility.quartier;
-
-  toggleBatimentsInput.checked =
-    overlayVisibility.batiment;
 
   toggleNumerosInput.checked =
     overlayVisibility.numero;
@@ -7291,24 +7498,41 @@ function updateDisplayControls() {
   toggleReperesInput.checked =
     overlayVisibility.repere;
 
+  /* Ancien contrôle invisible, gardé uniquement pour compatibilité. */
+  toggleBatimentsInput.checked =
+    true;
+
   const locked =
     factionLogoPlacementMode === true;
 
-  viewQuartiersButton.disabled = true;
-  viewFactionsButton.disabled = locked;
-  viewBatimentsButton.disabled = true;
+  toggleFactionsInput.disabled = locked;
   toggleQuartiersInput.disabled = locked;
-  toggleBatimentsInput.disabled = locked;
   toggleNumerosInput.disabled = locked;
   toggleReperesInput.disabled = locked;
 
+  document
+    .querySelectorAll(
+      ".layer-edit-button"
+    )
+    .forEach(
+      button => {
+        button.disabled =
+          !admin || locked;
+
+        button.classList.toggle(
+          "active",
+          editMode &&
+          button.dataset.editLayer === activeEditorKind
+        );
+      }
+    );
+
   displayNote.textContent =
     factionLogoPlacementMode
-      ? "Placement du logo actif : Factions reste au premier plan. Clique sur la carte pour placer le logo."
-      : mapViewMode === "factions"
-        ? "Ordre de rendu : Factions → Repères → Numéros → Bâtiments → Quartiers. Les bâtiments sont maintenant un calque indépendant."
-        : "Édition des bâtiments : les polygones, numéros et quartiers restent dans des calques séparés. Clique sur Factions pour revenir à la gestion des factions.";
+      ? "Placement du logo actif. Clique sur la carte pour enregistrer sa position."
+      : "Ordre : Factions → Repères → Bâtiments → Quartiers.";
 }
+
 
 
 function rerenderMapDisplay() {
@@ -7365,6 +7589,16 @@ viewBatimentsButton.addEventListener(
 );
 
 
+toggleFactionsInput.addEventListener(
+  "change",
+  () => {
+    overlayVisibility.faction =
+      toggleFactionsInput.checked;
+    rerenderMapDisplay();
+  }
+);
+
+
 toggleReperesInput.addEventListener(
   "change",
   () => {
@@ -7388,9 +7622,9 @@ toggleNumerosInput.addEventListener(
 toggleBatimentsInput.addEventListener(
   "change",
   () => {
+    /* Contrôle historique invisible. */
     overlayVisibility.batiment =
-      toggleBatimentsInput.checked;
-    rerenderMapDisplay();
+      true;
   }
 );
 
@@ -7403,6 +7637,67 @@ toggleQuartiersInput.addEventListener(
     rerenderMapDisplay();
   }
 );
+
+
+document
+  .querySelectorAll(
+    ".layer-edit-button"
+  )
+  .forEach(
+    button => {
+      button.addEventListener(
+        "click",
+        event => {
+          event.preventDefault();
+          event.stopPropagation();
+
+          openLayerEditor(
+            button.dataset.editLayer
+          );
+        }
+      );
+    }
+  );
+
+
+document
+  .querySelectorAll(
+    "[data-layer-row]"
+  )
+  .forEach(
+    row => {
+      row.addEventListener(
+        "click",
+        event => {
+          if (
+            event.target.closest("button") ||
+            event.target.matches("input")
+          ) {
+            return;
+          }
+
+          const input =
+            row.querySelector(
+              'input[type="checkbox"]'
+            );
+
+          if (!input || input.disabled) {
+            return;
+          }
+
+          input.checked =
+            !input.checked;
+
+          input.dispatchEvent(
+            new Event(
+              "change",
+              { bubbles: true }
+            )
+          );
+        }
+      );
+    }
+  );
 
 
 /* =========================================================
@@ -7689,17 +7984,33 @@ function renderLayers() {
     let visible = true;
 
     if (layer.kind === "quartier") {
-      /* Quartiers est désormais un calque indépendant. */
-      visible = overlayVisibility.quartier;
+      visible =
+        overlayVisibility.quartier ||
+        (editMode && activeEditorKind === "quartier") ||
+        (editMode && activeEditorKind === "batiment");
     }
 
     if (layer.kind === "repere") {
-      visible = overlayVisibility.repere;
+      visible =
+        overlayVisibility.repere ||
+        (editMode && activeEditorKind === "repere");
     }
 
     if (layer.kind === "batiment") {
-      /* Bâtiments redevient un vrai calque activable / masquable. */
-      visible = overlayVisibility.batiment;
+      /*
+        Il n'existe plus de calque public « polygones des bâtiments ».
+        Ces polygones constituent le calque Factions. Ils restent aussi
+        visibles quand l'administrateur édite spécifiquement les bâtiments.
+      */
+      visible =
+        (
+          mapViewMode === "factions" &&
+          overlayVisibility.faction
+        ) ||
+        (
+          editMode &&
+          activeEditorKind === "batiment"
+        );
     }
 
     if (visible) {
@@ -7714,14 +8025,20 @@ function renderLayers() {
   buildingNumberGroup =
     L.layerGroup();
 
-  if (overlayVisibility.numero) {
+  if (
+    overlayVisibility.numero ||
+    (editMode && activeEditorKind === "batiment")
+  ) {
     buildingNumberGroup.addTo(map);
   }
 
   factionDisplayGroup =
     L.layerGroup();
 
-  if (mapViewMode === "factions") {
+  if (
+    mapViewMode === "factions" &&
+    overlayVisibility.faction
+  ) {
     factionDisplayGroup.addTo(map);
   }
 
@@ -8205,6 +8522,7 @@ function renderFactionTerritories() {
 
   if (
     mapViewMode !== "factions" ||
+    !overlayVisibility.faction ||
     paintMode
   ) {
     return;
@@ -9123,7 +9441,11 @@ function renderShapes() {
             quartier
               ? "quartierPane"
               : kind === "batiment"
-                ? "buildingPane"
+                ? (
+                    mapViewMode === "factions"
+                      ? "territoryPane"
+                      : "buildingPane"
+                  )
                 : kind === "repere"
                   ? "reperePane"
                   : "otherShapePane",
@@ -9198,7 +9520,10 @@ function renderShapes() {
     if (
       kind === "batiment" &&
       polygon &&
-      overlayVisibility.numero
+      (
+        overlayVisibility.numero ||
+        (editMode && activeEditorKind === "batiment")
+      )
     ) {
       addBuildingNumberLabel(
         shape,
