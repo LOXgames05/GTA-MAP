@@ -1891,6 +1891,15 @@ body.painting .leaflet-interactive {
   transform: none;
 }
 
+/* Clic direct pour positionner le logo de la faction sélectionnée */
+body.editing.faction-logo-click-ready #map {
+  cursor: crosshair;
+}
+
+body.editing.faction-logo-click-ready .leaflet-interactive {
+  cursor: crosshair !important;
+}
+
 body.placing-faction-logo #map {
   cursor: crosshair;
 }
@@ -3749,7 +3758,7 @@ body.editing #draw-toolbar {
         id="faction-logo-help"
         class="faction-logo-help"
       >
-        Ajoute un logo, enregistre la faction, puis utilise « Placer le logo ». Le logo n'apparaît qu'après avoir choisi sa position sur la carte.
+        Sélectionne une faction avec un logo enregistré, puis clique directement sur la carte pour placer ou déplacer son logo.
       </div>
 
 
@@ -3770,6 +3779,7 @@ body.editing #draw-toolbar {
 
         <button
           id="place-faction-logo"
+          style="display:none"
           class="gold wide"
           disabled
         >
@@ -7433,19 +7443,45 @@ function renderFactionTerritories() {
         );
 
       if (logoLatLng) {
-        L.marker(
-          logoLatLng,
-          {
-            pane: "factionLabelPane",
-            interactive: false,
-            icon: L.divIcon({
-              className: "",
-              html: factionLogoHtml(faction),
-              iconSize: [1, 1],
-              iconAnchor: [0, 0]
-            })
-          }
-        ).addTo(group);
+        const logoDraggable =
+          editMode &&
+          selectedFaction?.id === faction.id;
+
+
+        const logoMarker =
+          L.marker(
+            logoLatLng,
+            {
+              pane: "factionLabelPane",
+              interactive: logoDraggable,
+              draggable: logoDraggable,
+              autoPan: logoDraggable,
+              icon: L.divIcon({
+                className: "",
+                html: factionLogoHtml(
+                  faction,
+                  logoDraggable
+                ),
+                iconSize: [48, 48],
+                iconAnchor: [24, 24]
+              })
+            }
+          );
+
+
+        if (logoDraggable) {
+          logoMarker.on(
+            "dragend",
+            async event => {
+              await saveFactionLogoPosition(
+                event.target.getLatLng()
+              );
+            }
+          );
+        }
+
+
+        logoMarker.addTo(group);
       }
     }
   }
@@ -9445,14 +9481,18 @@ function renderFactionPanel() {
   const canPlaceLogo =
     !!selectedFaction &&
     !!String(
-      factionLogoInput.value ||
       selectedFaction?.logo_url ||
       ""
     ).trim();
 
 
+  /*
+    Le bouton historique reste dans le DOM pour ne pas casser
+    les anciens gestionnaires, mais il n'est plus nécessaire :
+    le placement se fait directement par clic sur la carte.
+  */
   placeFactionLogoButton.disabled =
-    !canPlaceLogo;
+    true;
 
 
   resetFactionLogoPositionButton.disabled =
@@ -9462,34 +9502,32 @@ function renderFactionPanel() {
     );
 
 
-  placeFactionLogoButton.classList.toggle(
-    "active",
-    factionLogoPlacementMode
+  placeFactionLogoButton.classList.remove(
+    "active"
   );
-
-
-  placeFactionLogoButton.innerHTML =
-    factionLogoPlacementMode
-      ? `
-          <i data-lucide="check"></i>
-          Terminer placement
-        `
-      : `
-          <i data-lucide="move"></i>
-          Placer le logo
-        `;
 
 
   factionLogoHelp.classList.toggle(
     "active",
-    factionLogoPlacementMode
+    canPlaceLogo
   );
 
 
   factionLogoHelp.textContent =
-    factionLogoPlacementMode
-      ? "Placement actif : clique où tu veux sur la carte ou fais glisser le logo. La position est enregistrée automatiquement."
-      : "Ajoute un logo, enregistre la faction, puis utilise « Placer le logo ». Aucune position automatique n'est utilisée.";
+    !selectedFaction
+      ? "Sélectionne une faction."
+      : !selectedFaction.logo_url
+        ? "Ajoute un logo puis enregistre la faction. Ensuite, un simple clic sur la carte placera le logo."
+        : "Clique directement sur la carte pour placer ou déplacer le logo. Tu peux aussi faire glisser le logo une fois placé.";
+
+
+  document.body.classList.toggle(
+    "faction-logo-click-ready",
+    editMode &&
+    canPlaceLogo &&
+    !paintMode &&
+    mapViewMode === "factions"
+  );
 
 
   lucide.createIcons();
@@ -9519,6 +9557,20 @@ function selectFaction(
 
   selectedFaction =
     faction;
+
+
+  /*
+    Une faction sélectionnée se place directement sur la vue Factions.
+    Il suffit ensuite de cliquer sur la carte pour poser son logo.
+  */
+  mapViewMode =
+    "factions";
+
+
+  updateDisplayControls();
+
+
+  rerenderMapDisplay();
 
 
   factionNameInput.value =
@@ -9846,6 +9898,78 @@ async function moveFactionLogoTo(latlng) {
 }
 
 
+/* =========================================================
+   CLIC DIRECT SUR LA CARTE = POSITION DU LOGO
+
+   Plus besoin d'activer un outil séparé.
+   En édition, lorsqu'une faction avec un logo enregistré
+   est sélectionnée et que la vue Factions est active,
+   un simple clic sur la carte place ou déplace son logo.
+========================================================= */
+
+function canDirectPlaceFactionLogo() {
+  return (
+    editMode &&
+    !!selectedFaction &&
+    !!selectedFaction.id &&
+    !!String(selectedFaction.logo_url || "").trim() &&
+    !paintMode &&
+    mapViewMode === "factions"
+  );
+}
+
+
+map.getContainer().addEventListener(
+  "click",
+  async event => {
+    if (!canDirectPlaceFactionLogo()) {
+      return;
+    }
+
+    /*
+      Les contrôles Leaflet et le logo lui-même gardent leur
+      comportement normal. Un clic sur le reste de la carte
+      sert directement au placement.
+    */
+    if (
+      event.target.closest(
+        ".leaflet-control, .leaflet-marker-icon, .leaflet-marker-shadow"
+      )
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    const latlng =
+      map.mouseEventToLatLng(
+        event
+      );
+
+    const saved =
+      await saveFactionLogoPosition(
+        latlng
+      );
+
+    if (!saved) {
+      return;
+    }
+
+    /*
+      On rerend immédiatement pour afficher le logo à la
+      nouvelle position, sans attendre un rechargement.
+    */
+    rerenderMapDisplay();
+    renderFactionPanel();
+
+    status.textContent =
+      "Logo placé. Clique ailleurs sur la carte pour le déplacer.";
+  },
+  true
+);
+
+
 function factionLogoMapClick(event) {
   if (!factionLogoPlacementMode) {
     return;
@@ -9927,8 +10051,8 @@ function startFactionLogoPlacement() {
 
   status.textContent =
     startLatLng
-      ? "Déplace le logo comme un point : clique sur la carte ou fais-le glisser."
-      : "Clique sur la carte pour placer le logo. Aucune position automatique n'est utilisée.";
+      ? "Clique sur la carte ou fais glisser le logo pour le déplacer."
+      : "Clique directement sur la carte pour placer le logo.";
 }
 
 
