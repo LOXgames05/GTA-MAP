@@ -2478,6 +2478,22 @@ body.painting .zone-map-label {
   padding: 8px;
 }
 
+#building-quartier-info {
+  display: none;
+  margin-top: 7px;
+  padding: 7px 9px;
+  border: 1px solid rgba(134,173,150,.16);
+  border-radius: 7px;
+  background: rgba(48,81,62,.07);
+  color: #9db7a7;
+  font-size: 8px;
+  line-height: 1.4;
+}
+
+#building-quartier-info.visible {
+  display: block;
+}
+
 /* La barre d'outils passe à la ligne au lieu de défiler horizontalement */
 #draw-toolbar {
   overflow: visible !important;
@@ -3451,7 +3467,7 @@ body.editing #draw-toolbar {
 ========================================================= */
 
 #faction-list {
-  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   column-gap: 8px !important;
   row-gap: 7px !important;
 }
@@ -4107,6 +4123,12 @@ body.painting .faction-item.active {
       <select id="shape-layer"></select>
 
 
+      <div
+        id="building-quartier-info"
+        aria-live="polite"
+      ></div>
+
+
       <label id="shape-name-label">
         Nom
       </label>
@@ -4601,6 +4623,12 @@ const shapeDescriptionInput =
   );
 
 
+const buildingQuartierInfo =
+  document.getElementById(
+    "building-quartier-info"
+  );
+
+
 const shapeMarkerFields =
   document.getElementById(
     "shape-marker-fields"
@@ -4765,6 +4793,10 @@ const overlayVisibility = {
 
 
 let drawingTargetKind =
+  null;
+
+
+let pendingBuildingQuartier =
   null;
 
 
@@ -6566,6 +6598,21 @@ function startDrawing(
   drawingTargetKind =
     targetKind || null;
 
+  pendingBuildingQuartier =
+    null;
+
+  if (
+    targetKind === "batiment"
+  ) {
+    mapViewMode =
+      "quartiers";
+
+    rerenderMapDisplay();
+
+    status.textContent =
+      "Clique à l’intérieur d’un quartier pour placer le bâtiment.";
+  }
+
   button.classList.add(
     "active"
   );
@@ -6720,6 +6767,204 @@ function getLayerByKind(
     layer =>
       layer.kind === kind
   ) || null;
+}
+
+
+/* =========================================================
+   BÂTIMENTS DANS LES QUARTIERS
+========================================================= */
+
+function findQuartierAtLatLng(
+  latlng
+) {
+
+  if (
+    !latlng ||
+    !window.turf
+  ) {
+    return null;
+  }
+
+  const quartierLayer =
+    getLayerByKind(
+      "quartier"
+    );
+
+  if (
+    !quartierLayer
+  ) {
+    return null;
+  }
+
+  const point =
+    turf.point([
+      latlng.lng,
+      latlng.lat
+    ]);
+
+  for (
+    const quartier
+    of mapShapes
+  ) {
+
+    if (
+      quartier.layer_id !== quartierLayer.id ||
+      !isPolygonGeometry(
+        quartier.geometry
+      )
+    ) {
+      continue;
+    }
+
+    try {
+      const polygon = {
+        type: "Feature",
+        properties: {},
+        geometry: quartier.geometry
+      };
+
+      if (
+        turf.booleanPointInPolygon(
+          point,
+          polygon
+        )
+      ) {
+        return quartier;
+      }
+    }
+    catch (error) {
+      console.warn(
+        "Quartier impossible à tester :",
+        error
+      );
+    }
+  }
+
+  return null;
+}
+
+
+function buildingLatLngFromShape(
+  shape
+) {
+
+  if (
+    shape?.geometry?.type !== "Point" ||
+    !Array.isArray(
+      shape.geometry.coordinates
+    )
+  ) {
+    return null;
+  }
+
+  const [
+    lng,
+    lat
+  ] =
+    shape.geometry.coordinates;
+
+  if (
+    !Number.isFinite(lat) ||
+    !Number.isFinite(lng)
+  ) {
+    return null;
+  }
+
+  return L.latLng(
+    lat,
+    lng
+  );
+}
+
+
+function currentBuildingQuartier() {
+
+  if (
+    selectedEditorKind() !==
+    "batiment"
+  ) {
+    return null;
+  }
+
+  if (
+    selectedLeafletLayer instanceof
+    L.Marker
+  ) {
+    const found =
+      findQuartierAtLatLng(
+        selectedLeafletLayer.getLatLng()
+      );
+
+    if (found) {
+      return found;
+    }
+  }
+
+  if (
+    pendingBuildingQuartier
+  ) {
+    return pendingBuildingQuartier;
+  }
+
+  const savedId =
+    selectedShapeRecord?.style?.quartier_id;
+
+  if (savedId) {
+    const byId =
+      mapShapes.find(
+        shape =>
+          shape.id === savedId
+      );
+
+    if (byId) {
+      return byId;
+    }
+  }
+
+  const latlng =
+    buildingLatLngFromShape(
+      selectedShapeRecord
+    );
+
+  return latlng
+    ? findQuartierAtLatLng(latlng)
+    : null;
+}
+
+
+function updateBuildingQuartierInfo() {
+
+  if (
+    !buildingQuartierInfo
+  ) {
+    return;
+  }
+
+  if (
+    selectedEditorKind() !==
+    "batiment"
+  ) {
+    buildingQuartierInfo.classList.remove(
+      "visible"
+    );
+
+    buildingQuartierInfo.textContent =
+      "";
+
+    return;
+  }
+
+  const quartier =
+    currentBuildingQuartier();
+
+  buildingQuartierInfo.classList.add(
+    "visible"
+  );
+
+  buildingQuartierInfo.textContent =
+    quartier
+      ? `Quartier : ${quartier.name || "Sans nom"}`
+      : "Le bâtiment doit être placé à l’intérieur d’un quartier.";
 }
 
 
@@ -8593,6 +8838,47 @@ map.on(
       drawingTargetKind;
 
 
+    if (
+      targetKind === "batiment"
+    ) {
+      const latlng =
+        event.layer.getLatLng?.();
+
+      const quartier =
+        findQuartierAtLatLng(
+          latlng
+        );
+
+      if (
+        !quartier
+      ) {
+        map.removeLayer(
+          event.layer
+        );
+
+        pendingBuildingQuartier =
+          null;
+
+        map.pm.disableDraw();
+
+        clearToolActive();
+
+        drawingTargetKind =
+          null;
+
+        status.textContent =
+          "Bâtiment refusé : clique à l’intérieur d’un quartier.";
+
+        updateButtons();
+
+        return;
+      }
+
+      pendingBuildingQuartier =
+        quartier;
+    }
+
+
     map.pm.disableDraw();
 
     clearToolActive();
@@ -8718,8 +9004,20 @@ map.on(
     }
 
 
-    status.textContent =
-      "Nouvel élément créé. Le contour est conservé à l'intérieur de la zone.";
+    if (
+      targetKind === "batiment" &&
+      pendingBuildingQuartier
+    ) {
+      status.textContent =
+        `Bâtiment placé dans ${pendingBuildingQuartier.name || "ce quartier"}. Entre son numéro puis clique sur Enregistrer.`;
+    }
+    else {
+      status.textContent =
+        "Nouvel élément créé. Le contour est conservé à l'intérieur de la zone.";
+    }
+
+
+    updateBuildingQuartierInfo();
 
 
     updateButtons();
@@ -8753,6 +9051,10 @@ function selectExistingShape(
 
   selectedShapeRecord =
     shape;
+
+
+  pendingBuildingQuartier =
+    null;
 
 
   temporaryLayer =
@@ -8794,6 +9096,8 @@ function selectExistingShape(
 
 
   updateMarkerFieldsVisibility();
+
+  updateBuildingQuartierInfo();
 
 
   shapePublishedInput.checked =
@@ -8866,6 +9170,13 @@ function updateMarkerFieldsVisibility() {
     shapeNameInput.placeholder =
       "Ex. Commissariat";
 
+    shapeNameInput.inputMode =
+      "text";
+
+    shapeNameInput.removeAttribute(
+      "pattern"
+    );
+
     if (
       !shapeIconInput.value
     ) {
@@ -8885,6 +9196,14 @@ function updateMarkerFieldsVisibility() {
 
     shapeNameInput.placeholder =
       "Ex. 12";
+
+    shapeNameInput.inputMode =
+      "numeric";
+
+    shapeNameInput.setAttribute(
+      "pattern",
+      "[0-9]+"
+    );
   }
   else {
     if (
@@ -8896,7 +9215,16 @@ function updateMarkerFieldsVisibility() {
 
     shapeNameInput.placeholder =
       "Ex. Vinewood Hills";
+
+    shapeNameInput.inputMode =
+      "text";
+
+    shapeNameInput.removeAttribute(
+      "pattern"
+    );
   }
+
+  updateBuildingQuartierInfo();
 }
 
 
@@ -9024,6 +9352,53 @@ saveShapeButton.addEventListener(
         "MultiPolygon";
 
 
+    const editorKind =
+      selectedEditorKind();
+
+
+    if (
+      editorKind === "batiment" &&
+      !/^\d+$/.test(
+        shapeNameInput.value.trim()
+      )
+    ) {
+      status.textContent =
+        "Entre uniquement le numéro du bâtiment, par exemple 12.";
+
+      shapeNameInput.focus();
+
+      return;
+    }
+
+
+    let buildingQuartier =
+      null;
+
+
+    if (
+      editorKind === "batiment"
+    ) {
+      const latlng =
+        selectedLeafletLayer.getLatLng?.();
+
+      buildingQuartier =
+        findQuartierAtLatLng(
+          latlng
+        );
+
+      if (
+        !buildingQuartier
+      ) {
+        status.textContent =
+          "Impossible d’enregistrer : le bâtiment doit rester à l’intérieur d’un quartier.";
+
+        updateBuildingQuartierInfo();
+
+        return;
+      }
+    }
+
+
     const payload = {
 
       layer_id:
@@ -9057,18 +9432,28 @@ saveShapeButton.addEventListener(
 
         weight:
           area
-            ? (selectedEditorKind() === "quartier" ? 3 : 4)
+            ? (editorKind === "quartier" ? 3 : 4)
             : 3,
 
         logo_url:
-          selectedEditorKind() === "repere"
+          editorKind === "repere"
             ? (shapeLogoInput.value.trim() || null)
             : null,
 
         icon:
-          selectedEditorKind() === "repere"
+          editorKind === "repere"
             ? (shapeIconInput.value.trim() || null)
-            : null
+            : null,
+
+        quartier_id:
+          editorKind === "batiment"
+            ? buildingQuartier?.id || null
+            : (selectedShapeRecord?.style?.quartier_id || null),
+
+        quartier_name:
+          editorKind === "batiment"
+            ? buildingQuartier?.name || null
+            : (selectedShapeRecord?.style?.quartier_name || null)
 
       },
 
@@ -9155,6 +9540,10 @@ saveShapeButton.addEventListener(
 
 
     selectedShapeRecord =
+      null;
+
+
+    pendingBuildingQuartier =
       null;
 
 
@@ -9314,6 +9703,10 @@ function cancelSelection() {
 
 
   selectedShapeRecord =
+    null;
+
+
+  pendingBuildingQuartier =
     null;
 
 
