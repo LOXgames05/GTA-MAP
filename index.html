@@ -3731,7 +3731,7 @@ body.editing #draw-toolbar {
         id="faction-logo-help"
         class="faction-logo-help"
       >
-        Ajoute un logo, enregistre la faction, puis utilise « Placer le logo » pour le déplacer librement sur la carte.
+        Ajoute un logo, enregistre la faction, puis utilise « Placer le logo ». Le logo n'apparaît qu'après avoir choisi sa position sur la carte.
       </div>
 
 
@@ -3771,7 +3771,7 @@ body.editing #draw-toolbar {
 
           <i data-lucide="locate-fixed"></i>
 
-          Position auto
+          Effacer position
 
         </button>
 
@@ -7203,33 +7203,23 @@ function validFactionLogoPosition(position) {
 
 
 function factionLogoLatLng(
-  faction,
-  merged
+  faction
 ) {
 
-  if (validFactionLogoPosition(faction?.logo_position)) {
-    return L.latLng(
-      Number(faction.logo_position.lat),
-      Number(faction.logo_position.lng)
-    );
-  }
+  /*
+    Le logo n'a PLUS de position automatique.
+    Il n'existe sur la carte que lorsqu'une position
+    manuelle a été enregistrée dans logo_position.
+  */
 
-  if (!merged) {
+  if (!validFactionLogoPosition(faction?.logo_position)) {
     return null;
   }
 
-  try {
-    const point = turf.pointOnFeature(merged);
-    const [x, y] = point.geometry.coordinates;
-    return L.latLng(y, x);
-  }
-  catch (error) {
-    console.warn(
-      "Position automatique du logo impossible :",
-      error
-    );
-    return null;
-  }
+  return L.latLng(
+    Number(faction.logo_position.lat),
+    Number(faction.logo_position.lng)
+  );
 }
 
 
@@ -7396,11 +7386,12 @@ function renderFactionTerritories() {
 
 
     /*
-      Le logo est un point séparé et sa position peut être
-      enregistrée manuellement.
+      Le logo est un point séparé. Il n'est affiché que si
+      une position manuelle a été enregistrée.
     */
     if (
       faction.logo_url &&
+      validFactionLogoPosition(faction.logo_position) &&
       !(
         factionLogoPlacementMode &&
         selectedFaction?.id === faction.id
@@ -7408,8 +7399,7 @@ function renderFactionTerritories() {
     ) {
       const logoLatLng =
         factionLogoLatLng(
-          faction,
-          merged
+          faction
         );
 
       if (logoLatLng) {
@@ -9469,7 +9459,7 @@ function renderFactionPanel() {
   factionLogoHelp.textContent =
     factionLogoPlacementMode
       ? "Placement actif : clique où tu veux sur la carte ou fais glisser le logo. La position est enregistrée automatiquement."
-      : "Ajoute un logo, enregistre la faction, puis utilise « Placer le logo » pour le déplacer librement sur la carte.";
+      : "Ajoute un logo, enregistre la faction, puis utilise « Placer le logo ». Aucune position automatique n'est utilisée.";
 
 
   lucide.createIcons();
@@ -9824,20 +9814,22 @@ function startFactionLogoPlacement() {
 
   rerenderMapDisplay();
 
-  const merged =
-    getFactionMergedTerritory(
+  const startLatLng =
+    factionLogoLatLng(
       selectedFaction
     );
 
-  const startLatLng =
-    factionLogoLatLng(
-      selectedFaction,
-      merged
-    ) || map.getCenter();
-
-  createFactionLogoPlacementMarker(
-    startLatLng
-  );
+  /*
+    S'il existe déjà une position manuelle, on affiche
+    le marqueur à cet endroit. Sinon, aucun marqueur
+    n'est créé automatiquement : le premier clic sur
+    la carte définit sa position.
+  */
+  if (startLatLng) {
+    createFactionLogoPlacementMarker(
+      startLatLng
+    );
+  }
 
   map.on(
     "click",
@@ -9848,7 +9840,9 @@ function startFactionLogoPlacement() {
   updateDisplayControls();
 
   status.textContent =
-    "Déplace le logo comme un point : clique sur la carte ou fais-le glisser.";
+    startLatLng
+      ? "Déplace le logo comme un point : clique sur la carte ou fais-le glisser."
+      : "Clique sur la carte pour placer le logo. Aucune position automatique n'est utilisée.";
 }
 
 
@@ -9934,7 +9928,7 @@ resetFactionLogoPositionButton.addEventListener(
     if (error) {
       console.error(error);
       status.textContent =
-        "Position auto impossible : " +
+        "Impossible de supprimer la position : " +
         error.message;
       return;
     }
@@ -9942,29 +9936,36 @@ resetFactionLogoPositionButton.addEventListener(
     selectedFaction.logo_position =
       null;
 
-    if (factionLogoPlacementMode) {
-      const merged =
-        getFactionMergedTerritory(
-          selectedFaction
-        );
+    const cachedFaction =
+      mapFactions.find(
+        faction =>
+          faction.id === selectedFaction.id
+      );
 
-      const latlng =
-        factionLogoLatLng(
-          selectedFaction,
-          merged
-        );
-
-      if (latlng) {
-        factionLogoPlacementMarker
-          ?.setLatLng(latlng);
-      }
+    if (cachedFaction) {
+      cachedFaction.logo_position =
+        null;
     }
+
+    if (
+      factionLogoPlacementMarker &&
+      map.hasLayer(factionLogoPlacementMarker)
+    ) {
+      map.removeLayer(
+        factionLogoPlacementMarker
+      );
+    }
+
+    factionLogoPlacementMarker =
+      null;
 
     rerenderMapDisplay();
     renderFactionPanel();
 
     status.textContent =
-      "Logo replacé automatiquement sur le territoire.";
+      factionLogoPlacementMode
+        ? "Position supprimée. Clique sur la carte pour placer le logo à un nouvel endroit."
+        : "Position du logo supprimée. Le logo est masqué jusqu'à son prochain placement.";
   }
 );
 
