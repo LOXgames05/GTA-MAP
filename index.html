@@ -2217,6 +2217,17 @@ body.painting .overlay-toggle {
   pointer-events: auto;
 }
 
+/* Numéro généré automatiquement au centre d'un bâtiment polygone. */
+.building-number-marker.polygon-label {
+  pointer-events: none;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-color: rgba(227,200,104,.52);
+  background: rgba(5,8,7,.82);
+  font-size: 8px;
+}
+
 body.painting .zone-map-label {
   border: 0;
   background: transparent;
@@ -3467,7 +3478,7 @@ body.editing #draw-toolbar {
 ========================================================= */
 
 #faction-list {
-  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
   column-gap: 8px !important;
   row-gap: 7px !important;
 }
@@ -6610,7 +6621,7 @@ function startDrawing(
     rerenderMapDisplay();
 
     status.textContent =
-      "Clique à l’intérieur d’un quartier pour placer le bâtiment.";
+      "Dessine le contour du bâtiment entièrement à l’intérieur d’un quartier.";
   }
 
   button.classList.add(
@@ -6708,7 +6719,7 @@ document
     "click",
     event => {
       startDrawing(
-        "Marker",
+        "Polygon",
         event.currentTarget,
         "batiment"
       );
@@ -6844,36 +6855,78 @@ function findQuartierAtLatLng(
 }
 
 
-function buildingLatLngFromShape(
-  shape
+function findQuartierContainingGeometry(
+  geometry
 ) {
 
   if (
-    shape?.geometry?.type !== "Point" ||
-    !Array.isArray(
-      shape.geometry.coordinates
-    )
+    !isPolygonGeometry(geometry) ||
+    !window.turf
   ) {
     return null;
   }
 
-  const [
-    lng,
-    lat
-  ] =
-    shape.geometry.coordinates;
+  const quartierLayer =
+    getLayerByKind(
+      "quartier"
+    );
 
   if (
-    !Number.isFinite(lat) ||
-    !Number.isFinite(lng)
+    !quartierLayer
   ) {
     return null;
   }
 
-  return L.latLng(
-    lat,
-    lng
-  );
+  const buildingFeature = {
+    type: "Feature",
+    properties: {},
+    geometry
+  };
+
+  for (
+    const quartier
+    of mapShapes
+  ) {
+
+    if (
+      quartier.layer_id !== quartierLayer.id ||
+      !isPolygonGeometry(
+        quartier.geometry
+      )
+    ) {
+      continue;
+    }
+
+    const quartierFeature = {
+      type: "Feature",
+      properties: {},
+      geometry: quartier.geometry
+    };
+
+    try {
+      const inside =
+        turf.booleanWithin(
+          buildingFeature,
+          quartierFeature
+        ) ||
+        turf.booleanContains(
+          quartierFeature,
+          buildingFeature
+        );
+
+      if (inside) {
+        return quartier;
+      }
+    }
+    catch (error) {
+      console.warn(
+        "Bâtiment impossible à tester dans le quartier :",
+        error
+      );
+    }
+  }
+
+  return null;
 }
 
 
@@ -6887,12 +6940,16 @@ function currentBuildingQuartier() {
   }
 
   if (
-    selectedLeafletLayer instanceof
-    L.Marker
+    selectedLeafletLayer?.toGeoJSON
   ) {
+    const geometry =
+      selectedLeafletLayer
+        .toGeoJSON()
+        .geometry;
+
     const found =
-      findQuartierAtLatLng(
-        selectedLeafletLayer.getLatLng()
+      findQuartierContainingGeometry(
+        geometry
       );
 
     if (found) {
@@ -6921,13 +6978,10 @@ function currentBuildingQuartier() {
     }
   }
 
-  const latlng =
-    buildingLatLngFromShape(
-      selectedShapeRecord
-    );
-
-  return latlng
-    ? findQuartierAtLatLng(latlng)
+  return selectedShapeRecord?.geometry
+    ? findQuartierContainingGeometry(
+        selectedShapeRecord.geometry
+      )
     : null;
 }
 
@@ -6964,7 +7018,7 @@ function updateBuildingQuartierInfo() {
   buildingQuartierInfo.textContent =
     quartier
       ? `Quartier : ${quartier.name || "Sans nom"}`
-      : "Le bâtiment doit être placé à l’intérieur d’un quartier.";
+      : "Le polygone du bâtiment doit rester entièrement à l’intérieur d’un quartier.";
 }
 
 
@@ -8523,6 +8577,77 @@ function pointToMapLayer(
 
 
 /* =========================================================
+   NUMÉRO AUTOMATIQUE AU CENTRE D'UN BÂTIMENT POLYGONE
+   Le bâtiment lui-même reste un vrai polygone en base.
+========================================================= */
+
+function addBuildingNumberLabel(
+  shape,
+  group
+) {
+
+  if (
+    !isPolygonGeometry(
+      shape.geometry
+    )
+  ) {
+    return;
+  }
+
+  const number =
+    String(
+      shape.name ||
+      ""
+    ).trim();
+
+  if (
+    !number
+  ) {
+    return;
+  }
+
+  try {
+    const pole =
+      quartierPole(
+        shape.geometry
+      );
+
+    if (
+      !pole
+    ) {
+      return;
+    }
+
+    L.marker(
+      [pole.y, pole.x],
+      {
+        pane: "zoneLabelPane",
+        interactive: false,
+        icon: L.divIcon({
+          className: "",
+          html: `
+            <div class="building-number-marker polygon-label">
+              ${escapeHtml(number)}
+            </div>
+          `,
+          iconSize: [1, 1],
+          iconAnchor: [0, 0]
+        })
+      }
+    ).addTo(
+      group
+    );
+  }
+  catch (error) {
+    console.warn(
+      "Numéro du bâtiment impossible à positionner :",
+      error
+    );
+  }
+}
+
+
+/* =========================================================
    RENDER SHAPES
 ========================================================= */
 
@@ -8733,6 +8858,16 @@ function renderShapes() {
         group
       );
     }
+
+    if (
+      kind === "batiment" &&
+      polygon
+    ) {
+      addBuildingNumberLabel(
+        shape,
+        group
+      );
+    }
   }
 
   setTimeout(
@@ -8841,12 +8976,14 @@ map.on(
     if (
       targetKind === "batiment"
     ) {
-      const latlng =
-        event.layer.getLatLng?.();
+      const buildingGeometry =
+        event.layer
+          .toGeoJSON?.()
+          .geometry;
 
       const quartier =
-        findQuartierAtLatLng(
-          latlng
+        findQuartierContainingGeometry(
+          buildingGeometry
         );
 
       if (
@@ -8867,7 +9004,7 @@ map.on(
           null;
 
         status.textContent =
-          "Bâtiment refusé : clique à l’intérieur d’un quartier.";
+          "Bâtiment refusé : le polygone doit être entièrement à l’intérieur d’un quartier.";
 
         updateButtons();
 
@@ -9009,7 +9146,7 @@ map.on(
       pendingBuildingQuartier
     ) {
       status.textContent =
-        `Bâtiment placé dans ${pendingBuildingQuartier.name || "ce quartier"}. Entre son numéro puis clique sur Enregistrer.`;
+        `Bâtiment dessiné dans ${pendingBuildingQuartier.name || "ce quartier"}. Entre son numéro puis clique sur Enregistrer.`;
     }
     else {
       status.textContent =
@@ -9150,7 +9287,7 @@ function updateMarkerFieldsVisibility() {
 
   /*
     Repères : logo / symbole disponibles.
-    Bâtiments : seulement un numéro, donc aucun champ logo/symbole.
+    Bâtiments : polygone + numéro, donc aucun champ logo/symbole.
   */
   shapeMarkerFields.style.display =
     kind === "repere"
@@ -9378,19 +9515,27 @@ saveShapeButton.addEventListener(
     if (
       editorKind === "batiment"
     ) {
-      const latlng =
-        selectedLeafletLayer.getLatLng?.();
+      if (
+        !isPolygonGeometry(
+          geometry
+        )
+      ) {
+        status.textContent =
+          "Impossible d’enregistrer : un bâtiment doit être un polygone.";
+
+        return;
+      }
 
       buildingQuartier =
-        findQuartierAtLatLng(
-          latlng
+        findQuartierContainingGeometry(
+          geometry
         );
 
       if (
         !buildingQuartier
       ) {
         status.textContent =
-          "Impossible d’enregistrer : le bâtiment doit rester à l’intérieur d’un quartier.";
+          "Impossible d’enregistrer : le polygone du bâtiment doit rester entièrement à l’intérieur d’un quartier.";
 
         updateBuildingQuartierInfo();
 
