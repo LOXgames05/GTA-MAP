@@ -3690,6 +3690,16 @@ body.editing[data-editor-kind="batiment"] #editor-panel,
 body.editing[data-editor-kind="quartier"] #editor-panel {
   display: block !important;
 }
+
+/*
+  Édition strictement limitée au calque choisi avec le crayon.
+  Le type reste visible dans l'éditeur, mais il ne peut pas être changé.
+*/
+body.editing #shape-layer {
+  pointer-events: none;
+  opacity: .72;
+  cursor: not-allowed;
+}
 </style>
 
 </head>
@@ -6687,6 +6697,26 @@ logoutButton.addEventListener(
    EDIT MODE
 ========================================================= */
 
+function editorKindLabel(kind) {
+  return ({
+    factions: "Factions",
+    repere: "Repères",
+    batiment: "Bâtiments",
+    quartier: "Quartiers"
+  })[kind] || "ce calque";
+}
+
+
+function canEditShapeKind(kind) {
+  if (!editMode) {
+    return false;
+  }
+
+  return !!activeEditorKind &&
+    activeEditorKind === kind;
+}
+
+
 function selectEditorLayerKind(
   kind
 ) {
@@ -6738,6 +6768,9 @@ function setActiveEditorKind(
   selectEditorLayerKind(
     activeEditorKind
   );
+
+  status.textContent =
+    `Édition ${editorKindLabel(activeEditorKind)} : seuls les éléments de ce calque peuvent être modifiés.`;
 }
 
 
@@ -6786,7 +6819,10 @@ function enableEditMode(
 
 
   status.textContent =
-    "Mode édition actif. Snap sommets + segments activé.";
+    `Édition ${editorKindLabel(activeEditorKind)} active. Seul ce calque est modifiable. Snap sommets + segments activé.`;
+
+  shapeLayerInput.disabled =
+    activeEditorKind !== "factions";
 
 
   lucide.createIcons();
@@ -6831,6 +6867,10 @@ function disableEditMode() {
 
   activeEditorKind =
     null;
+
+
+  shapeLayerInput.disabled =
+    false;
 
 
   mapViewMode =
@@ -7006,6 +7046,15 @@ function startDrawing(
     !editMode ||
     paintMode
   ) {
+    return;
+  }
+
+  if (
+    !targetKind ||
+    activeEditorKind !== targetKind
+  ) {
+    status.textContent =
+      `Édition ${editorKindLabel(activeEditorKind)} active : impossible de créer un élément d’un autre calque.`;
     return;
   }
 
@@ -8172,14 +8221,21 @@ function configureShapeLayer(
     false;
 
 
-  leafletLayer.bindPopup(
-
-    buildPopup(
-      shape,
-      parentLayer
-    )
-
-  );
+  /*
+    En édition, les autres calques restent visibles comme référence,
+    mais ils ne doivent ni ouvrir leur fiche ni devenir sélectionnables.
+  */
+  if (
+    !editMode ||
+    canEditShapeKind(parentLayer.kind)
+  ) {
+    leafletLayer.bindPopup(
+      buildPopup(
+        shape,
+        parentLayer
+      )
+    );
+  }
 
 
   leafletLayer.on(
@@ -8203,6 +8259,18 @@ function configureShapeLayer(
       */
       if (
         drawingTargetKind
+      ) {
+        return;
+      }
+
+
+      /*
+        Le crayon d'un calque verrouille réellement l'édition sur ce type.
+        Exemple : avec Quartiers actif, un bâtiment ou un repère reste
+        visible mais un clic dessus ne peut pas le sélectionner/modifier.
+      */
+      if (
+        !canEditShapeKind(parentLayer.kind)
       ) {
         return;
       }
@@ -9577,9 +9645,19 @@ function updateShapeLayerSelect() {
   }
 
 
+  const editorScopedLayers =
+    editMode &&
+    activeEditorKind &&
+    activeEditorKind !== "factions"
+      ? mapLayers.filter(
+          layer => layer.kind === activeEditorKind
+        )
+      : mapLayers;
+
+
   for (
     const layer
-    of mapLayers
+    of editorScopedLayers
   ) {
 
     const option =
@@ -9601,6 +9679,14 @@ function updateShapeLayerSelect() {
     );
 
   }
+
+
+  shapeLayerInput.disabled =
+    !!(
+      editMode &&
+      activeEditorKind &&
+      activeEditorKind !== "factions"
+    );
 
 
   updateMarkerFieldsVisibility();
@@ -9839,6 +9925,29 @@ function selectExistingShape(
   shape
 ) {
 
+  const candidateLayer =
+    mapLayers.find(
+      layer => layer.id === shape.layer_id
+    ) ||
+    (
+      isPolygonGeometry(shape.geometry) &&
+      shape.style?.quartier_id
+        ? getLayerByKind("batiment")
+        : null
+    );
+
+  const candidateKind =
+    candidateLayer?.kind || null;
+
+  if (
+    editMode &&
+    !canEditShapeKind(candidateKind)
+  ) {
+    status.textContent =
+      `Édition ${editorKindLabel(activeEditorKind)} active : cet élément appartient au calque ${editorKindLabel(candidateKind)}.`;
+    return;
+  }
+
   if (
     selectedLeafletLayer?.pm
   ) {
@@ -9865,15 +9974,7 @@ function selectExistingShape(
 
 
   const selectedCanonicalLayer =
-    mapLayers.find(
-      layer => layer.id === shape.layer_id
-    ) ||
-    (
-      isPolygonGeometry(shape.geometry) &&
-      shape.style?.quartier_id
-        ? getLayerByKind("batiment")
-        : null
-    );
+    candidateLayer;
 
   shapeLayerInput.value =
     selectedCanonicalLayer?.id ||
@@ -10196,6 +10297,22 @@ shapeOpacityInput.addEventListener(
 shapeLayerInput.addEventListener(
   "change",
   () => {
+    if (
+      editMode &&
+      activeEditorKind &&
+      activeEditorKind !== "factions"
+    ) {
+      const scopedLayer =
+        getLayerByKind(activeEditorKind);
+
+      if (
+        scopedLayer &&
+        shapeLayerInput.value !== scopedLayer.id
+      ) {
+        shapeLayerInput.value = scopedLayer.id;
+      }
+    }
+
     updateMarkerFieldsVisibility();
     applyShapePreview();
   }
