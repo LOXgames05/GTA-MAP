@@ -5521,6 +5521,15 @@ map.getPane("quartierPane").style.zIndex = 420;
 map.createPane("otherShapePane");
 map.getPane("otherShapePane").style.zIndex = 430;
 
+/*
+  Couche dédiée aux bâtiments.
+  Elle est volontairement au-dessus des quartiers et des autres formes,
+  afin que les polygones de bâtiments ne se mélangent pas visuellement
+  avec les polygones de quartiers.
+*/
+map.createPane("buildingPane");
+map.getPane("buildingPane").style.zIndex = 435;
+
 map.createPane("zoneLabelPane");
 map.getPane("zoneLabelPane").style.zIndex = 438;
 
@@ -6671,13 +6680,13 @@ function startDrawing(
 
       pathOptions: {
         /*
-          Important : les bâtiments sont dessinés dans le pane des
-          éléments superposés, donc AU-DESSUS des quartiers.
-          On peut ainsi tracer directement sur un polygone de quartier.
+          Important : les bâtiments sont dessinés dans leur propre pane,
+          au-dessus des quartiers. Les deux types de polygones restent
+          donc visuellement séparés même lorsqu'ils occupent la même zone.
         */
         pane:
           targetKind === "batiment"
-            ? "otherShapePane"
+            ? "buildingPane"
             : targetKind === "quartier"
               ? "quartierPane"
               : "otherShapePane",
@@ -8615,7 +8624,10 @@ function pointToMapLayer(
   return L.marker(
     latlng,
     {
-      pane: "otherShapePane",
+      pane:
+        kind === "batiment"
+          ? "buildingPane"
+          : "otherShapePane",
       icon: L.divIcon({
         className: "",
         html: pointMarkerHtml(shape, kind),
@@ -8828,7 +8840,9 @@ function renderShapes() {
           pane:
             quartier
               ? "quartierPane"
-              : "otherShapePane",
+              : kind === "batiment"
+                ? "buildingPane"
+                : "otherShapePane",
 
           style:
             baseStyle,
