@@ -7145,11 +7145,11 @@ function startDrawing(
             : "#86ad96",
         fillOpacity:
           isArea
-            ? (targetKind === "batiment" ? .28 : .12)
+            ? (targetKind === "batiment" ? 0 : .12)
             : 0,
         weight:
           isArea
-            ? (targetKind === "batiment" ? 4 : 3)
+            ? (targetKind === "batiment" ? 3 : 3)
             : 3,
         lineJoin: "round",
         lineCap: "round"
@@ -8047,19 +8047,13 @@ function renderLayers() {
 
     if (layer.kind === "batiment") {
       /*
-        Il n'existe plus de calque public « polygones des bâtiments ».
-        Ces polygones constituent le calque Factions. Ils restent aussi
-        visibles quand l'administrateur édite spécifiquement les bâtiments.
+        Les polygones des bâtiments sont des aides d'édition uniquement.
+        Ils ne sont jamais ajoutés à la carte publique. Le calque public
+        « Bâtiments » continue d'afficher seulement les numéros.
       */
       visible =
-        (
-          mapViewMode === "factions" &&
-          overlayVisibility.faction
-        ) ||
-        (
-          editMode &&
-          activeEditorKind === "batiment"
-        );
+        editMode &&
+        activeEditorKind === "batiment";
     }
 
     if (visible) {
@@ -9455,8 +9449,10 @@ function renderShapes() {
       mapViewMode === "factions"
     ) {
       /*
-        Carte Factions : l'appartenance est portée par le bâtiment.
-        Un bâtiment attribué prend la couleur de sa faction.
+        Les bâtiments servent toujours de support aux factions, mais leurs
+        contours sont un outil d'édition uniquement. En public, on garde
+        éventuellement la couleur de faction sans tracer le contour du
+        bâtiment.
       */
       const factionColor =
         faction?.color ||
@@ -9464,27 +9460,40 @@ function renderShapes() {
 
       color = factionColor;
       fillColor = factionColor;
-      fillOpacity = faction ? .44 : .12;
-      weight = faction ? 4 : 3;
-      opacity = faction ? 1 : .58;
+
+      if (
+        editMode &&
+        activeEditorKind === "batiment"
+      ) {
+        /* Édition Bâtiments : contour seul, aucun remplissage. */
+        fillOpacity = 0;
+        weight = 3;
+        opacity = 1;
+      }
+      else {
+        /* Public / autres éditeurs : le polygone du bâtiment est invisible. */
+        fillOpacity = 0;
+        weight = 0;
+        opacity = 0;
+      }
     }
 
     if (
       batiment &&
       mapViewMode === "batiments"
     ) {
-      /* Carte Bâtiments : aucune couleur de faction, uniquement le style du bâtiment. */
+      /*
+        Cette vue n'est utilisée que par l'éditeur. Les bâtiments y sont
+        volontairement affichés comme de simples contours.
+      */
       color =
         shape.style?.color ||
         parentLayer.color ||
         "#86ad96";
 
       fillColor = color;
-      fillOpacity =
-        shape.style?.opacity ??
-        parentLayer.opacity ??
-        .30;
-      weight = 4;
+      fillOpacity = 0;
+      weight = 3;
       opacity = 1;
     }
 
@@ -10263,7 +10272,7 @@ function applyShapePreview() {
     fillOpacity:
       isArea
         ? (
-            quartier
+            quartier || kind === "batiment"
               ? 0
               : Number(shapeOpacityInput.value)
           )
@@ -10271,7 +10280,7 @@ function applyShapePreview() {
 
     weight:
       isArea
-        ? (quartier ? 3 : 4)
+        ? (quartier || kind === "batiment" ? 3 : 4)
         : 3,
 
     lineJoin: "round",
