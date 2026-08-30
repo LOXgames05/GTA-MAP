@@ -1820,8 +1820,8 @@ body.painting .leaflet-interactive {
 }
 
 /*
-  Le logo de faction n'est plus affiché au centre du territoire.
-  Le nom reste seul, plus discret et plus lisible.
+  Le nom de faction reste centré automatiquement sur le territoire.
+  Le logo est désormais un point indépendant et déplaçable.
 */
 .faction-map-name {
   max-width: 170px;
@@ -1838,6 +1838,59 @@ body.painting .leaflet-interactive {
   text-overflow: ellipsis;
   white-space: nowrap;
   text-transform: uppercase;
+}
+
+.faction-logo-point {
+  transform: translate(-50%, -50%);
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 2px solid rgba(255,255,255,.78);
+  border-radius: 50%;
+  background: rgba(4,8,6,.92);
+  box-shadow: 0 7px 22px rgba(0,0,0,.48);
+  pointer-events: none;
+}
+
+.faction-logo-point img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.faction-logo-point.placement {
+  width: 48px;
+  height: 48px;
+  border-width: 3px;
+  border-color: var(--gold-light);
+  box-shadow:
+    0 0 0 5px rgba(198,164,67,.12),
+    0 10px 30px rgba(0,0,0,.62);
+  cursor: grab;
+  pointer-events: auto;
+}
+
+.faction-logo-point.placement:active {
+  cursor: grabbing;
+}
+
+.faction-logo-help {
+  margin-top: 8px;
+  padding: 8px 9px;
+  border: 1px solid rgba(198,164,67,.18);
+  border-radius: 7px;
+  background: rgba(198,164,67,.055);
+  color: #a99d75;
+  font-size: 7px;
+  line-height: 1.45;
+}
+
+.faction-logo-help.active {
+  border-color: rgba(198,164,67,.42);
+  color: var(--gold-light);
 }
 
 body.painting .faction-item.active {
@@ -3674,6 +3727,14 @@ body.editing #draw-toolbar {
       >
 
 
+      <div
+        id="faction-logo-help"
+        class="faction-logo-help"
+      >
+        Ajoute un logo, enregistre la faction, puis utilise « Placer le logo » pour le déplacer librement sur la carte.
+      </div>
+
+
       <div class="action-grid">
 
 
@@ -3685,6 +3746,32 @@ body.editing #draw-toolbar {
           <i data-lucide="save"></i>
 
           Enregistrer
+
+        </button>
+
+
+        <button
+          id="place-faction-logo"
+          class="gold wide"
+          disabled
+        >
+
+          <i data-lucide="move"></i>
+
+          Placer le logo
+
+        </button>
+
+
+        <button
+          id="reset-faction-logo-position"
+          class="wide"
+          disabled
+        >
+
+          <i data-lucide="locate-fixed"></i>
+
+          Position auto
 
         </button>
 
@@ -4428,6 +4515,18 @@ let selectedFaction =
 
 let paintMode =
   false;
+
+
+let factionLogoPlacementMode =
+  false;
+
+
+let factionLogoPlacementMarker =
+  null;
+
+
+let factionLogoPlacementPreviousViewMode =
+  null;
 
 
 let mapViewMode =
@@ -6084,6 +6183,15 @@ function enableEditMode() {
 function disableEditMode() {
 
   if (
+    factionLogoPlacementMode
+  ) {
+    stopFactionLogoPlacement(
+      false
+    );
+  }
+
+
+  if (
     paintMode
   ) {
 
@@ -6401,7 +6509,8 @@ function updateDisplayControls() {
     overlayVisibility.batiment;
 
   const locked =
-    paintMode === true;
+    paintMode === true ||
+    factionLogoPlacementMode === true;
 
   viewQuartiersButton.disabled = locked;
   viewFactionsButton.disabled = locked;
@@ -6411,9 +6520,11 @@ function updateDisplayControls() {
   displayNote.textContent =
     paintMode
       ? "Pot de peinture actif : vue Quartiers forcée, Repères et Bâtiments masqués."
-      : mapViewMode === "quartiers"
-        ? "Vue Quartiers : chaque zone reste individuelle et son nom est affiché au centre."
-        : "Vue Factions : les quartiers voisins d’une même faction sont fusionnés visuellement.";
+      : factionLogoPlacementMode
+        ? "Placement du logo actif : vue Factions forcée. Clique sur la carte ou fais glisser le logo."
+        : mapViewMode === "quartiers"
+          ? "Vue Quartiers : chaque zone reste individuelle et son nom est affiché au centre."
+          : "Vue Factions : les quartiers voisins d’une même faction sont fusionnés visuellement.";
 }
 
 
@@ -6428,7 +6539,10 @@ function setMapViewMode(
   mode
 ) {
 
-  if (paintMode) return;
+  if (
+    paintMode ||
+    factionLogoPlacementMode
+  ) return;
 
   if (
     mode !== "quartiers" &&
@@ -6850,6 +6964,19 @@ function configureShapeLayer(
 
 
       if (
+        factionLogoPlacementMode
+      ) {
+
+        await moveFactionLogoTo(
+          event.latlng
+        );
+
+        return;
+
+      }
+
+
+      if (
         paintMode
       ) {
 
@@ -7025,10 +7152,6 @@ function buildFactionPopup(faction) {
 }
 
 function factionLabelHtml(faction) {
-  /*
-    Aucun logo / aucune icône au centre des territoires de faction.
-    Seul le nom reste affiché.
-  */
   return `
     <div
       class="faction-map-badge"
@@ -7039,6 +7162,100 @@ function factionLabelHtml(faction) {
       </div>
     </div>
   `;
+}
+
+
+function factionLogoHtml(
+  faction,
+  placement = false
+) {
+
+  if (!faction?.logo_url) {
+    return "";
+  }
+
+  return `
+    <div
+      class="faction-logo-point${placement ? " placement" : ""}"
+      style="border-color:${escapeHtml(
+        placement
+          ? "#e3c868"
+          : (faction.color || "#ffffff")
+      )}"
+    >
+      <img
+        src="${escapeHtml(faction.logo_url)}"
+        alt=""
+        draggable="false"
+      >
+    </div>
+  `;
+}
+
+
+function validFactionLogoPosition(position) {
+  return (
+    position &&
+    Number.isFinite(Number(position.lat)) &&
+    Number.isFinite(Number(position.lng))
+  );
+}
+
+
+function factionLogoLatLng(
+  faction,
+  merged
+) {
+
+  if (validFactionLogoPosition(faction?.logo_position)) {
+    return L.latLng(
+      Number(faction.logo_position.lat),
+      Number(faction.logo_position.lng)
+    );
+  }
+
+  if (!merged) {
+    return null;
+  }
+
+  try {
+    const point = turf.pointOnFeature(merged);
+    const [x, y] = point.geometry.coordinates;
+    return L.latLng(y, x);
+  }
+  catch (error) {
+    console.warn(
+      "Position automatique du logo impossible :",
+      error
+    );
+    return null;
+  }
+}
+
+
+function getFactionMergedTerritory(faction) {
+  const quartierLayer = getLayerByKind("quartier");
+
+  if (!quartierLayer || !faction) {
+    return null;
+  }
+
+  const features = mapShapes
+    .filter(
+      shape =>
+        shape.layer_id === quartierLayer.id &&
+        shape.faction_id === faction.id &&
+        isPolygonGeometry(shape.geometry)
+    )
+    .map(
+      shape => ({
+        type: "Feature",
+        properties: { id: shape.id },
+        geometry: shape.geometry
+      })
+    );
+
+  return mergeFactionFeatures(features);
 }
 
 
@@ -7143,16 +7360,17 @@ function renderFactionTerritories() {
       }
     );
 
+    /*
+      Le nom reste automatiquement centré sur chaque morceau
+      de territoire continu.
+    */
     for (
       const piece
       of splitTerritoryPieces(merged)
     ) {
       try {
-        const point =
-          turf.pointOnFeature(piece);
-
-        const [x, y] =
-          point.geometry.coordinates;
+        const point = turf.pointOnFeature(piece);
+        const [x, y] = point.geometry.coordinates;
 
         L.marker(
           [y, x],
@@ -7170,9 +7388,44 @@ function renderFactionTerritories() {
       }
       catch (error) {
         console.warn(
-          "Position du logo de faction impossible :",
+          "Position du nom de faction impossible :",
           error
         );
+      }
+    }
+
+
+    /*
+      Le logo est un point séparé et sa position peut être
+      enregistrée manuellement.
+    */
+    if (
+      faction.logo_url &&
+      !(
+        factionLogoPlacementMode &&
+        selectedFaction?.id === faction.id
+      )
+    ) {
+      const logoLatLng =
+        factionLogoLatLng(
+          faction,
+          merged
+        );
+
+      if (logoLatLng) {
+        L.marker(
+          logoLatLng,
+          {
+            pane: "factionLabelPane",
+            interactive: false,
+            icon: L.divIcon({
+              className: "",
+              html: factionLogoHtml(faction),
+              iconSize: [1, 1],
+              iconAnchor: [0, 0]
+            })
+          }
+        ).addTo(group);
       }
     }
   }
@@ -8975,6 +9228,24 @@ const factionLogoInput =
   );
 
 
+const factionLogoHelp =
+  document.getElementById(
+    "faction-logo-help"
+  );
+
+
+const placeFactionLogoButton =
+  document.getElementById(
+    "place-faction-logo"
+  );
+
+
+const resetFactionLogoPositionButton =
+  document.getElementById(
+    "reset-faction-logo-position"
+  );
+
+
 const factionVisibleInput =
   document.getElementById(
     "faction-visible"
@@ -9142,11 +9413,63 @@ function renderFactionPanel() {
 
 
   paintFactionButton.disabled =
-    !selectedFaction;
+    !selectedFaction ||
+    factionLogoPlacementMode;
 
 
   deleteFactionButton.disabled =
-    !selectedFaction;
+    !selectedFaction ||
+    factionLogoPlacementMode;
+
+
+  const canPlaceLogo =
+    !!selectedFaction &&
+    !!String(
+      factionLogoInput.value ||
+      selectedFaction?.logo_url ||
+      ""
+    ).trim();
+
+
+  placeFactionLogoButton.disabled =
+    !canPlaceLogo;
+
+
+  resetFactionLogoPositionButton.disabled =
+    !selectedFaction ||
+    !validFactionLogoPosition(
+      selectedFaction?.logo_position
+    );
+
+
+  placeFactionLogoButton.classList.toggle(
+    "active",
+    factionLogoPlacementMode
+  );
+
+
+  placeFactionLogoButton.innerHTML =
+    factionLogoPlacementMode
+      ? `
+          <i data-lucide="check"></i>
+          Terminer placement
+        `
+      : `
+          <i data-lucide="move"></i>
+          Placer le logo
+        `;
+
+
+  factionLogoHelp.classList.toggle(
+    "active",
+    factionLogoPlacementMode
+  );
+
+
+  factionLogoHelp.textContent =
+    factionLogoPlacementMode
+      ? "Placement actif : clique où tu veux sur la carte ou fais glisser le logo. La position est enregistrée automatiquement."
+      : "Ajoute un logo, enregistre la faction, puis utilise « Placer le logo » pour le déplacer librement sur la carte.";
 
 
   lucide.createIcons();
@@ -9157,6 +9480,13 @@ function renderFactionPanel() {
 function selectFaction(
   faction
 ) {
+
+  if (
+    factionLogoPlacementMode
+  ) {
+    stopFactionLogoPlacement();
+  }
+
 
   if (
     paintMode
@@ -9217,6 +9547,13 @@ document
     () => {
 
       if (
+        factionLogoPlacementMode
+      ) {
+        stopFactionLogoPlacement();
+      }
+
+
+      if (
         paintMode
       ) {
 
@@ -9257,6 +9594,321 @@ document
 
     }
   );
+
+
+factionLogoInput.addEventListener(
+  "input",
+  () => {
+    renderFactionPanel();
+  }
+);
+
+
+/* =========================================================
+   POSITION DU LOGO DE FACTION
+========================================================= */
+
+function createFactionLogoPlacementMarker(latlng) {
+  if (factionLogoPlacementMarker) {
+    map.removeLayer(factionLogoPlacementMarker);
+  }
+
+  factionLogoPlacementMarker = L.marker(
+    latlng,
+    {
+      pane: "factionLabelPane",
+      draggable: true,
+      autoPan: true,
+      icon: L.divIcon({
+        className: "",
+        html: factionLogoHtml(
+          selectedFaction,
+          true
+        ),
+        iconSize: [1, 1],
+        iconAnchor: [0, 0]
+      })
+    }
+  );
+
+  factionLogoPlacementMarker.on(
+    "dragend",
+    async event => {
+      await saveFactionLogoPosition(
+        event.target.getLatLng()
+      );
+    }
+  );
+
+  factionLogoPlacementMarker.addTo(map);
+}
+
+
+async function saveFactionLogoPosition(latlng) {
+  if (!selectedFaction || !latlng) {
+    return false;
+  }
+
+  const position = {
+    lat: Number(latlng.lat),
+    lng: Number(latlng.lng)
+  };
+
+  const previousPosition =
+    selectedFaction.logo_position ||
+    null;
+
+  selectedFaction.logo_position =
+    position;
+
+  factionLogoPlacementMarker
+    ?.setLatLng(latlng);
+
+  const { error } =
+    await db
+      .from("factions")
+      .update({
+        logo_position: position
+      })
+      .eq(
+        "id",
+        selectedFaction.id
+      );
+
+  if (error) {
+    console.error(error);
+
+    selectedFaction.logo_position =
+      previousPosition;
+
+    status.textContent =
+      "Position non enregistrée : " +
+      error.message;
+
+    return false;
+  }
+
+  status.textContent =
+    "Position du logo enregistrée.";
+
+  resetFactionLogoPositionButton.disabled =
+    false;
+
+  return true;
+}
+
+
+
+async function moveFactionLogoTo(latlng) {
+  if (
+    !factionLogoPlacementMode ||
+    !selectedFaction
+  ) {
+    return;
+  }
+
+  if (!factionLogoPlacementMarker) {
+    createFactionLogoPlacementMarker(latlng);
+  }
+  else {
+    factionLogoPlacementMarker.setLatLng(latlng);
+  }
+
+  await saveFactionLogoPosition(latlng);
+}
+
+
+function factionLogoMapClick(event) {
+  if (!factionLogoPlacementMode) {
+    return;
+  }
+
+  moveFactionLogoTo(event.latlng);
+}
+
+
+function startFactionLogoPlacement() {
+  if (!selectedFaction) {
+    status.textContent =
+      "Sélectionne d'abord une faction.";
+    return;
+  }
+
+  const logoUrl =
+    factionLogoInput.value.trim();
+
+  if (!logoUrl) {
+    status.textContent =
+      "Ajoute d'abord un logo à la faction.";
+    return;
+  }
+
+  if (selectedFaction.logo_url !== logoUrl) {
+    status.textContent =
+      "Enregistre d'abord la faction pour valider le logo.";
+    return;
+  }
+
+  if (paintMode) {
+    stopPaintMode();
+  }
+
+  stopDrawing();
+  cancelSelection();
+
+  factionLogoPlacementMode = true;
+
+  factionLogoPlacementPreviousViewMode =
+    mapViewMode;
+
+  mapViewMode =
+    "factions";
+
+  rerenderMapDisplay();
+
+  const merged =
+    getFactionMergedTerritory(
+      selectedFaction
+    );
+
+  const startLatLng =
+    factionLogoLatLng(
+      selectedFaction,
+      merged
+    ) || map.getCenter();
+
+  createFactionLogoPlacementMarker(
+    startLatLng
+  );
+
+  map.on(
+    "click",
+    factionLogoMapClick
+  );
+
+  renderFactionPanel();
+  updateDisplayControls();
+
+  status.textContent =
+    "Déplace le logo comme un point : clique sur la carte ou fais-le glisser.";
+}
+
+
+function stopFactionLogoPlacement(
+  restoreView = true
+) {
+  if (!factionLogoPlacementMode) {
+    return;
+  }
+
+  map.off(
+    "click",
+    factionLogoMapClick
+  );
+
+  if (
+    factionLogoPlacementMarker &&
+    map.hasLayer(factionLogoPlacementMarker)
+  ) {
+    map.removeLayer(
+      factionLogoPlacementMarker
+    );
+  }
+
+  factionLogoPlacementMarker =
+    null;
+
+  factionLogoPlacementMode =
+    false;
+
+  if (
+    restoreView &&
+    factionLogoPlacementPreviousViewMode
+  ) {
+    mapViewMode =
+      factionLogoPlacementPreviousViewMode;
+  }
+
+  factionLogoPlacementPreviousViewMode =
+    null;
+
+  rerenderMapDisplay();
+  renderFactionPanel();
+
+  if (editMode) {
+    status.textContent =
+      "Placement du logo terminé.";
+  }
+}
+
+
+placeFactionLogoButton.addEventListener(
+  "click",
+  () => {
+    if (factionLogoPlacementMode) {
+      stopFactionLogoPlacement();
+    }
+    else {
+      startFactionLogoPlacement();
+    }
+  }
+);
+
+
+resetFactionLogoPositionButton.addEventListener(
+  "click",
+  async () => {
+    if (!selectedFaction) {
+      return;
+    }
+
+    const { error } =
+      await db
+        .from("factions")
+        .update({
+          logo_position: null
+        })
+        .eq(
+          "id",
+          selectedFaction.id
+        );
+
+    if (error) {
+      console.error(error);
+      status.textContent =
+        "Position auto impossible : " +
+        error.message;
+      return;
+    }
+
+    selectedFaction.logo_position =
+      null;
+
+    if (factionLogoPlacementMode) {
+      const merged =
+        getFactionMergedTerritory(
+          selectedFaction
+        );
+
+      const latlng =
+        factionLogoLatLng(
+          selectedFaction,
+          merged
+        );
+
+      if (latlng) {
+        factionLogoPlacementMarker
+          ?.setLatLng(latlng);
+      }
+    }
+
+    rerenderMapDisplay();
+    renderFactionPanel();
+
+    status.textContent =
+      "Logo replacé automatiquement sur le territoire.";
+  }
+);
 
 
 document
@@ -9476,6 +10128,10 @@ deleteFactionButton
 
 
 function startPaintMode() {
+
+  if (factionLogoPlacementMode) {
+    stopFactionLogoPlacement();
+  }
 
   if (!selectedFaction) {
     status.textContent =
@@ -9736,6 +10392,11 @@ function updateButtons() {
 
 document.addEventListener("keydown", event => {
   if (event.key !== "Escape") return;
+
+  if (factionLogoPlacementMode) {
+    stopFactionLogoPlacement();
+    return;
+  }
 
   if (paintMode) {
     stopPaintMode();
