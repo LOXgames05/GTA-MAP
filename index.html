@@ -2228,6 +2228,19 @@ body.painting .overlay-toggle {
   font-size: 8px;
 }
 
+/* Bâtiments polygones : même rendu texte que les quartiers. */
+.building-zone-label {
+  color: rgba(255,255,255,.96);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .35px;
+  line-height: 1.05;
+  text-align: center;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
 body.painting .zone-map-label {
   border: 0;
   background: transparent;
@@ -8664,7 +8677,7 @@ function addBuildingNumberLabel(
         icon: L.divIcon({
           className: "",
           html: `
-            <div class="building-number-marker polygon-label">
+            <div class="zone-map-label building-zone-label">
               ${escapeHtml(number)}
             </div>
           `,
