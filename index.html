@@ -3181,6 +3181,77 @@ button svg {
 
 
 /* =========================================================
+   ADMIN CONTEXTUEL : QUARTIERS / FACTIONS
+
+   À gauche, un seul menu admin est visible :
+   - vue Quartiers  -> Éditeur territorial
+   - vue Factions   -> Gestion des factions
+========================================================= */
+
+#faction-status {
+  padding: 7px 8px;
+  border: 1px solid rgba(134,173,150,.14);
+  border-radius: 8px;
+  background: rgba(48,81,62,.09);
+  color: #9db7a7;
+  font-size: 8px;
+  line-height: 1.45;
+}
+
+.faction-status-section {
+  margin-bottom: 10px !important;
+  padding-bottom: 10px !important;
+}
+
+/* Les deux panneaux admin partagent la même colonne gauche. */
+#ui-panels > #factions-panel {
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  position: relative !important;
+  inset: auto !important;
+  width: var(--left-panel) !important;
+  max-width: var(--left-panel) !important;
+  max-height: none !important;
+  margin: 0 !important;
+  pointer-events: auto !important;
+}
+
+/* Par défaut aucun menu d'administration n'est affiché. */
+#editor-panel,
+#factions-panel {
+  display: none !important;
+}
+
+/* En édition, on affiche uniquement le menu correspondant à la carte. */
+body.editing.map-view-quartiers #editor-panel {
+  display: block !important;
+}
+
+body.editing.map-view-factions #factions-panel {
+  display: block !important;
+}
+
+/* La colonne droite ne contient plus que le menu Affichage. */
+#right-ui-stack > #layers-panel {
+  width: 100% !important;
+}
+
+@media (max-width: 760px) {
+  #ui-panels > #factions-panel,
+  #ui-panels > #editor-panel {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    order: 2;
+  }
+}
+
+
+/* =========================================================
    ZOOM SLIDER
 
    Barre de zoom persistante en bas de la carte.
@@ -3594,7 +3665,7 @@ body.editing #draw-toolbar {
         </span>
         <span class="overlay-copy">
           <strong>Bâtiments</strong>
-          <small>Logos et noms des lieux</small>
+          <small>Numéros sur la carte</small>
         </span>
       </label>
 
@@ -3607,6 +3678,8 @@ body.editing #draw-toolbar {
   </div>
 
 </aside>
+
+  </div><!-- /#right-ui-stack -->
 
 
 <!-- FACTIONS -->
@@ -3621,11 +3694,11 @@ body.editing #draw-toolbar {
     <div>
 
       <div class="panel-kicker">
-        TERRITOIRES
+        ADMINISTRATION
       </div>
 
       <div class="panel-title">
-        Factions
+        Gestion des factions
       </div>
 
     </div>
@@ -3643,6 +3716,19 @@ body.editing #draw-toolbar {
 
 
   <div class="panel-scroll">
+
+
+    <section class="editor-section faction-status-section">
+
+      <div class="section-head">
+        <span class="section-name">ÉTAT</span>
+      </div>
+
+      <div id="faction-status">
+        Prêt.
+      </div>
+
+    </section>
 
 
     <div id="faction-list">
@@ -3869,8 +3955,6 @@ body.editing #draw-toolbar {
   </div>
 
 </aside>
-
-  </div><!-- /#right-ui-stack -->
 
 
 <!-- EDITOR -->
@@ -4374,6 +4458,12 @@ const status =
   );
 
 
+const factionStatus =
+  document.getElementById(
+    "faction-status"
+  );
+
+
 const loginOverlay =
   document.getElementById(
     "login-overlay"
@@ -4499,6 +4589,32 @@ const deleteShapeButton =
     "delete-shape"
   );
 
+
+
+/* =========================================================
+   STATUS PARTAGÉ ENTRE LES DEUX MENUS ADMIN
+========================================================= */
+
+function syncFactionStatus() {
+  if (factionStatus && status) {
+    factionStatus.textContent = status.textContent;
+  }
+}
+
+if (factionStatus && status) {
+  new MutationObserver(
+    syncFactionStatus
+  ).observe(
+    status,
+    {
+      childList: true,
+      characterData: true,
+      subtree: true
+    }
+  );
+
+  syncFactionStatus();
+}
 
 
 /* =========================================================
@@ -6532,6 +6648,21 @@ function getLayerByKind(
 
 function updateDisplayControls() {
 
+  /*
+    Le mode de carte pilote aussi le menu d'administration à gauche.
+    Quartiers = éditeur territorial.
+    Factions = gestion des factions.
+  */
+  document.body.classList.toggle(
+    "map-view-quartiers",
+    mapViewMode === "quartiers"
+  );
+
+  document.body.classList.toggle(
+    "map-view-factions",
+    mapViewMode === "factions"
+  );
+
   viewQuartiersButton.classList.toggle(
     "active",
     mapViewMode === "quartiers"
@@ -6589,6 +6720,14 @@ function setMapViewMode(
     mode !== "factions"
   ) {
     return;
+  }
+
+  if (mode !== mapViewMode) {
+    stopDrawing();
+
+    if (selectedLeafletLayer) {
+      cancelSelection();
+    }
   }
 
   mapViewMode = mode;
@@ -10698,6 +10837,10 @@ document.addEventListener("keydown", event => {
 /* =========================================================
    START
 ========================================================= */
+
+/* Applique immédiatement le bon panneau admin gauche. */
+updateDisplayControls();
+
 
 await refreshAuth();
 
