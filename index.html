@@ -8771,11 +8771,39 @@ function renderShapes() {
     of mapShapes
   ) {
 
-    const parentLayer =
+    /*
+      Une forme peut appartenir à une ancienne ligne map_layers qui n'est
+      plus la couche canonique actuellement affichée. C'est fréquent pour
+      les bâtiments après plusieurs évolutions de la carte.
+
+      En mode public, map_layers est en plus filtré par visible = true.
+      Le bâtiment publié existe donc bien dans map_shapes, mais son layer_id
+      peut ne plus être présent dans mapLayers. Au lieu de jeter la forme,
+      on la rattache à la couche Bâtiments d'affichage grâce au quartier_id
+      enregistré dans son style.
+    */
+    let parentLayer =
       mapLayers.find(
         layer =>
           layer.id === shape.layer_id
-      );
+      ) || null;
+
+    let kind =
+      parentLayer?.kind || null;
+
+    const orphanBuilding =
+      !parentLayer &&
+      !!shape.geometry &&
+      isPolygonGeometry(shape.geometry) &&
+      !!shape.style?.quartier_id;
+
+    if (orphanBuilding) {
+      parentLayer =
+        getLayerByKind("batiment");
+
+      kind =
+        "batiment";
+    }
 
     if (
       !parentLayer ||
@@ -8784,17 +8812,19 @@ function renderShapes() {
       continue;
     }
 
-    const kind =
-      parentLayer.kind;
-
     const quartier =
       kind === "quartier";
 
     const faction =
       findFaction(shape.faction_id);
 
+    /*
+      Le groupe d'affichage suit la couche résolue ci-dessus, pas forcément
+      le layer_id historique de la forme. Ainsi un bâtiment reste visible
+      publiquement même si son ancienne couche a été masquée ou remplacée.
+    */
     const group =
-      layerGroups[shape.layer_id];
+      layerGroups[parentLayer.id];
 
     if (!group) continue;
 
