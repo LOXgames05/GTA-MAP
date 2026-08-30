@@ -1841,7 +1841,7 @@ body.painting .leaflet-interactive {
 }
 
 .faction-logo-point {
-  transform: translate(-50%, -50%);
+  transform: none;
   width: 38px;
   height: 38px;
   display: grid;
@@ -7600,8 +7600,12 @@ function renderFactionTerritories() {
                 faction,
                 false
               ),
-              iconSize: [48, 48],
-              iconAnchor: [24, 24]
+              /*
+                Le point Leaflet correspond exactement au centre
+                du rond de 38px.
+              */
+              iconSize: [38, 38],
+              iconAnchor: [19, 19]
             })
           }
         );
