@@ -4898,7 +4898,7 @@ body.editing #draw-marker-repere,body.editing #draw-marker-batiment{display:none
 
   <section class="mara-page" id="mara-page-access">
     <div class="mara-page-heading">
-      <div><h1>Permissions administrateurs</h1><p>Gestion des droits directement depuis Mara MAP.</p></div>
+      <div><h1>Permissions administrateurs</h1><p>Gestion des droits depuis Mara MAP, réservée aux e-mails administrateurs préautorisés dans Supabase.</p></div>
       <div class="mara-actions"><button type="button" id="mara-access-reload">Actualiser</button><button type="button" class="primary" id="mara-access-new">+ Autoriser un compte</button></div>
     </div>
     <div id="mara-access-status" class="mara-status" role="status"></div>
@@ -4910,7 +4910,7 @@ body.editing #draw-marker-repere,body.editing #draw-marker-batiment{display:none
     </div>
     <div id="mara-pending-requests" class="mara-card">
       <span class="mara-kicker">// INSCRIPTIONS EN ATTENTE</span>
-      <p class="mara-note">Valide une demande et choisis son organisation. Aucun accès au site n'est accordé avant validation.</p>
+      <p class="mara-note">Valide une demande et choisis son organisation. Seuls les administrateurs à e-mail préautorisé dans SQL 06 peuvent accorder un accès.</p>
       <div class="mara-table-wrap"><table class="mara-table"><thead><tr><th>ID demandé</th><th>Demande</th><th>Organisation</th><th>Validation</th></tr></thead>
         <tbody id="mara-pending-rows"><tr><td colspan="4" class="mara-empty">Chargement...</td></tr></tbody></table></div>
     </div>
@@ -4927,7 +4927,7 @@ body.editing #draw-marker-repere,body.editing #draw-marker-batiment{display:none
         <label><input id="mara-access-groups" type="checkbox"> Gérer les membres des groupes</label>
         <label><input id="mara-access-vehicles" type="checkbox"> Gérer les véhicules</label>
         <label><input id="mara-access-intelligence" type="checkbox"> Consulter et modifier les renseignements</label>
-        <label><input id="mara-access-admins" type="checkbox"> Gérer les permissions</label>
+        <label><input id="mara-access-admins" type="checkbox"> Gérer les permissions (e-mail inscrit dans SQL 06 seulement)</label>
       </div>
       <div class="mara-form-actions"><button class="primary" type="submit">Enregistrer les droits</button><button type="button" id="mara-access-cancel">Annuler</button></div>
     </form>
@@ -4950,7 +4950,7 @@ body.editing #draw-marker-repere,body.editing #draw-marker-batiment{display:none
 
       <h2 class="login-title">MARA MAP // IDENTIFICATION</h2>
 
-      <p class="login-sub" id="mara-auth-subtitle">Accès sécurisé au réseau RP · Identifiant et mot de passe.</p>
+      <p class="login-sub" id="mara-auth-subtitle">Accès RP · ID et mot de passe. Aucun e-mail pour les membres.</p>
 
     </div>
 
@@ -4965,7 +4965,7 @@ body.editing #draw-marker-repere,body.editing #draw-marker-batiment{display:none
         <label for="login-id">Identifiant (ID)</label>
         <input id="login-id" name="username" type="text" required minlength="3" maxlength="80"
                autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="Ex. marabunta07">
-        <p class="mara-auth-help" id="mara-auth-login-help">Ancien compte administrateur ? Tu peux aussi saisir ton e-mail.</p>
+        <p class="mara-auth-help" id="mara-auth-login-help">Compte administrateur autorisé ? Connecte-toi avec ton e-mail et ton mot de passe.</p>
 
         <label for="login-password">Mot de passe</label>
         <input id="login-password" name="password" type="password" required autocomplete="current-password" minlength="6">
@@ -4974,7 +4974,7 @@ body.editing #draw-marker-repere,body.editing #draw-marker-batiment{display:none
           <label for="mara-auth-confirm-password">Confirmer le mot de passe</label>
           <input id="mara-auth-confirm-password" type="password" minlength="10" autocomplete="new-password">
         </div>
-        <p class="mara-auth-help" id="mara-auth-register-help" hidden>Choisis un ID de 3 à 24 caractères (lettres, chiffres, _ ou -) et un mot de passe d'au moins 10 caractères. Un administrateur devra approuver ton inscription.</p>
+        <p class="mara-auth-help" id="mara-auth-register-help" hidden>Aucun e-mail demandé. Choisis un ID (3 à 24 caractères : lettres, chiffres, _ ou -) et un mot de passe de 10 caractères minimum. Seul un administrateur préautorisé pourra valider ta demande.</p>
 
         <div class="action-grid" style="margin-top:17px;">
           <button id="mara-auth-submit" type="submit" class="primary wide"><i data-lucide="log-in"></i><span id="mara-auth-submit-text">Se connecter</span></button>
@@ -6754,8 +6754,8 @@ function maraSetAuthMode(mode, message = '') {
   document.getElementById('login-password').autocomplete = registering ? 'new-password' : 'current-password';
   document.getElementById('mara-auth-submit-text').textContent = registering ? 'Demander un compte' : 'Se connecter';
   document.getElementById('mara-auth-subtitle').textContent = registering
-    ? 'Création d’un accès RP · Validation obligatoire par un administrateur.'
-    : 'Accès sécurisé au réseau RP · Identifiant et mot de passe.';
+    ? 'Créer un compte RP · ID et mot de passe uniquement, sans e-mail.'
+    : 'Accès RP · ID et mot de passe. Aucun e-mail pour les membres.';
   loginError.textContent = message;
   lucide.createIcons();
 }
