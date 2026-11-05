@@ -3866,6 +3866,20 @@ body.editing #draw-marker-repere,body.editing #draw-marker-batiment{display:none
 .mara-poi-marker{transform:none!important;clip-path:none!important;border-radius:9px 9px 9px 1px!important}
 .mara-poi-marker img{width:100%;height:100%;object-fit:contain;display:block;padding:3px}
 .mara-poi-name{display:block;position:absolute;top:37px;left:18px;transform:translateX(-50%);min-width:max-content;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:3px 7px;background:#04150e;border:1px solid #18573c;border-radius:3px;color:#b2f9d0;font-family:ui-monospace,monospace;font-size:9px;font-weight:800;pointer-events:none;text-shadow:0 1px 2px #000}
+
+/* MARA MAP V4 · Identification RP */
+.mara-auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:16px}
+#mara-auth-switch-login,#mara-auth-switch-register{min-height:41px!important;padding:9px 7px!important;border:1px solid #205a40;background:#05160e;color:#81bda0;font-size:10px!important;letter-spacing:.5px;border-radius:4px}
+#mara-auth-switch-login.active,#mara-auth-switch-register.active{border-color:#53ed9c;background:rgba(33,115,75,.28);color:#bcffdd;box-shadow:inset 0 -2px 0 #4ceb98}
+#login-overlay .login-box{width:min(480px,95vw)}
+#login-overlay #login-form label{font-family:ui-monospace,monospace}
+#login-overlay #login-id{font-family:ui-monospace,monospace;font-size:13px}
+#login-overlay #login-error{font-size:11px;line-height:1.6;min-height:25px;white-space:pre-wrap}
+.mara-auth-help{color:#7eac90;font-size:9px;line-height:1.6;margin:6px 0 12px}
+#mara-auth-confirm-wrap[hidden],#mara-auth-register-help[hidden],#mara-auth-login-help[hidden]{display:none!important}
+#mara-pending-requests{margin-bottom:15px}
+#mara-pending-requests .mara-pending-group{min-width:140px;max-width:225px;width:100%;color:#dbffed;background:#021209}
+#mara-pending-requests .mara-table td{vertical-align:middle}
 </style>
 
 </head>
@@ -4890,17 +4904,23 @@ body.editing #draw-marker-repere,body.editing #draw-marker-batiment{display:none
     <div id="mara-access-status" class="mara-status" role="status"></div>
     <div class="mara-card mara-form">
       <span class="mara-kicker">// RATTACHEMENT AU GROUPE</span>
-      <p class="mara-note">Affecte ton propre compte à la faction MARABUNTA ou au groupe RP voulu. Les nouveaux comptes doivent exister dans Supabase Authentication.</p>
+      <p class="mara-note">Rattache les comptes à leur organisation RP. Les demandes créées via « Créer un compte » s'affichent plus bas pour validation.</p>
       <div class="mara-form-grid"><div><label for="mara-own-group">Mon organisation</label><select id="mara-own-group"></select></div>
       <div style="align-self:end"><button id="mara-save-own-group" class="primary" type="button">Associer mon compte</button></div></div>
+    </div>
+    <div id="mara-pending-requests" class="mara-card">
+      <span class="mara-kicker">// INSCRIPTIONS EN ATTENTE</span>
+      <p class="mara-note">Valide une demande et choisis son organisation. Aucun accès au site n'est accordé avant validation.</p>
+      <div class="mara-table-wrap"><table class="mara-table"><thead><tr><th>ID demandé</th><th>Demande</th><th>Organisation</th><th>Validation</th></tr></thead>
+        <tbody id="mara-pending-rows"><tr><td colspan="4" class="mara-empty">Chargement...</td></tr></tbody></table></div>
     </div>
     <div class="mara-card">
       <div class="mara-table-wrap"><table class="mara-table"><thead><tr><th>Compte</th><th>Organisation</th><th>Carte</th><th>Groupes</th><th>Véhicules</th><th>Renseignements</th><th>Permissions</th><th>Actions</th></tr></thead><tbody id="mara-access-rows"><tr><td colspan="8" class="mara-empty">Chargement...</td></tr></tbody></table></div>
     </div>
     <form id="mara-access-form" class="mara-card mara-form" hidden>
       <h2 id="mara-access-form-title">Autoriser un compte</h2>
-      <label for="mara-access-email">Adresse e-mail du compte Supabase Auth existant *</label><input id="mara-access-email" type="email" required autocomplete="off">
-      <p class="mara-note">Le compte doit déjà exister dans Supabase Authentication. Impossible de modifier le propriétaire ou ses propres permissions depuis ce panneau.</p>
+      <label for="mara-access-email">ID de connexion (ou e-mail d'un ancien compte) *</label><input id="mara-access-email" type="text" required autocomplete="off" autocapitalize="none" spellcheck="false">
+      <p class="mara-note">Le membre doit avoir créé son compte depuis le site, ou posséder un ancien compte Supabase Auth. Le propriétaire et ses propres droits restent protégés.</p>
       <label for="mara-access-group">Organisation RP attribuée</label><select id="mara-access-group"></select>
       <div class="mara-check-grid">
         <label><input id="mara-access-map" type="checkbox"> Modifier la carte et les factions</label>
@@ -4930,70 +4950,37 @@ body.editing #draw-marker-repere,body.editing #draw-marker-batiment{display:none
 
       <h2 class="login-title">MARA MAP // IDENTIFICATION</h2>
 
-      <p class="login-sub">
-        Accès au réseau RP réservé aux comptes autorisés. Identifie-toi pour consulter l'organisation, les groupes et la carte.
-      </p>
+      <p class="login-sub" id="mara-auth-subtitle">Accès sécurisé au réseau RP · Identifiant et mot de passe.</p>
 
     </div>
 
 
     <div class="login-body">
 
-      <form id="login-form">
+      <div class="mara-auth-tabs" role="group" aria-label="Mode d'accès">
+        <button type="button" id="mara-auth-switch-login" class="mara-auth-tab active" aria-pressed="true">CONNEXION</button>
+        <button type="button" id="mara-auth-switch-register" class="mara-auth-tab" aria-pressed="false">CRÉER UN COMPTE</button>
+      </div>
+      <form id="login-form" autocomplete="on">
+        <label for="login-id">Identifiant (ID)</label>
+        <input id="login-id" name="username" type="text" required minlength="3" maxlength="80"
+               autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="Ex. marabunta07">
+        <p class="mara-auth-help" id="mara-auth-login-help">Ancien compte administrateur ? Tu peux aussi saisir ton e-mail.</p>
 
+        <label for="login-password">Mot de passe</label>
+        <input id="login-password" name="password" type="password" required autocomplete="current-password" minlength="6">
 
-        <label>
-          Adresse email
-        </label>
-
-        <input
-          id="login-email"
-          type="email"
-          required
-        >
-
-
-        <label>
-          Mot de passe
-        </label>
-
-        <input
-          id="login-password"
-          type="password"
-          required
-        >
-
-
-        <div
-          class="action-grid"
-          style="margin-top:17px;"
-        >
-
-          <button
-            type="submit"
-            class="primary wide"
-          >
-
-            <i data-lucide="log-in"></i>
-
-            Se connecter
-
-          </button>
-
-
-          <button
-            id="close-login"
-            type="button"
-            class="wide"
-          >
-            Annuler
-          </button>
-
+        <div id="mara-auth-confirm-wrap" hidden>
+          <label for="mara-auth-confirm-password">Confirmer le mot de passe</label>
+          <input id="mara-auth-confirm-password" type="password" minlength="10" autocomplete="new-password">
         </div>
+        <p class="mara-auth-help" id="mara-auth-register-help" hidden>Choisis un ID de 3 à 24 caractères (lettres, chiffres, _ ou -) et un mot de passe d'au moins 10 caractères. Un administrateur devra approuver ton inscription.</p>
 
-
-        <div id="login-error"></div>
-
+        <div class="action-grid" style="margin-top:17px;">
+          <button id="mara-auth-submit" type="submit" class="primary wide"><i data-lucide="log-in"></i><span id="mara-auth-submit-text">Se connecter</span></button>
+          <button id="close-login" type="button" class="wide">Annuler</button>
+        </div>
+        <div id="login-error" role="status" aria-live="polite"></div>
       </form>
 
     </div>
@@ -6729,8 +6716,51 @@ document
 
 
 /* =========================================================
-   AUTH
+   AUTH · ID RP / MOT DE PASSE
 ========================================================= */
+
+// Supabase Auth attend un email ou un téléphone pour son API de mot de passe.
+// Une adresse technique déterministe, non routable et sans e-mail personnel,
+// permet de conserver le fournisseur Auth et ses protections de mot de passe.
+// Cette convention DOIT correspondre au domaine de la migration SQL 05.
+const MARA_LOGIN_DOMAIN = 'members.mara-map.invalid';
+const MARA_ID_PATTERN = /^[a-z0-9][a-z0-9_-]{2,23}$/;
+const maraNormalizeLogin = value => String(value || '').trim().toLowerCase();
+function maraAuthEmail(value) {
+  const login = maraNormalizeLogin(value);
+  if (login.includes('@')) return login; // Compatibilité avec les comptes administrateurs existants
+  if (!MARA_ID_PATTERN.test(login)) throw new Error('ID invalide : 3 à 24 caractères (lettres, chiffres, _ ou -).');
+  return `${login}@${MARA_LOGIN_DOMAIN}`;
+}
+function maraPrettyLogin(value) {
+  const email = maraNormalizeLogin(value);
+  const suffix = `@${MARA_LOGIN_DOMAIN}`;
+  return email.endsWith(suffix) ? email.slice(0, -suffix.length) : (value || '');
+}
+let maraAuthMode = 'login';
+function maraSetAuthMode(mode, message = '') {
+  maraAuthMode = mode === 'register' ? 'register' : 'login';
+  const registering = maraAuthMode === 'register';
+  document.getElementById('mara-auth-switch-login').classList.toggle('active', !registering);
+  document.getElementById('mara-auth-switch-register').classList.toggle('active', registering);
+  document.getElementById('mara-auth-switch-login').setAttribute('aria-pressed', String(!registering));
+  document.getElementById('mara-auth-switch-register').setAttribute('aria-pressed', String(registering));
+  document.getElementById('mara-auth-confirm-wrap').hidden = !registering;
+  document.getElementById('mara-auth-register-help').hidden = !registering;
+  document.getElementById('mara-auth-login-help').hidden = registering;
+  document.getElementById('mara-auth-confirm-password').required = registering;
+  document.getElementById('login-id').maxLength = registering ? 24 : 80;
+  document.getElementById('login-password').minLength = registering ? 10 : 6;
+  document.getElementById('login-password').autocomplete = registering ? 'new-password' : 'current-password';
+  document.getElementById('mara-auth-submit-text').textContent = registering ? 'Demander un compte' : 'Se connecter';
+  document.getElementById('mara-auth-subtitle').textContent = registering
+    ? 'Création d’un accès RP · Validation obligatoire par un administrateur.'
+    : 'Accès sécurisé au réseau RP · Identifiant et mot de passe.';
+  loginError.textContent = message;
+  lucide.createIcons();
+}
+document.getElementById('mara-auth-switch-login').addEventListener('click', () => maraSetAuthMode('login'));
+document.getElementById('mara-auth-switch-register').addEventListener('click', () => maraSetAuthMode('register'));
 
 async function refreshAuth() {
 
@@ -6818,8 +6848,7 @@ async function refreshAuth() {
 
 
     adminEmail.textContent =
-      currentUser.email ||
-      "";
+      maraPrettyLogin(currentUser.email || "");
 
   }
   else {
@@ -6907,67 +6936,50 @@ loginOverlay.addEventListener(
 );
 
 
-loginForm.addEventListener(
-  "submit",
-  async event => {
-
-    event.preventDefault();
-
-
-    loginError.textContent =
-      "Connexion...";
-
-
-    const email =
-      document
-        .getElementById(
-          "login-email"
-        )
-        .value
-        .trim();
-
-
-    const password =
-      document
-        .getElementById(
-          "login-password"
-        )
-        .value;
-
-
-    const {
-      error
-    } =
-      await db.auth
-        .signInWithPassword({
-
-          email,
-          password
-
-        });
-
-
-    if (
-      error
-    ) {
-
-      loginError.textContent =
-        error.message;
-
+loginForm.addEventListener('submit', async event => {
+  event.preventDefault();
+  const btn = document.getElementById('mara-auth-submit');
+  btn.disabled = true;
+  const login = maraNormalizeLogin(document.getElementById('login-id').value);
+  const password = document.getElementById('login-password').value;
+  try {
+    const email = maraAuthEmail(login);
+    if (maraAuthMode === 'register') {
+      if (login.includes('@')) throw new Error('Pour créer un compte, choisis un ID, pas une adresse e-mail.');
+      if (password.length < 10) throw new Error('Mot de passe trop court : minimum 10 caractères.');
+      if (password !== document.getElementById('mara-auth-confirm-password').value) {
+        throw new Error('Les deux mots de passe ne correspondent pas.');
+      }
+      loginError.textContent = 'Création de la demande...';
+      const {data,error} = await db.auth.signUp({
+        email, password, options: {data: {mara_login_id: login}}
+      });
+      if (error) throw error;
+      if (!data?.user) throw new Error('Création non confirmée. Contacte un administrateur.');
+      // Ne jamais autoriser une inscription simplement parce que Supabase a créé une session.
+      if (data.session) await db.auth.signOut();
+      document.getElementById('login-password').value = '';
+      document.getElementById('mara-auth-confirm-password').value = '';
+      maraSetAuthMode('login', data.session
+        ? `Demande enregistrée pour l'ID « ${login} ». Un administrateur doit maintenant l'approuver dans Permissions. Ensuite, connecte-toi avec ton ID et ton mot de passe.`
+        : `Compte créé, mais Supabase demande une vérification e-mail. Pour les IDs RP sans e-mail, le propriétaire doit désactiver « Confirm email » dans Authentication → Providers → Email, ou confirmer manuellement le compte. L'accès reste soumis à validation.`);
       return;
-
     }
-
-
+    loginError.textContent = 'Vérification de ton identifiant...';
+    const {error} = await db.auth.signInWithPassword({email,password});
+    if (error) throw error;
     await refreshAuth();
-    if(!currentUser)return;
-
-    loginOverlay.classList.remove("visible");
+    if (!currentUser) return;
+    loginOverlay.classList.remove('visible');
     await loadDatabase();
-    await maraGo("groups");
-
+    await maraGo('groups');
+  } catch (error) {
+    console.error('Authentification Mara MAP :', error);
+    loginError.textContent = error.message || 'Impossible de traiter cette demande.';
+  } finally {
+    btn.disabled = false;
   }
-);
+});
 
 
 
@@ -6980,12 +6992,12 @@ logoutButton.addEventListener(
   async () => {
 
     await db.auth.signOut();
-
+    maraSetAuthMode('login');
 
     await refreshAuth();
     maraMembers=[];maraVehicles=[];maraIntelRecords=[];maraProfileRecords=[];
     maraStaffGroups=[];maraAdmins=[];mapShapes=[];mapFactions=[];mapLayers=[];
-    ['mara-members-rows','mara-vehicles-rows','mara-intel-rows','mara-profiles-list','mara-access-rows'].forEach(id=>{
+    ['mara-members-rows','mara-vehicles-rows','mara-intel-rows','mara-profiles-list','mara-access-rows','mara-pending-rows'].forEach(id=>{
       const node=document.getElementById(id);if(node)node.replaceChildren();
     });
     if(typeof rerenderMapDisplay==='function')rerenderMapDisplay();
@@ -12559,7 +12571,7 @@ function maraRenderAdmins() {
   tbody.replaceChildren();
   maraAdmins.forEach(account => {
     const tr = document.createElement('tr');
-    const email = maraTextCell(account.email);
+    const email = maraTextCell(maraPrettyLogin(account.email));
     if (account.is_owner) {
       const badge = document.createElement('span');
       badge.className = 'mara-tag';
@@ -12602,13 +12614,66 @@ async function maraLoadAdmins() {
   maraSelectOptions('mara-access-group');
   maraById('mara-own-group').value=maraMyGroup?.id||'';
   maraRenderAdmins();
+  await maraLoadPendingRegistrations();
   maraSetStatus('access', `${maraAdmins.length} compte(s) autorisé(s).`);
+}
+
+async function maraLoadPendingRegistrations() {
+  const tbody = maraById('mara-pending-rows');
+  const {data,error} = await db.rpc('mara_list_pending_registrations');
+  if (error) {
+    maraSetEmpty(tbody, 4, `Liste des demandes indisponible : ${error.message}. Installer SQL 05.`);
+    return;
+  }
+  const requests = data || [];
+  if (!requests.length) return maraSetEmpty(tbody, 4, 'Aucune demande en attente.');
+  tbody.replaceChildren();
+  for (const request of requests) {
+    const tr = document.createElement('tr');
+    const group = document.createElement('select');
+    group.className = 'mara-pending-group';
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = 'Choisir un groupe';
+    group.appendChild(defaultOption);
+    for (const faction of maraStaffGroups) {
+      const option = document.createElement('option');
+      option.value = faction.id;
+      option.textContent = faction.name;
+      group.appendChild(option);
+    }
+    const groupCell = document.createElement('td');
+    groupCell.appendChild(group);
+    const action = document.createElement('td');
+    const approve = maraActionButton('Autoriser', async () => {
+      if (!group.value) {
+        maraSetStatus('access','Sélectionne une organisation pour autoriser ce membre.');
+        return;
+      }
+      approve.disabled = true;
+      const {error} = await db.rpc('mara_approve_registration', {
+        p_user_id: request.user_id, p_group_id: group.value
+      });
+      approve.disabled = false;
+      if (error) return maraSetStatus('access', `Demande refusée : ${error.message}`);
+      await maraLoadAdmins();
+      maraSetStatus('access', `Compte « ${request.login_id} » autorisé. Aucun droit admin attribué.`);
+    });
+    action.appendChild(approve);
+    tr.append(
+      maraTextCell(request.login_id),
+      maraTextCell(new Date(request.created_at).toLocaleDateString('fr-FR')),
+      groupCell,
+      action
+    );
+    tbody.appendChild(tr);
+  }
 }
 
 function maraEditAdmin(account = null) {
   maraById('mara-access-form').hidden = false;
   maraById('mara-access-form-title').textContent = account ? 'Modifier des permissions' : 'Autoriser un compte';
-  maraById('mara-access-email').value = account?.email || '';
+  maraById('mara-access-email').value = account?.email ? maraPrettyLogin(account.email) : '';
   maraById('mara-access-email').readOnly = Boolean(account);
   maraById('mara-access-group').value=account?.group_id||'';
   maraById('mara-access-map').checked = Boolean(account?.can_edit_map);
@@ -12622,8 +12687,11 @@ function maraEditAdmin(account = null) {
 async function maraSaveAdmin(event) {
   event.preventDefault();
   if (!maraPermissions.access) return;
+  let accountEmail;
+  try { accountEmail = maraAuthEmail(maraInput('mara-access-email')); }
+  catch(error) { maraSetStatus('access', error.message); return; }
   const { error } = await db.rpc('mara_set_admin_by_email', {
-    p_email: maraInput('mara-access-email'),
+    p_email: accountEmail,
     p_map: maraById('mara-access-map').checked,
     p_groups: maraById('mara-access-groups').checked,
     p_vehicles: maraById('mara-access-vehicles').checked,
@@ -12632,7 +12700,7 @@ async function maraSaveAdmin(event) {
   });
   if (error) return maraSetStatus('access', `Erreur : ${error.message}`);
   const {error:groupError}=await db.rpc('mara_set_user_group',{
-    p_email:maraInput('mara-access-email'),p_group_id:maraInput('mara-access-group')||null
+    p_email:accountEmail,p_group_id:maraInput('mara-access-group')||null
   });
   if(groupError)return maraSetStatus('access',`Permissions enregistrées, mais affectation échouée : ${groupError.message}`);
   maraById('mara-access-form').hidden = true;
@@ -12641,7 +12709,7 @@ async function maraSaveAdmin(event) {
 }
 
 async function maraDeleteAdmin(account) {
-  if (!confirm(`Retirer tous les accès de ${account.email} ?`)) return;
+  if (!confirm(`Retirer tous les accès de ${maraPrettyLogin(account.email)} ?`)) return;
   const { error } = await db.rpc('mara_remove_admin', { p_user_id: account.user_id });
   if (error) return maraSetStatus('access', `Erreur : ${error.message}`);
   await maraLoadAdmins();
