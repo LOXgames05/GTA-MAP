@@ -3670,6 +3670,8 @@ body.editing[data-editor-kind="batiment"] #draw-marker-repere {
   display: none !important;
 }
 
+body.editing[data-editor-kind="territoire"] #draw-marker-repere,
+body.editing[data-editor-kind="territoire"] #draw-marker-batiment,
 body.editing[data-editor-kind="quartier"] #draw-marker-repere,
 body.editing[data-editor-kind="quartier"] #draw-marker-batiment {
   display: none !important;
@@ -3687,6 +3689,7 @@ body.editing[data-editor-kind="factions"] #factions-panel {
 
 body.editing[data-editor-kind="repere"] #editor-panel,
 body.editing[data-editor-kind="batiment"] #editor-panel,
+body.editing[data-editor-kind="territoire"] #editor-panel,
 body.editing[data-editor-kind="quartier"] #editor-panel {
   display: block !important;
 }
@@ -3722,6 +3725,7 @@ body:not([data-mara-page="map"]) #reset-map { visibility: hidden !important; poi
 }
 body[data-mara-page="map"] #mara-management { display: none; }
 .mara-page { display: none; max-width: 1420px; margin: 0 auto; }
+body[data-mara-page="intelligence"] #mara-page-intelligence,
 body[data-mara-page="groups"] #mara-page-groups,
 body[data-mara-page="vehicles"] #mara-page-vehicles,
 body[data-mara-page="access"] #mara-page-access { display: block; }
@@ -3740,7 +3744,7 @@ body[data-mara-page="access"] #mara-page-access { display: block; }
 .mara-table td:last-child { white-space: nowrap; }
 .mara-table .muted, .mara-muted { color: #81948a; }
 .mara-form { max-width: 780px; }
-.mara-form[hidden], .mara-card[hidden] { display: none !important; }
+.mara-form[hidden], .mara-card[hidden], #mara-intel-report-area[hidden], #mara-intel-new[hidden] { display: none !important; }
 .mara-form h2 { margin: 0 0 15px; font-size: 16px; }
 .mara-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 9px 15px; }
 .mara-form-grid > div { min-width: 0; }
@@ -3773,6 +3777,61 @@ body[data-mara-page="access"] #mara-page-access { display: block; }
   #mara-management { padding: 16px 10px 70px; }
   body:not([data-mara-page="map"]) { overflow: hidden !important; }
 }
+
+
+
+/* MARA MAP v2 : esthétique terminal clandestin GTA RP */
+:root {--bg:#030807;--panel:rgba(3,14,12,.96);--border:rgba(73,227,161,.22);--border-strong:rgba(93,255,186,.62);--green:#4fffb0;--green-light:#b0ffdb;--gold:#f1b956;--text:#e4fff1;--muted:#77988b;--top-height:72px}
+body {font-family: 'IBM Plex Mono',Consolas,'Courier New',monospace;background:#020807;color:#dafce7}
+body::before {background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,rgba(21,60,45,.09) 4px),radial-gradient(ellipse at 50% 10%,rgba(21,105,68,.25),transparent 65%);pointer-events:none}
+#topbar {background:rgba(2,11,9,.97);border-bottom:1px solid rgba(75,255,166,.35);box-shadow:0 0 42px rgba(32,255,128,.075)}
+.brand-emblem {border-radius:9px;border-color:#46e6a0;background:#07251b;box-shadow:0 0 18px rgba(51,255,156,.12)}
+.brand-name {color:#7affbe;font-size:14px!important;letter-spacing:3.5px!important;text-shadow:0 0 18px rgba(85,255,160,.27)}
+.brand-sub {letter-spacing:1.8px!important;color:#628b79}
+.nav-item {font-family:inherit;color:#82a895;letter-spacing:1.7px!important}
+.nav-item.active {color:#75ffc0;text-shadow:0 0 15px rgba(75,255,174,.32)}
+.panel,.mara-card,.login-box {background:linear-gradient(145deg,rgba(5,20,16,.97),rgba(3,10,9,.97));border:1px solid rgba(61,210,143,.24);box-shadow:0 9px 35px rgba(0,0,0,.4),inset 0 1px 0 rgba(91,255,186,.04);border-radius:5px}
+.panel-title,.mara-page-heading h1,.mara-page-heading h2 {color:#c8ffe1}
+.panel-kicker,.mara-kicker {display:block;font-size:9px;letter-spacing:2px;color:#55ffa7;text-transform:uppercase;margin:0 0 7px}
+button {border-radius:4px!important;letter-spacing:.3px;text-transform:uppercase}
+button.primary,button.active,.mara-map-modes button.active {border-color:#3bea94!important;color:#032012!important;background:#68ffb5!important;font-weight:900;box-shadow:0 0 18px rgba(85,255,154,.13)}
+input,select,textarea {border-radius:3px!important;background:#03110e!important;color:#e0ffee!important;border-color:#1b5a41!important}
+input:focus,textarea:focus,select:focus {outline:1px solid #49fca6}
+#status,#faction-status,.mara-status {border-left:3px solid #56ffaa!important;background:rgba(14,66,41,.15);padding:10px;color:#a5ffd2!important}
+#mara-management {background:radial-gradient(circle at 83% 5%,rgba(19,90,58,.19),transparent 55%),repeating-linear-gradient(90deg,transparent 0,transparent 46px,rgba(52,151,97,.021) 47px),#030a08}
+.mara-card {position:relative}
+.mara-card::before {content:'[ SECURE CHANNEL / MARA ]';position:absolute;right:13px;top:9px;font-size:8px;letter-spacing:1px;color:rgba(95,255,160,.26);pointer-events:none}
+.mara-card .mara-page-heading {padding-top:5px}
+.mara-table th {background:#072018;color:#69f4ad;border-bottom:1px solid rgba(96,250,171,.24)}
+.mara-table td {border-color:rgba(85,227,159,.1)}
+.mara-table tbody tr:hover {background:rgba(38,239,137,.055)}
+.mara-tag {color:#77ffae;background:#092b1b;border:1px solid #236c40}
+.mara-map-modes {display:flex;gap:6px;margin-bottom:12px}
+.mara-map-modes button {flex:1;min-height:37px;border:1px solid #256449;background:rgba(5,23,17,.9);color:#98deba;font-size:9px}
+.mara-map-help {font-size:9px;color:#7c9f8b;margin:0 0 14px;line-height:1.65}
+[data-layer-row="repere"],[data-layer-row="batiment"],.legacy-display-controls,
+#draw-marker-repere,#draw-marker-batiment,#factions-panel,
+#shape-marker-fields,#shape-color-label,#shape-color-wrap,#shape-opacity-wrap,#shape-opacity-label {display:none!important}
+#editor-panel .form-grid:has(#shape-color) {display:none!important}
+body.editing[data-editor-kind="territoire"] #editor-panel {display:block!important}
+body.editing[data-editor-kind="territoire"] #draw-toolbar {display:flex!important}
+.mara-auto-logo {display:grid;place-items:center;width:42px;height:42px;border:2px solid var(--group-color);border-radius:10px;background:rgba(4,16,14,.95);font-size:12px;color:var(--group-color);font-weight:900;box-shadow:0 0 18px color-mix(in srgb,var(--group-color) 22%,transparent)}
+.faction-logo-point {width:43px;height:43px;border-radius:10px;background:rgba(0,15,11,.95);box-shadow:0 0 18px rgba(22,250,146,.18)}
+.mara-intel-filter {display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px;margin:12px 0 18px}
+.mara-stats {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:14px 0 22px}
+.mara-stats>div {background:rgba(5,28,19,.88);border:1px solid #1b6b47;padding:15px 18px;border-radius:4px;display:flex;flex-direction:column;gap:8px}
+.mara-stats small {color:#78bd98;letter-spacing:1.5px;font-size:9px}
+.mara-stats strong {color:#70ffb0;font-size:29px;line-height:1;font-variant-numeric:tabular-nums}
+.mara-profile-list {display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin-top:18px}
+.mara-profile-item {display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px;border:1px solid rgba(88,243,152,.2);background:rgba(2,14,9,.8);border-radius:3px}
+.mara-profile-info {display:flex;align-items:center;gap:10px;min-width:0}
+.mara-profile-dot {width:15px;height:15px;border:1px solid #ddd;flex-shrink:0;box-shadow:0 0 10px currentColor}
+.mara-profile-item strong {display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:11px}
+.mara-profile-item small {color:#79b293;font-size:9px}
+.mara-priority-haute {color:#ff8e79;font-weight:900}.mara-priority-normale {color:#ffc56d}.mara-priority-basse {color:#82eebb}
+.mara-page-heading h2 {font-size:17px;margin:0 0 5px}
+#nav-intelligence {display:none}
+@media(max-width:780px){.mara-intel-filter{grid-template-columns:1fr}.mara-stats {gap:6px}.mara-stats>div{padding:9px}.mara-stats strong{font-size:21px}.brand-name {font-size:10px!important}}
 
 </style>
 
@@ -3836,9 +3895,10 @@ body[data-mara-page="access"] #mara-page-access { display: block; }
     </div>
 
 
-    <div id="nav-groups" class="nav-item" role="button" tabindex="0">GROUPES</div>
+    <div id="nav-intelligence" class="nav-item" role="button" tabindex="0">RENSEIGNEMENTS</div>
+    <div id="nav-groups" class="nav-item" role="button" tabindex="0">MEMBRES</div>
     <div id="nav-vehicles" class="nav-item" role="button" tabindex="0">VÉHICULES</div>
-    <div id="nav-access" class="nav-item" role="button" tabindex="0">ADMINISTRATEURS</div>
+    <div id="nav-access" class="nav-item" role="button" tabindex="0">ACCÈS</div>
 
     <div
       id="nav-editor"
@@ -3944,26 +4004,31 @@ body[data-mara-page="access"] #mara-page-access { display: block; }
         CALQUES
       </div>
 
+      <div class="mara-map-modes" role="group" aria-label="Mode de lecture de la carte">
+        <button id="mara-view-territoires" type="button" class="active">◉ TERRITOIRES</button>
+        <button id="mara-view-quartiers" type="button">▤ QUARTIERS</button>
+      </div>
+      <p class="mara-map-help">Calques polygonaux uniquement. Sommets aimantés aux frontières voisines.</p>
       <div class="overlay-toggle" data-layer-row="factions">
         <input
           id="toggle-factions"
           type="checkbox"
           checked
-          aria-label="Afficher les factions"
+          aria-label="Afficher les territoires"
         >
         <span class="overlay-icon">
           <i data-lucide="shield"></i>
         </span>
         <span class="overlay-copy">
-          <strong>Factions</strong>
-          <small>Calque le plus proche</small>
+          <strong>Territoires</strong>
+          <small>Zones des groupes RP</small>
         </span>
         <button
           class="layer-edit-button"
           type="button"
-          data-edit-layer="factions"
-          title="Modifier les factions"
-          aria-label="Modifier les factions"
+          data-edit-layer="territoire"
+          title="Dessiner des territoires"
+          aria-label="Dessiner des territoires"
         >
           <i data-lucide="pencil"></i>
         </button>
@@ -4006,7 +4071,7 @@ body[data-mara-page="access"] #mara-page-access { display: block; }
         </span>
         <span class="overlay-copy">
           <strong>Quartiers</strong>
-          <small>Au-dessus des bâtiments</small>
+          <small>Vue cadastrale contrastée</small>
         </span>
         <button
           class="layer-edit-button"
@@ -4407,10 +4472,10 @@ body[data-mara-page="access"] #mara-page-access { display: block; }
       </div>
 
 
-      <label>
-        Type d’élément
-      </label>
-
+      <label for="mara-shape-picker">Polygone exact (sélection par identifiant)</label>
+      <select id="mara-shape-picker"><option value="">Cliquer sur la carte ou choisir une zone</option></select>
+      <div class="field-help">La suppression utilise UNIQUEMENT l'identifiant affiché dans cette sélection.</div>
+      <label>Type d’élément</label>
       <select id="shape-layer"></select>
 
 
@@ -4424,15 +4489,15 @@ body[data-mara-page="access"] #mara-page-access { display: block; }
         style="display:none;"
       >
         <label>
-          Faction du bâtiment
+          Groupe propriétaire du territoire
         </label>
 
         <select id="shape-faction">
-          <option value="">Aucune faction</option>
+          <option value="">Sélectionner un groupe</option>
         </select>
 
         <div class="field-help">
-          La faction est rattachée au bâtiment. Sur la carte Factions, le bâtiment prend la couleur de cette faction.
+          La couleur et le logo de ce territoire sont définis dans Renseignements → Groupes.
         </div>
       </div>
 
@@ -4652,7 +4717,7 @@ body[data-mara-page="access"] #mara-page-access { display: block; }
     class="draw-tool"
   >
     <i data-lucide="pentagon"></i>
-    <span class="draw-label">QUARTIER</span>
+    <span class="draw-label">TERRITOIRE</span>
   </button>
 
   <button
@@ -4660,7 +4725,7 @@ body[data-mara-page="access"] #mara-page-access { display: block; }
     class="draw-tool"
   >
     <i data-lucide="square"></i>
-    <span class="draw-label">RECTANGLE</span>
+    <span class="draw-label">ZONE RECT.</span>
   </button>
 
   <button
@@ -4723,6 +4788,50 @@ body[data-mara-page="access"] #mara-page-access { display: block; }
     </form>
   </section>
 
+
+  <section class="mara-page" id="mara-page-intelligence">
+    <div class="mara-page-heading">
+      <div><span class="mara-kicker">// CELLULE DE RENSEIGNEMENT · MARABUNTA</span><h1>Dossiers / Renseignements</h1>
+        <p>Informations RP, traçabilité des sources et profils de groupes. Accès restreint.</p></div>
+      <div class="mara-actions"><button id="mara-intel-reload" type="button">↻ Actualiser</button><button class="primary" id="mara-intel-new" type="button">+ Nouveau dossier</button></div>
+    </div>
+    <div id="mara-intelligence-status" class="mara-status" role="status"></div>
+    <div id="mara-intel-report-area"><div class="mara-stats"><div><small>DOSSIERS ACTIFS</small><strong id="mara-intel-count">00</strong></div><div><small>PRIORITÉ HAUTE</small><strong id="mara-intel-urgent">00</strong></div><div><small>GROUPES IDENTIFIÉS</small><strong id="mara-intel-groupcount">00</strong></div></div>
+    <div class="mara-card"><div class="mara-intel-filter"><input id="mara-intel-search" type="search" placeholder="Rechercher cible, lieu, source, détail..." aria-label="Rechercher les dossiers"><select id="mara-intel-filter-group" aria-label="Filtrer par groupe"><option value="">Tous les groupes</option></select><select id="mara-intel-filter-priority" aria-label="Filtrer par priorité"><option value="">Toutes priorités</option><option value="haute">Haute</option><option value="normale">Normale</option><option value="basse">Basse</option></select></div>
+      <div class="mara-table-wrap"><table class="mara-table"><thead><tr><th>Identité / Cible</th><th>Groupe</th><th>Lieu</th><th>Priorité</th><th>Fiabilité</th><th>Date</th><th>Actions</th></tr></thead><tbody id="mara-intel-rows"></tbody></table></div></div>
+    <form class="mara-card mara-form" id="mara-intel-form" hidden>
+      <h2 id="mara-intel-form-title">Nouveau dossier</h2>
+      <div class="mara-form-grid">
+        <div><label for="mara-intel-target">Cible / Objet *</label><input id="mara-intel-target" maxlength="180" required placeholder="Nom RP ou objet du signalement"></div>
+        <div><label for="mara-intel-group">Groupe associé</label><select id="mara-intel-group"></select></div>
+        <div><label for="mara-intel-vehicle">Véhicule associé</label><select id="mara-intel-vehicle"><option value="">Aucun</option></select></div>
+        <div><label for="mara-intel-location">Lieu RP</label><input id="mara-intel-location" maxlength="200" placeholder="Quartier ou point de rencontre"></div>
+        <div><label for="mara-intel-source">Source / Origine RP</label><input id="mara-intel-source" maxlength="160" placeholder="Observation, informateur, interception RP..."></div>
+        <div><label for="mara-intel-date">Date des faits</label><input id="mara-intel-date" type="datetime-local"></div>
+        <div><label for="mara-intel-priority">Priorité</label><select id="mara-intel-priority"><option value="normale">Normale</option><option value="haute">Haute</option><option value="basse">Basse</option></select></div>
+        <div><label for="mara-intel-confidence">Fiabilité</label><select id="mara-intel-confidence"><option value="a_verifier">À vérifier</option><option value="probable">Probable</option><option value="confirme">Confirmé RP</option></select></div>
+        <div><label for="mara-intel-status-field">État du dossier</label><select id="mara-intel-status-field"><option value="ouvert">Ouvert</option><option value="suivi">Sous surveillance RP</option><option value="archive">Archivé</option></select></div>
+        <div class="mara-wide"><label for="mara-intel-details">Compte rendu / Informations *</label><textarea id="mara-intel-details" maxlength="10000" required></textarea></div>
+      </div><div class="mara-form-actions"><button type="submit" class="primary">Enregistrer le dossier</button><button type="button" id="mara-intel-cancel">Annuler</button></div>
+    </form>
+    </div><!-- /#mara-intel-report-area -->
+    <div class="mara-card" id="mara-intel-profiles">
+      <div class="mara-page-heading"><div><span class="mara-kicker">// REGISTRE DES ENTITÉS</span><h2>Identité visuelle des groupes</h2><p>Couleurs et logos configurés ici, jamais dans l'éditeur de carte.</p></div><button id="mara-profiles-new" class="primary" type="button">+ Nouveau groupe</button></div>
+      <div id="mara-profiles-list" class="mara-profile-list"></div>
+      <form class="mara-form" id="mara-profile-form" hidden>
+        <h2 id="mara-profile-form-title">Identité du groupe</h2>
+        <div class="mara-form-grid">
+          <div><label for="mara-profile-name">Nom *</label><input id="mara-profile-name" maxlength="120" required></div>
+          <div><label for="mara-profile-kind">Catégorie</label><select id="mara-profile-kind"><option value="illegal">Groupe illégal : un logo automatique</option><option value="entreprise">Entreprise : logo sur chaque polygone</option><option value="gouvernement">Gouvernement : logo sur chaque polygone</option></select></div>
+          <div><label for="mara-profile-color">Couleur sur la carte</label><input id="mara-profile-color" type="color" value="#55ffb2"></div>
+          <div><label for="mara-profile-logo">URL du logo</label><input id="mara-profile-logo" type="text" maxlength="1000" placeholder="images/groupes/logo.png"></div>
+          <div class="mara-wide"><label for="mara-profile-description">Description</label><textarea id="mara-profile-description" maxlength="3000"></textarea></div>
+        </div><div class="mara-form-actions"><button type="submit" class="primary">Enregistrer l'identité</button><button type="button" id="mara-profile-cancel">Annuler</button></div>
+      </form>
+      <p class="mara-note">Le logo d'un groupe illégal est automatiquement centré sur son territoire le plus adapté. Pour une entreprise ou une administration, le même logo apparaît sur chacun de ses polygones. Aucun placement manuel nécessaire.</p>
+    </div>
+  </section>
+
   <section class="mara-page" id="mara-page-vehicles">
     <div class="mara-page-heading">
       <div><h1>Véhicules</h1><p>Registre des véhicules et de leurs groupes.</p></div>
@@ -4758,7 +4867,7 @@ body[data-mara-page="access"] #mara-page-access { display: block; }
     </div>
     <div id="mara-access-status" class="mara-status" role="status"></div>
     <div class="mara-card">
-      <div class="mara-table-wrap"><table class="mara-table"><thead><tr><th>Compte</th><th>Carte</th><th>Groupes</th><th>Véhicules</th><th>Permissions</th><th>Actions</th></tr></thead><tbody id="mara-access-rows"><tr><td colspan="6" class="mara-empty">Chargement...</td></tr></tbody></table></div>
+      <div class="mara-table-wrap"><table class="mara-table"><thead><tr><th>Compte</th><th>Carte</th><th>Groupes</th><th>Véhicules</th><th>Renseignements</th><th>Permissions</th><th>Actions</th></tr></thead><tbody id="mara-access-rows"><tr><td colspan="7" class="mara-empty">Chargement...</td></tr></tbody></table></div>
     </div>
     <form id="mara-access-form" class="mara-card mara-form" hidden>
       <h2 id="mara-access-form-title">Autoriser un compte</h2>
@@ -4768,6 +4877,7 @@ body[data-mara-page="access"] #mara-page-access { display: block; }
         <label><input id="mara-access-map" type="checkbox"> Modifier la carte et les factions</label>
         <label><input id="mara-access-groups" type="checkbox"> Gérer les membres des groupes</label>
         <label><input id="mara-access-vehicles" type="checkbox"> Gérer les véhicules</label>
+        <label><input id="mara-access-intelligence" type="checkbox"> Consulter et modifier les renseignements</label>
         <label><input id="mara-access-admins" type="checkbox"> Gérer les permissions</label>
       </div>
       <div class="mara-form-actions"><button class="primary" type="submit">Enregistrer les droits</button><button type="button" id="mara-access-cancel">Annuler</button></div>
@@ -5167,7 +5277,7 @@ let admin =
 
 /* Permissions récupérées depuis Supabase, jamais calculées dans le navigateur. */
 let maraPermissions = {
-  map: false, groups: false, vehicles: false, access: false, owner: false
+  map: false, groups: false, vehicles: false, intelligence: false, access: false, owner: false
 };
 
 
@@ -5227,10 +5337,12 @@ let mapViewMode =
 let activeEditorKind =
   null;
 
+let maraMapDisplayMode = "territoires";
+
 
 const overlayVisibility = {
   faction: true,
-  quartier: true,
+  quartier: false,
   batiment: true,
   numero: true,
   repere: true
@@ -6411,7 +6523,7 @@ map.pm.setGlobalOptions({
     true,
 
   snapDistance:
-    30,
+    45,
 
   snapVertex:
     true,
@@ -6623,11 +6735,12 @@ async function refreshAuth() {
         map: serverPermissions.map === true,
         groups: serverPermissions.groups === true,
         vehicles: serverPermissions.vehicles === true,
+        intelligence: serverPermissions.intelligence === true,
         access: serverPermissions.access === true,
         owner: serverPermissions.owner === true
       };
       admin = Boolean(maraPermissions.map || maraPermissions.groups ||
-        maraPermissions.vehicles || maraPermissions.access);
+        maraPermissions.vehicles || maraPermissions.intelligence || maraPermissions.access);
     }
   }
 
@@ -6867,6 +6980,7 @@ logoutButton.addEventListener(
 
 function editorKindLabel(kind) {
   return ({
+    territoire: "Territoires",
     factions: "Factions",
     repere: "Repères",
     batiment: "Bâtiments",
@@ -6936,6 +7050,7 @@ function setActiveEditorKind(
   selectEditorLayerKind(
     activeEditorKind
   );
+  maraFillPolygonPicker();
 
   status.textContent =
     `Édition ${editorKindLabel(activeEditorKind)} : seuls les éléments de ce calque peuvent être modifiés.`;
@@ -6999,6 +7114,7 @@ function enableEditMode(
       selectEditorLayerKind(
         activeEditorKind
       );
+      maraFillPolygonPicker();
 
       updateDisplayControls();
     }
@@ -7209,8 +7325,9 @@ function startDrawing(
 ) {
 
   if (
-    !editMode ||
-    paintMode
+    !editMode || paintMode ||
+    !["territoire", "quartier"].includes(targetKind) ||
+    !["Polygon", "Rectangle"].includes(type)
   ) {
     return;
   }
@@ -7271,7 +7388,7 @@ function startDrawing(
     type,
     {
       snappable: true,
-      snapDistance: 30,
+      snapDistance: 45,
       snapVertex: true,
       snapSegment: true,
       snapMiddle: false,
@@ -7337,7 +7454,7 @@ document
       startDrawing(
         "Polygon",
         event.currentTarget,
-        "quartier"
+        "territoire"
       );
     }
   );
@@ -7351,7 +7468,7 @@ document
       startDrawing(
         "Rectangle",
         event.currentTarget,
-        "quartier"
+        "territoire"
       );
     }
   );
@@ -7420,6 +7537,7 @@ function canonicalLayerKind(
       `${layer?.kind || ""} ${layer?.name || ""}`
     );
 
+  if (source.includes("territoire")) return "territoire";
   if (source.includes("quartier")) return "quartier";
   if (source.includes("repere")) return "repere";
   if (source.includes("batiment") || source.includes("building")) return "batiment";
@@ -7745,7 +7863,7 @@ function updateDisplayControls() {
   displayNote.textContent =
     factionLogoPlacementMode
       ? "Placement du logo actif. Clique sur la carte pour enregistrer sa position."
-      : "Ordre : Factions → Repères → Quartiers → Bâtiments.";
+      : "Territoires polygonaux uniquement · Sommets magnétisés · Groupes dans Renseignements.";
 }
 
 
@@ -7846,11 +7964,7 @@ toggleBatimentsInput.addEventListener(
 
 toggleQuartiersInput.addEventListener(
   "change",
-  () => {
-    overlayVisibility.quartier =
-      toggleQuartiersInput.checked;
-    rerenderMapDisplay();
-  }
+  () => maraSetMapView(toggleQuartiersInput.checked ? "quartiers" : "territoires")
 );
 
 
@@ -8053,6 +8167,7 @@ async function loadDatabase() {
   }
 
   const allowedKinds = [
+    "territoire",
     "quartier",
     "repere",
     "batiment"
@@ -8188,72 +8303,24 @@ function clearGroups() {
 ========================================================= */
 
 function renderLayers() {
-
   clearGroups();
-
   for (const layer of mapLayers) {
+    if (!["territoire", "quartier"].includes(layer.kind)) continue;
     const group = L.layerGroup();
-
     layerGroups[layer.id] = group;
-
-    let visible = true;
-
-    if (layer.kind === "quartier") {
-      visible =
-        overlayVisibility.quartier ||
-        (editMode && activeEditorKind === "quartier") ||
-        (editMode && activeEditorKind === "batiment");
-    }
-
-    if (layer.kind === "repere") {
-      visible =
-        overlayVisibility.repere ||
-        (editMode && activeEditorKind === "repere");
-    }
-
-    if (layer.kind === "batiment") {
-      /*
-        Les polygones des bâtiments sont des aides d'édition uniquement.
-        Ils ne sont jamais ajoutés à la carte publique. Le calque public
-        « Bâtiments » continue d'afficher seulement les numéros.
-      */
-      visible =
-        editMode &&
-        activeEditorKind === "batiment";
-    }
-
-    if (visible) {
-      group.addTo(map);
-    }
+    const visible = layer.kind === "territoire"
+      ? overlayVisibility.faction
+      : (maraMapDisplayMode === "quartiers" ||
+         (editMode && activeEditorKind === "quartier"));
+    if (visible) group.addTo(map);
   }
-
-  /*
-    Les numéros et les factions ont leur propre groupe.
-    Ils ne dépendent donc plus du groupe Bâtiments ou Quartiers.
-  */
-  buildingNumberGroup =
-    L.layerGroup();
-
-  if (
-    overlayVisibility.numero ||
-    (editMode && activeEditorKind === "batiment")
-  ) {
-    buildingNumberGroup.addTo(map);
-  }
-
-  factionDisplayGroup =
-    L.layerGroup();
-
-  if (
-    mapViewMode === "factions" &&
-    overlayVisibility.faction
-  ) {
+  factionDisplayGroup = L.layerGroup();
+  if (overlayVisibility.faction && maraMapDisplayMode === "territoires") {
     factionDisplayGroup.addTo(map);
   }
-
+  buildingNumberGroup = L.layerGroup(); // conservé pour les anciens événements JS.
   updateDisplayControls();
 }
-
 
 
 /* =========================================================
@@ -8311,7 +8378,7 @@ function buildPopup(
 
 
   const popupFaction =
-    parentLayer?.kind === "batiment"
+    ["batiment", "territoire"].includes(parentLayer?.kind)
       ? findFaction(
           shape.faction_id
         )
@@ -8747,67 +8814,37 @@ function splitTerritoryPieces(feature) {
 }
 
 function renderFactionTerritories() {
-
-  if (
-    mapViewMode !== "factions" ||
-    !overlayVisibility.faction ||
-    paintMode
-  ) {
-    return;
-  }
-
-  /*
-    Les factions ne sont plus calculées à partir des quartiers.
-    Leur représentation territoriale vient maintenant des bâtiments
-    colorés dans renderShapes(). Ici on conserve seulement les logos
-    placés manuellement.
-  */
-  const group =
-    factionDisplayGroup;
-
-  if (!group) return;
-
+  const group = factionDisplayGroup;
+  const territoryLayer = getLayerByKind("territoire");
+  if (!group || !territoryLayer || maraMapDisplayMode !== "territoires" ||
+      !overlayVisibility.faction) return;
   for (const faction of mapFactions) {
-    if (
-      !faction.logo_url ||
-      !validFactionLogoPosition(faction.logo_position) ||
-      (
-        factionLogoPlacementMode &&
-        selectedFaction?.id === faction.id
-      )
-    ) {
-      continue;
+    const territories = mapShapes.filter(shape =>
+      shape.layer_id === territoryLayer.id && shape.faction_id === faction.id &&
+      isPolygonGeometry(shape.geometry));
+    if (!territories.length) continue;
+    const multipleLogos = ["entreprise", "gouvernement"].includes(faction.faction_kind);
+    // Pour les groupes illégaux : le polygone offrant le plus grand espace intérieur.
+    const targets = multipleLogos ? territories : [territories.reduce((best, shape) => {
+      const radius = quartierPole(shape.geometry)?.radius ?? -1;
+      return !best || radius > (quartierPole(best.geometry)?.radius ?? -1) ? shape : best;
+    }, null)];
+    for (const shape of targets) {
+      const pole = shape && quartierPole(shape.geometry);
+      if (!pole) continue;
+      // Icône de secours automatique si le groupe n'a pas de logo personnalisé.
+      const mark = L.marker([pole.y,pole.x], {
+        pane:"factionLabelPane", interactive:false, keyboard:false,
+        icon:L.divIcon({className:"", iconSize:[44,44], iconAnchor:[22,22],
+          html: faction.logo_url
+            ? factionLogoHtml(faction)
+            : `<div class="mara-auto-logo" style="--group-color:${escapeHtml(faction.color||"#55ffb2")}">${escapeHtml((faction.name||"?").slice(0,2).toUpperCase())}</div>`
+        })
+      });
+      mark.addTo(group);
     }
-
-    const logoLatLng =
-      factionLogoLatLng(faction);
-
-    if (!logoLatLng) continue;
-
-    const logoMarker =
-      L.marker(
-        logoLatLng,
-        {
-          pane: "factionLabelPane",
-          interactive: false,
-          draggable: false,
-          keyboard: false,
-          icon: L.divIcon({
-            className: "",
-            html: factionLogoHtml(
-              faction,
-              false
-            ),
-            iconSize: [38, 38],
-            iconAnchor: [19, 19]
-          })
-        }
-      );
-
-    logoMarker.addTo(group);
   }
 }
-
 
 
 function quartierLabelHtml(
@@ -9502,290 +9539,52 @@ function addBuildingNumberLabel(
    RENDER SHAPES
 ========================================================= */
 
+const maraShapeLayers = new Map();
+
 function renderShapes() {
-
-  renderFactionTerritories();
-
-  for (
-    const shape
-    of mapShapes
-  ) {
-
-    /*
-      Une forme peut appartenir à une ancienne ligne map_layers qui n'est
-      plus la couche canonique actuellement affichée. C'est fréquent pour
-      les bâtiments après plusieurs évolutions de la carte.
-
-      En mode public, map_layers est en plus filtré par visible = true.
-      Le bâtiment publié existe donc bien dans map_shapes, mais son layer_id
-      peut ne plus être présent dans mapLayers. Au lieu de jeter la forme,
-      on la rattache à la couche Bâtiments d'affichage grâce au quartier_id
-      enregistré dans son style.
-    */
-    let parentLayer =
-      mapLayers.find(
-        layer =>
-          layer.id === shape.layer_id
-      ) || null;
-
-    let kind =
-      parentLayer?.kind || null;
-
-    const orphanBuilding =
-      !parentLayer &&
-      !!shape.geometry &&
-      isPolygonGeometry(shape.geometry) &&
-      !!shape.style?.quartier_id;
-
-    if (orphanBuilding) {
-      parentLayer =
-        getLayerByKind("batiment");
-
-      kind =
-        "batiment";
-    }
-
-    if (
-      !parentLayer ||
-      !shape.geometry
-    ) {
-      continue;
-    }
-
-    const quartier =
-      kind === "quartier";
-
-    const batiment =
-      kind === "batiment";
-
-    /* Les factions sont liées uniquement aux bâtiments. */
-    const faction =
-      batiment
-        ? findFaction(shape.faction_id)
-        : null;
-
-    /*
-      Le groupe d'affichage suit la couche résolue ci-dessus, pas forcément
-      le layer_id historique de la forme. Ainsi un bâtiment reste visible
-      publiquement même si son ancienne couche a été masquée ou remplacée.
-    */
-    const group =
-      layerGroups[parentLayer.id];
-
+  maraShapeLayers.clear();
+  // Aucun ancien repère ni bâtiment n'est rendu ni effacé de la base.
+  for (const shape of mapShapes) {
+    const parentLayer = mapLayers.find(layer => layer.id === shape.layer_id);
+    const kind = parentLayer?.kind;
+    if (!["territoire", "quartier"].includes(kind) ||
+        !isPolygonGeometry(shape.geometry)) continue;
+    const group = layerGroups[parentLayer.id];
     if (!group) continue;
-
-    const polygon =
-      isPolygonGeometry(shape.geometry);
-
-    let color =
-      shape.style?.color ||
-      parentLayer.color ||
-      "#86ad96";
-
-    let fillColor =
-      color;
-
-    let fillOpacity =
-      shape.style?.opacity ??
-      parentLayer.opacity ??
-      .30;
-
-    let weight =
-      polygon ? 4 : 3;
-
-    let opacity = 1;
-
-    if (quartier) {
-      /*
-        Quartiers est un simple calque géographique.
-        Il ne prend plus jamais la couleur d'une faction.
-      */
-      color = "#ffffff";
-      fillColor = "#ffffff";
-      fillOpacity = 0;
-
-      /*
-        Seul le calque Quartiers s'éclaire quand SON crayon est actif.
-        Pendant l'édition d'un autre calque, les quartiers gardent leur
-        apparence normale et ne donnent plus l'impression d'être éditables.
-      */
-      const quartierEditActive =
-        editMode &&
-        activeEditorKind === "quartier";
-
-      weight = quartierEditActive ? 3 : 2;
-      opacity = quartierEditActive ? .88 : .34;
-    }
-
-    if (
-      batiment &&
-      mapViewMode === "factions"
-    ) {
-      /*
-        Les bâtiments servent toujours de support aux factions, mais leurs
-        contours sont un outil d'édition uniquement. En public, on garde
-        éventuellement la couleur de faction sans tracer le contour du
-        bâtiment.
-      */
-      const factionColor =
-        faction?.color ||
-        "#7b8580";
-
-      color = factionColor;
-      fillColor = factionColor;
-
-      if (
-        editMode &&
-        activeEditorKind === "batiment"
-      ) {
-        /* Édition Bâtiments : contour seul, aucun remplissage. */
-        fillOpacity = 0;
-        weight = 3;
-        opacity = 1;
-      }
-      else {
-        /* Public / autres éditeurs : le polygone du bâtiment est invisible. */
-        fillOpacity = 0;
-        weight = 0;
-        opacity = 0;
-      }
-    }
-
-    if (
-      batiment &&
-      mapViewMode === "batiments"
-    ) {
-      /*
-        Cette vue n'est utilisée que par l'éditeur. Les bâtiments y sont
-        volontairement affichés comme de simples contours.
-      */
-      color =
-        shape.style?.color ||
-        parentLayer.color ||
-        "#86ad96";
-
-      fillColor = color;
-      fillOpacity = 0;
-      weight = 3;
-      opacity = 1;
-    }
-
-    const baseStyle = {
+    const quartier = kind === "quartier";
+    const faction = findFaction(shape.faction_id);
+    const isQuartierView = maraMapDisplayMode === "quartiers";
+    const color = quartier ? "#9df9d3" : (faction?.color || "#55ffb2");
+    const active = editMode && activeEditorKind === kind;
+    const style = {
       color,
-      fillColor,
-      fillOpacity: polygon ? fillOpacity : 0,
-      weight,
-      opacity,
-      lineCap: "round",
-      lineJoin: "round"
+      fillColor: color,
+      fillOpacity: quartier ? (isQuartierView ? .105 : 0) : (isQuartierView ? .075 : .27),
+      weight: quartier ? (isQuartierView ? 3.4 : 2) : (active ? 4 : (isQuartierView ? 1.3 : 2.6)),
+      opacity: quartier ? (isQuartierView ? 1 : .35) : (isQuartierView ? .4 : 1),
+      lineCap: "round", lineJoin: "round"
     };
-
-    const geo =
-      L.geoJSON(
-        {
-          type: "Feature",
-          geometry: shape.geometry
-        },
-        {
-          pane:
-            quartier
-              ? "quartierPane"
-              : kind === "batiment"
-                ? (
-                    mapViewMode === "factions"
-                      ? "territoryPane"
-                      : "buildingPane"
-                  )
-                : kind === "repere"
-                  ? "reperePane"
-                  : "otherShapePane",
-
-          style:
-            baseStyle,
-
-          pointToLayer:
-            (feature, latlng) =>
-              pointToMapLayer(
-                feature,
-                latlng,
-                shape,
-                kind
-              )
-        }
-      );
-
-    geo.eachLayer(
-      leafletLayer => {
-
-        configureShapeLayer(
-          leafletLayer,
-          shape,
-          parentLayer
-        );
-
-        leafletLayer.__gtaBaseStyle =
-          baseStyle;
-
-        if (
-          quartier &&
-          typeof leafletLayer.setStyle === "function"
-        ) {
-
-          leafletLayer.on(
-            "mouseover",
-            () => {
-              if (!canEditShapeKind("quartier")) return;
-
-              leafletLayer.setStyle({
-                weight: 4,
-                fillOpacity: .045
-              });
-            }
-          );
-
-          leafletLayer.on(
-            "mouseout",
-            () => {
-              if (!canEditShapeKind("quartier")) return;
-              leafletLayer.setStyle(baseStyle);
-              scheduleInnerOutline(leafletLayer);
-            }
-          );
-        }
-
-        leafletLayer.addTo(group);
-      }
-    );
-
-    if (
-      quartier &&
-      overlayVisibility.quartier
-    ) {
-      addQuartierLabel(
-        shape,
-        group
-      );
-    }
-
-    if (
-      kind === "batiment" &&
-      polygon &&
-      (
-        overlayVisibility.numero ||
-        (editMode && activeEditorKind === "batiment")
-      )
-    ) {
-      addBuildingNumberLabel(
-        shape,
-        group
-      );
-    }
+    const geo = L.geoJSON({type:"Feature", geometry: shape.geometry}, {
+      pane: quartier ? "quartierPane" : "territoryPane", style
+    });
+    geo.eachLayer(layer => {
+      layer.__maraShapeId = shape.id;
+      maraShapeLayers.set(shape.id,layer);
+      configureShapeLayer(layer, shape, parentLayer);
+      layer.__gtaBaseStyle = style;
+      layer.on("mouseover", () => {
+        if (editMode && activeEditorKind === kind) layer.setStyle({weight:5, fillOpacity:.34});
+      });
+      layer.on("mouseout", () => {
+        if (editMode && activeEditorKind === kind) layer.setStyle(style);
+      });
+      layer.addTo(group);
+    });
+    if (quartier && isQuartierView) addQuartierLabel(shape, group);
   }
-
-  setTimeout(
-    syncAllInnerOutlines,
-    50
-  );
+  renderFactionTerritories();
+  maraFillPolygonPicker();
+  setTimeout(syncAllInnerOutlines, 45);
 }
 
 
@@ -9956,6 +9755,7 @@ map.on(
 
     selectedLeafletLayer =
       event.layer;
+    maraById("mara-shape-picker").value = "";
 
 
     temporaryLayer =
@@ -9990,8 +9790,8 @@ map.on(
           : "";
 
 
-    shapeFactionInput.value =
-      "";
+    populateBuildingFactionSelect();
+    shapeFactionInput.value = "";
 
 
     shapePublishedInput.checked =
@@ -10145,6 +9945,7 @@ function selectExistingShape(
 
   selectedShapeRecord =
     shape;
+  maraById("mara-shape-picker").value = shape.id;
 
 
   pendingBuildingQuartier =
@@ -10193,9 +9994,8 @@ function selectExistingShape(
     "";
 
 
-  shapeFactionInput.value =
-    shape.faction_id ||
-    "";
+  populateBuildingFactionSelect();
+  shapeFactionInput.value = shape.faction_id || "";
 
 
   updateMarkerFieldsVisibility();
@@ -10289,7 +10089,7 @@ function updateBuildingFactionField() {
 
   const building =
     selectedEditorKind() ===
-    "batiment";
+    "territoire";
 
   buildingFactionField.style.display =
     building
@@ -10425,7 +10225,9 @@ function applyShapePreview() {
       : null;
 
   const previewColor =
-    kind === "batiment" &&
+    kind === "territoire"
+      ? (findFaction(shapeFactionInput.value)?.color || "#65fcb8")
+      : kind === "batiment" &&
     mapViewMode === "batiments" &&
     buildingFaction
       ? (buildingFaction.color || shapeColorInput.value)
@@ -10447,7 +10249,7 @@ function applyShapePreview() {
         ? (
             quartier || kind === "batiment"
               ? 0
-              : Number(shapeOpacityInput.value)
+              : (kind === "territoire" ? .22 : Number(shapeOpacityInput.value))
           )
         : 0,
 
@@ -10609,6 +10411,15 @@ saveShapeButton.addEventListener(
     }
 
 
+    if (editorKind === "territoire" && !shapeFactionInput.value) {
+      status.textContent = "Choisis un groupe pour attribuer ce territoire.";
+      return;
+    }
+
+    const alignedGeometry = ["territoire", "quartier"].includes(editorKind)
+      ? maraSnapGeometry(geometry, selectedShapeRecord?.id)
+      : geometry;
+
     const payload = {
 
       layer_id:
@@ -10626,24 +10437,22 @@ saveShapeButton.addEventListener(
           .trim(),
 
       faction_id:
-        editorKind === "batiment"
+        (editorKind === "batiment" || editorKind === "territoire")
           ? (shapeFactionInput.value || null)
           : null,
 
       geometry:
-        geometry,
+        alignedGeometry,
 
       style: {
 
         ...(selectedShapeRecord?.style || {}),
 
         color:
-          shapeColorInput.value,
+          editorKind === "territoire" ? null : shapeColorInput.value,
 
         opacity:
-          Number(
-            shapeOpacityInput.value
-          ),
+          editorKind === "territoire" ? null : Number(shapeOpacityInput.value),
 
         weight:
           area
@@ -10801,7 +10610,7 @@ editShapeButton.addEventListener(
         true,
 
       snapDistance:
-        30,
+        45,
 
       snapVertex:
         true,
@@ -10919,6 +10728,7 @@ function cancelSelection() {
 
   selectedShapeRecord =
     null;
+  maraById("mara-shape-picker").value = "";
 
 
   pendingBuildingQuartier =
@@ -10977,16 +10787,21 @@ deleteShapeButton.addEventListener(
   "click",
   async () => {
 
-    if (
-      !selectedShapeRecord
-    ) {
+    const targetId = selectedShapeRecord?.id;
+    const targetName = selectedShapeRecord?.name || "Sans nom";
+    const targetGroup = selectedShapeRecord?.faction_id || null;
+    const currentRecord = mapShapes.find(shape => shape.id === targetId);
+    if (!targetId || !currentRecord ||
+        currentRecord.layer_id !== selectedShapeRecord.layer_id ||
+        currentRecord.faction_id !== targetGroup ||
+        selectedLeafletLayer?.__maraShapeId !== targetId) {
+      status.textContent = "Sélection périmée : sélectionne de nouveau le polygone exact.";
       return;
     }
 
-
     if (
       !confirm(
-        "Supprimer définitivement cet élément ?"
+        `Supprimer uniquement le polygone « ${targetName} » ? (ID ${targetId})`
       )
     ) {
       return;
@@ -11703,6 +11518,7 @@ async function moveFactionLogoTo(latlng) {
 ========================================================= */
 
 function canDirectPlaceFactionLogo() {
+  return false; /* Logos des territoires placés automatiquement. */
   return (
     editMode &&
     !!selectedFaction &&
@@ -12440,7 +12256,7 @@ document.addEventListener("keydown", event => {
    Données privées et contrôle RLS dans Supabase.
 ========================================================= */
 const maraById = id => document.getElementById(id);
-const maraPermitted = page => page === 'map' || Boolean(maraPermissions[page]);
+const maraPermitted = page => page === 'map' || (page === 'intelligence' && maraPermissions.map) || Boolean(maraPermissions[page]);
 const maraGroupName = id => (maraStaffGroups.find(group => group.id === id)?.name || 'Groupe inconnu');
 const maraInput = id => maraById(id).value.trim();
 let maraStaffGroups = [];
@@ -12456,9 +12272,9 @@ function maraSetStatus(page, message) {
 }
 
 function maraSyncAccessNav() {
-  const navPermissions = { 'nav-groups': 'groups', 'nav-vehicles': 'vehicles', 'nav-access': 'access' };
+  const navPermissions = { 'nav-intelligence': 'intelligence', 'nav-groups': 'groups', 'nav-vehicles': 'vehicles', 'nav-access': 'access' };
   Object.entries(navPermissions).forEach(([id, key]) => {
-    maraById(id).style.display = maraPermissions[key] ? 'flex' : 'none';
+    maraById(id).style.display = (maraPermissions[key] || (key === 'intelligence' && maraPermissions.map)) ? 'flex' : 'none';
   });
   if (!maraPermitted(document.body.dataset.maraPage)) {
     maraGo('map');
@@ -12469,7 +12285,7 @@ async function maraGo(page) {
   if (!maraPermitted(page)) return;
   if (page !== 'map' && editMode) disableEditMode();
   document.body.dataset.maraPage = page;
-  ['map', 'groups', 'vehicles', 'access'].forEach(key => {
+  ['map', 'intelligence', 'groups', 'vehicles', 'access'].forEach(key => {
     maraById(`nav-${key}`).classList.toggle('active', key === page);
   });
   maraById('nav-layers').classList.remove('active');
@@ -12689,7 +12505,7 @@ async function maraDeleteVehicle(vehicle) {
 
 function maraRenderAdmins() {
   const tbody = maraById('mara-access-rows');
-  if (!maraAdmins.length) return maraSetEmpty(tbody, 6, 'Aucun administrateur configuré.');
+  if (!maraAdmins.length) return maraSetEmpty(tbody, 7, 'Aucun administrateur configuré.');
   tbody.replaceChildren();
   maraAdmins.forEach(account => {
     const tr = document.createElement('tr');
@@ -12704,6 +12520,7 @@ function maraRenderAdmins() {
       maraTextCell(account.is_owner || account.can_edit_map ? 'Oui' : 'Non'),
       maraTextCell(account.is_owner || account.can_manage_groups ? 'Oui' : 'Non'),
       maraTextCell(account.is_owner || account.can_manage_vehicles ? 'Oui' : 'Non'),
+      maraTextCell(account.is_owner || account.can_manage_intelligence ? 'Oui' : 'Non'),
       maraTextCell(account.is_owner || account.can_manage_permissions ? 'Oui' : 'Non')
     );
     const actions = document.createElement('td');
@@ -12736,6 +12553,7 @@ function maraEditAdmin(account = null) {
   maraById('mara-access-map').checked = Boolean(account?.can_edit_map);
   maraById('mara-access-groups').checked = Boolean(account?.can_manage_groups);
   maraById('mara-access-vehicles').checked = Boolean(account?.can_manage_vehicles);
+  maraById('mara-access-intelligence').checked = Boolean(account?.can_manage_intelligence);
   maraById('mara-access-admins').checked = Boolean(account?.can_manage_permissions);
   maraById('mara-access-form').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
@@ -12748,7 +12566,8 @@ async function maraSaveAdmin(event) {
     p_map: maraById('mara-access-map').checked,
     p_groups: maraById('mara-access-groups').checked,
     p_vehicles: maraById('mara-access-vehicles').checked,
-    p_access: maraById('mara-access-admins').checked
+    p_access: maraById('mara-access-admins').checked,
+    p_intelligence: maraById('mara-access-intelligence').checked
   });
   if (error) return maraSetStatus('access', `Erreur : ${error.message}`);
   maraById('mara-access-form').hidden = true;
@@ -12772,6 +12591,7 @@ async function maraLoadSection(page) {
     if (page === 'groups') await maraLoadMembers();
     if (page === 'vehicles') await maraLoadVehicles();
     if (page === 'access') await maraLoadAdmins();
+    if (page === 'intelligence') await maraLoadIntelligence();
   } catch (error) {
     console.error(error);
     maraSetStatus(section, `Impossible de charger : ${error.message || String(error)}`);
@@ -12779,10 +12599,11 @@ async function maraLoadSection(page) {
 }
 
 maraById('nav-map').addEventListener('click', () => maraGo('map'));
+maraById('nav-intelligence').addEventListener('click', () => maraGo('intelligence'));
 maraById('nav-groups').addEventListener('click', () => maraGo('groups'));
 maraById('nav-vehicles').addEventListener('click', () => maraGo('vehicles'));
 maraById('nav-access').addEventListener('click', () => maraGo('access'));
-['nav-groups', 'nav-vehicles', 'nav-access'].forEach(id => {
+['nav-intelligence', 'nav-groups', 'nav-vehicles', 'nav-access'].forEach(id => {
   maraById(id).addEventListener('keydown', event => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
@@ -12809,6 +12630,254 @@ maraById('mara-access-form').addEventListener('submit', maraSaveAdmin);
   maraById(button).addEventListener('click', () => maraLoadSection(page));
 });
 
+
+
+/* =========================================================
+   MARA MAP / TERRITOIRES : MODE QUARTIER ET SNAP
+========================================================= */
+function maraSetMapView(mode) {
+  maraMapDisplayMode = mode === "quartiers" ? "quartiers" : "territoires";
+  overlayVisibility.quartier = maraMapDisplayMode === "quartiers";
+  overlayVisibility.faction = true;
+  maraById("mara-view-territoires").classList.toggle("active", mode !== "quartiers");
+  maraById("mara-view-quartiers").classList.toggle("active", mode === "quartiers");
+  rerenderMapDisplay();
+}
+maraById("mara-view-territoires").addEventListener("click", () => maraSetMapView("territoires"));
+maraById("mara-view-quartiers").addEventListener("click", () => maraSetMapView("quartiers"));
+
+// Snap sur vrais sommets et segments enregistrés. Geoman fait le snap pendant
+// le dessin ; cette passe enregistre les coordonnées exactes au moment du save.
+function maraSnapGeometry(geometry, ownId) {
+  if (!isPolygonGeometry(geometry)) return geometry;
+  const candidates = [];
+  const territories = mapShapes.filter(s => s.id !== ownId &&
+    isPolygonGeometry(s.geometry) &&
+    ["territoire", "quartier"].includes(
+      mapLayers.find(l => l.id === s.layer_id)?.kind));
+  for (const shape of territories) {
+    const parts = shape.geometry.type === "Polygon" ?
+      [shape.geometry.coordinates] : shape.geometry.coordinates;
+    for (const rings of parts) for (const ring of rings) {
+      for (let k=0;k<ring.length-1;k++) candidates.push([ring[k],ring[k+1]]);
+    }
+  }
+  const px = point => map.latLngToContainerPoint([point[1],point[0]]);
+  function snapOne(point) {
+    const source = px(point); let best = null; let distance = 12;
+    for (const [a,b] of candidates) {
+      for (const vertex of [a,b]) {
+        const d = source.distanceTo(px(vertex));
+        if (d < distance) {distance=d;best=vertex;}
+      }
+    }
+    if (best) return [best[0], best[1]];
+    for (const [a,b] of candidates) {
+      const A=px(a), B=px(b), dx=B.x-A.x, dy=B.y-A.y;
+      const t=Math.max(0,Math.min(1, ((source.x-A.x)*dx + (source.y-A.y)*dy)/(dx*dx+dy*dy||1)));
+      const X=A.x+t*dx, Y=A.y+t*dy;
+      const d=Math.hypot(source.x-X,source.y-Y);
+      if(d<distance){distance=d;best=[a[0]+t*(b[0]-a[0]),a[1]+t*(b[1]-a[1])];}
+    }
+    return best || point;
+  }
+  const snapRings = rings => rings.map(ring => {
+    const pts = ring.slice(0, -1).map(snapOne);
+    // Reboucler obligatoirement sur le premier sommet exact.
+    return [...pts, [...pts[0]]];
+  });
+  return {...geometry, coordinates: geometry.type === "Polygon"
+    ? snapRings(geometry.coordinates)
+    : geometry.coordinates.map(snapRings)};
+}
+
+
+/* =========================================================
+   RENSEIGNEMENTS RP : accès serveur, profils et dossiers
+========================================================= */
+let maraIntelRecords = [];
+let maraProfileRecords = [];
+let maraIntelEditId = null;
+let maraProfileEditId = null;
+function maraIntelGroupName(id) {return maraProfileRecords.find(g => g.id === id)?.name || "—";}
+function maraSelectProfiles(id, all = false) {
+  const el = maraById(id), old = el.value;
+  el.replaceChildren();
+  const empty=document.createElement("option");empty.value="";empty.textContent=all?"Tous les groupes":"Aucun groupe";el.appendChild(empty);
+  maraProfileRecords.forEach(g=>{const item=document.createElement("option");item.value=g.id;item.textContent=g.name;el.appendChild(item);});
+  if (maraProfileRecords.some(g=>g.id===old))el.value=old;
+}
+function maraRenderProfiles() {
+  const root=maraById("mara-profiles-list");root.replaceChildren();
+  maraById("mara-intel-groupcount").textContent=String(maraProfileRecords.length).padStart(2,"0");
+  maraById("mara-profiles-new").hidden=!maraPermissions.map;
+  for(const g of maraProfileRecords){
+    const item=document.createElement("div");item.className="mara-profile-item";
+    const info=document.createElement("div");info.className="mara-profile-info";
+    const dot=document.createElement("span");dot.className="mara-profile-dot";dot.style.backgroundColor=g.color||"#55ffb2";
+    const txt=document.createElement("div");const name=document.createElement("strong");name.textContent=g.name;
+    const kind=document.createElement("small");kind.textContent=({illegal:"Illégal · 1 logo",entreprise:"Entreprise · logo par zone",gouvernement:"Gouvernement · logo par zone"})[g.faction_kind]||"Illégal";
+    txt.append(name,kind);info.append(dot,txt);item.appendChild(info);
+    if(maraPermissions.map)item.appendChild(maraActionButton("Configurer",()=>maraEditProfile(g)));
+    root.appendChild(item);
+  }
+  ["mara-intel-group","mara-intel-filter-group","mara-territory-group"].forEach(id=>{
+    if(maraById(id))maraSelectProfiles(id,id==="mara-intel-filter-group");
+  });
+}
+async function maraLoadProfiles() {
+  const {data,error}=await db.rpc("mara_intelligence_factions");
+  if(error)throw error;
+  maraProfileRecords=data||[];
+  maraRenderProfiles();
+}
+function maraEditProfile(profile=null) {
+  if(!maraPermissions.map)return;
+  maraProfileEditId=profile?.id||null;
+  maraById("mara-profile-form").hidden=false;
+  maraById("mara-profile-form-title").textContent=profile?"Configurer "+profile.name:"Créer un groupe";
+  maraById("mara-profile-name").value=profile?.name||"";
+  maraById("mara-profile-kind").value=profile?.faction_kind||"illegal";
+  maraById("mara-profile-color").value=profile?.color||"#55ffb2";
+  maraById("mara-profile-logo").value=profile?.logo_url||"";
+  maraById("mara-profile-description").value=profile?.description||"";
+  maraById("mara-profile-form").scrollIntoView({block:"nearest",behavior:"smooth"});
+}
+async function maraSaveProfile(event) {
+  event.preventDefault();if(!maraPermissions.map)return;
+  const {data,error}=await db.rpc("mara_save_faction_profile",{
+    p_id:maraProfileEditId, p_name:maraInput("mara-profile-name"),
+    p_kind:maraInput("mara-profile-kind"),p_color:maraById("mara-profile-color").value,
+    p_logo_url:maraInput("mara-profile-logo")||null,p_description:maraInput("mara-profile-description")
+  });
+  if(error){maraSetStatus("intelligence","Profil non enregistré : "+error.message);return;}
+  maraProfileEditId=null;maraById("mara-profile-form").hidden=true;
+  await maraLoadProfiles();await loadDatabase();
+  maraSetStatus("intelligence","Identité du groupe enregistrée.");
+}
+function maraFillIntelVehicles(selected="") {
+  const el=maraById("mara-intel-vehicle");el.replaceChildren();
+  const empty=document.createElement("option");empty.value="";empty.textContent="Aucun véhicule";el.appendChild(empty);
+  for (const v of maraIntelVehicles) {
+    const o=document.createElement("option");o.value=v.id;o.textContent=v.model+(v.license_plate?" / "+v.license_plate:"");el.appendChild(o);
+  }
+  el.value=selected||"";
+}
+let maraIntelVehicles=[];
+async function maraLoadIntelVehicles() {
+  // Le droit Renseignements n'accorde PAS automatiquement le droit Véhicules.
+  maraIntelVehicles=[];
+  if(maraPermissions.vehicles){
+    const {data,error}=await db.from("mara_vehicles").select("id,model,license_plate").order("model");
+    if(error)throw error;maraIntelVehicles=data||[];
+  }
+  maraFillIntelVehicles();
+  maraById("mara-intel-vehicle").disabled=!maraPermissions.vehicles;
+}
+function maraRenderIntelligence() {
+  const text=maraInput("mara-intel-search").toLowerCase();
+  const g=maraById("mara-intel-filter-group").value;
+  const priority=maraById("mara-intel-filter-priority").value;
+  const records=maraIntelRecords.filter(r=>(!g||r.group_id===g)&&(!priority||r.priority===priority)&&
+    (!text||[r.target_name,r.location,r.source,r.details,maraIntelGroupName(r.group_id)].some(x=>String(x||"").toLowerCase().includes(text))));
+  const body=maraById("mara-intel-rows");body.replaceChildren();
+  maraById("mara-intel-count").textContent=String(maraIntelRecords.filter(r=>r.status!=="archive").length).padStart(2,"0");
+  maraById("mara-intel-urgent").textContent=String(maraIntelRecords.filter(r=>r.priority==="haute"&&r.status!=="archive").length).padStart(2,"0");
+  if(!records.length)return maraSetEmpty(body,7,"Aucun dossier correspondant.");
+  for(const r of records){
+    const tr=document.createElement("tr");
+    const target=maraTextCell(r.target_name);const state=document.createElement("small");state.textContent=" / "+r.status;state.className="mara-muted";target.appendChild(state);
+    const p=maraTextCell(r.priority);p.classList.add("mara-priority-"+r.priority);
+    tr.append(target,maraTextCell(maraIntelGroupName(r.group_id)),maraTextCell(r.location),p,maraTextCell(r.confidence),
+      maraTextCell(r.observed_at?new Date(r.observed_at).toLocaleDateString("fr-FR"):"—"));
+    const actions=document.createElement("td");
+    actions.append(maraActionButton("Ouvrir",()=>maraEditIntel(r)),maraActionButton("Effacer",()=>maraDeleteIntel(r),true));tr.appendChild(actions);body.appendChild(tr);
+  }
+}
+async function maraLoadIntelligence() {
+  await maraLoadProfiles();
+  // Gestionnaires de carte sans droit aux dossiers : afficher seulement les profils.
+  const mayReadReports = Boolean(maraPermissions.intelligence);
+  maraById("mara-intel-report-area").hidden = !mayReadReports;
+  maraById("mara-intel-new").hidden = !mayReadReports;
+  if (!mayReadReports) {
+    maraSetStatus("intelligence", "Profils accessibles · Accès aux dossiers non autorisé pour ce compte.");
+    return;
+  }
+  await maraLoadIntelVehicles();
+  const {data,error}=await db.from("mara_intelligence").select("*").order("created_at",{ascending:false});
+  if(error)throw error;
+  maraIntelRecords=data||[];
+  maraRenderIntelligence();
+  maraSetStatus("intelligence",maraIntelRecords.length+" dossiers RP enregistrés. Accès sécurisé par Supabase RLS.");
+}
+function maraEditIntel(record=null) {
+  maraIntelEditId=record?.id||null;
+  maraById("mara-intel-form").hidden=false;
+  maraById("mara-intel-form-title").textContent=record?"Dossier / "+record.target_name:"Nouveau dossier";
+  const value=(id,v)=>{maraById(id).value=v||"";};
+  value("mara-intel-target",record?.target_name);value("mara-intel-group",record?.group_id);
+  maraFillIntelVehicles(record?.vehicle_id);value("mara-intel-location",record?.location);
+  value("mara-intel-source",record?.source);value("mara-intel-date",record?.observed_at?record.observed_at.slice(0,16):new Date().toISOString().slice(0,16));
+  value("mara-intel-priority",record?.priority||"normale");value("mara-intel-confidence",record?.confidence||"a_verifier");
+  value("mara-intel-status-field",record?.status||"ouvert");value("mara-intel-details",record?.details);
+  maraById("mara-intel-form").scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+async function maraSaveIntel(event) {
+  event.preventDefault();if(!maraPermissions.intelligence)return;
+  const payload={target_name:maraInput("mara-intel-target"),group_id:maraInput("mara-intel-group")||null,
+    vehicle_id:maraPermissions.vehicles?(maraInput("mara-intel-vehicle")||null):null,
+    location:maraInput("mara-intel-location"),source:maraInput("mara-intel-source"),
+    observed_at:maraById("mara-intel-date").value?new Date(maraById("mara-intel-date").value).toISOString():null,
+    priority:maraInput("mara-intel-priority"),confidence:maraInput("mara-intel-confidence"),
+    status:maraInput("mara-intel-status-field"),details:maraInput("mara-intel-details")};
+  if(!payload.target_name||!payload.details)return maraSetStatus("intelligence","Cible et compte rendu obligatoires.");
+  // Si pas de droit véhicule, conserver la liaison existante lors d'une modification.
+  if (!maraPermissions.vehicles && maraIntelEditId) delete payload.vehicle_id;
+  const q=db.from("mara_intelligence");
+  const {error}=maraIntelEditId?await q.update(payload).eq("id",maraIntelEditId):await q.insert(payload);
+  if(error)return maraSetStatus("intelligence","Erreur : "+error.message);
+  maraById("mara-intel-form").hidden=true;maraIntelEditId=null;
+  await maraLoadIntelligence();maraSetStatus("intelligence","Dossier enregistré.");
+}
+async function maraDeleteIntel(r) {
+  if(!confirm(`Effacer uniquement le dossier « ${r.target_name} » ?`))return;
+  const {error}=await db.from("mara_intelligence").delete().eq("id",r.id);
+  if(error)return maraSetStatus("intelligence","Erreur : "+error.message);
+  await maraLoadIntelligence();
+}
+maraById("mara-intel-new").addEventListener("click",()=>maraEditIntel());
+maraById("mara-intel-reload").addEventListener("click",()=>maraLoadSection("intelligence"));
+maraById("mara-intel-search").addEventListener("input",maraRenderIntelligence);
+maraById("mara-intel-filter-group").addEventListener("change",maraRenderIntelligence);
+maraById("mara-intel-filter-priority").addEventListener("change",maraRenderIntelligence);
+maraById("mara-intel-form").addEventListener("submit",maraSaveIntel);
+maraById("mara-intel-cancel").addEventListener("click",()=>maraById("mara-intel-form").hidden=true);
+maraById("mara-profiles-new").addEventListener("click",()=>maraEditProfile());
+maraById("mara-profile-form").addEventListener("submit",maraSaveProfile);
+maraById("mara-profile-cancel").addEventListener("click",()=>maraById("mara-profile-form").hidden=true);
+
+function maraFillPolygonPicker(){
+  const select=maraById("mara-shape-picker");
+  const previous=selectedShapeRecord?.id||select.value;
+  select.replaceChildren();
+  const empty=document.createElement("option");empty.value="";empty.textContent="Cliquer sur la carte ou choisir un polygone";select.appendChild(empty);
+  const currentKind=activeEditorKind;
+  mapShapes.filter(shape=>isPolygonGeometry(shape.geometry)&&
+    mapLayers.find(l=>l.id===shape.layer_id)?.kind===currentKind).forEach(shape=>{
+      const option=document.createElement("option");option.value=shape.id;
+      option.textContent=`${shape.name||"Sans nom"} · ${shape.id.slice(0,8)}`;
+      select.appendChild(option);
+    });
+  select.value=maraShapeLayers.has(previous)?previous:"";
+}
+maraById("mara-shape-picker").addEventListener("change",event=>{
+  const id=event.target.value;
+  const record=mapShapes.find(x=>x.id===id);
+  const layer=maraShapeLayers.get(id);
+  if(!record||!layer){maraById("mara-shape-picker").value="";return;}
+  selectExistingShape(layer,record);
+});
 
 /* =========================================================
    START
