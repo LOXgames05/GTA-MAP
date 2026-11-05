@@ -3833,13 +3833,46 @@ body.editing[data-editor-kind="territoire"] #draw-toolbar {display:flex!importan
 #nav-intelligence {display:none}
 @media(max-width:780px){.mara-intel-filter{grid-template-columns:1fr}.mara-stats {gap:6px}.mara-stats>div{padding:9px}.mara-stats strong{font-size:21px}.brand-name {font-size:10px!important}}
 
+
+/* MARA MAP V3 · écran de connexion & navigation RP */
+body.mara-auth-locked #topbar,body.mara-auth-locked #mara-management,
+body.mara-auth-locked #map,body.mara-auth-locked #ui-panels,
+body.mara-auth-locked #draw-toolbar,body.mara-auth-locked #zoom-slider-control,
+body.mara-auth-locked .leaflet-control-container {visibility:hidden!important;pointer-events:none!important}
+body.mara-auth-locked #login-overlay{display:flex!important;z-index:30000;background:radial-gradient(circle at 50% 38%,rgba(35,130,77,.23),transparent 46%),#020705}
+body.mara-auth-locked #close-login{display:none!important}
+#login-overlay .login-box{width:min(450px,95vw);border:1px solid #258759;box-shadow:0 0 95px rgba(25,255,145,.085),0 30px 95px rgba(0,0,0,.8)}
+#login-overlay .login-title{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:1px;color:#7bffc3}
+#topbar{grid-template-columns:220px 1fr auto}
+.main-nav{gap:clamp(9px,2.5vw,32px)}
+#nav-layers,#nav-vehicles,#nav-access{display:none!important}
+body[data-mara-page="map"] #map{visibility:visible}
+#layers-panel [data-layer-row="repere"],#layers-panel [data-layer-row="quartier"],
+#layers-panel [data-layer-row="batiment"]{display:none!important}
+.mara-map-modes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+.mara-map-modes button{font-size:8px!important;white-space:normal;line-height:1.35;padding:5px!important}
+body.editing[data-editor-kind="territoire"] #draw-marker-poi{display:flex!important}
+body.editing #draw-marker-repere,body.editing #draw-marker-batiment{display:none!important}
+.mara-poi-marker{position:relative;display:flex;align-items:center;justify-content:center;transform:translate(-50%,-100%);width:36px;height:36px;background:#04160e;border:2px solid #6affe3;clip-path:polygon(50% 100%,0 36%,0 0,100% 0,100% 36%);box-shadow:0 0 10px #58ecab;color:#b5ffe0;font-size:17px;font-weight:900;cursor:pointer}
+.mara-profile-item{align-items:flex-start;min-height:84px}
+.mara-profile-item .mara-group-description{display:block;white-space:normal;line-height:1.4;margin-top:5px;max-width:320px}
+.mara-profile-item .mara-group-logo{width:36px;height:36px;object-fit:contain;border:1px solid #286d50;background:#061a12;padding:2px}
+.mara-profile-list{grid-template-columns:repeat(auto-fit,minmax(255px,1fr))}
+#mara-page-groups #mara-member-new[hidden],#mara-page-intelligence #mara-intel-new[hidden]{display:none!important}
+@media(max-width:1000px){#topbar{grid-template-columns:1fr auto}.main-nav{display:flex!important;grid-column:1 / -1;grid-row:2;height:39px;justify-content:flex-start;gap:14px;overflow-x:auto}.nav-item{font-size:8px!important;flex-shrink:0}#topbar{height:103px;grid-template-rows:54px 39px} :root{--top-height:103px}}
+@media(max-width:760px){#topbar{height:102px}.main-nav{justify-content:center;gap:14px}.mara-map-modes{grid-template-columns:1fr}.mara-profile-list{grid-template-columns:1fr}}
+
+/* Point d'intérêt et titre indépendants ; clics concentrés sur le marqueur. */
+.mara-poi-marker{transform:none!important;clip-path:none!important;border-radius:9px 9px 9px 1px!important}
+.mara-poi-marker img{width:100%;height:100%;object-fit:contain;display:block;padding:3px}
+.mara-poi-name{display:block;position:absolute;top:37px;left:18px;transform:translateX(-50%);min-width:max-content;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:3px 7px;background:#04150e;border:1px solid #18573c;border-radius:3px;color:#b2f9d0;font-family:ui-monospace,monospace;font-size:9px;font-weight:800;pointer-events:none;text-shadow:0 1px 2px #000}
 </style>
 
 </head>
 
 
 
-<body class="layers-open" data-mara-page="map">
+<body class="layers-open mara-auth-locked" data-mara-page="groups">
 
 
 <!-- MAP -->
@@ -3877,28 +3910,13 @@ body.editing[data-editor-kind="territoire"] #draw-toolbar {display:flex!importan
 
 
 
-  <nav class="main-nav">
-
-    <div
-      id="nav-map"
-      class="nav-item active"
-    >
-      CARTE
-    </div>
-
-
-    <div
-      id="nav-layers"
-      class="nav-item"
-    >
-      AFFICHAGE
-    </div>
-
-
+  <nav class="main-nav" aria-label="Navigation MARA MAP">
+    <div id="nav-groups" class="nav-item active" role="button" tabindex="0">ORGANISATION</div>
     <div id="nav-intelligence" class="nav-item" role="button" tabindex="0">RENSEIGNEMENTS</div>
-    <div id="nav-groups" class="nav-item" role="button" tabindex="0">MEMBRES</div>
-    <div id="nav-vehicles" class="nav-item" role="button" tabindex="0">VÉHICULES</div>
-    <div id="nav-access" class="nav-item" role="button" tabindex="0">ACCÈS</div>
+    <div id="nav-map" class="nav-item" role="button" tabindex="0">CARTE</div>
+    <div id="nav-layers" class="nav-item" style="display:none">AFFICHAGE</div>
+    <div id="nav-vehicles" class="nav-item" style="display:none">VÉHICULES</div>
+    <div id="nav-access" class="nav-item" style="display:none">ACCÈS</div>
 
     <div
       id="nav-editor"
@@ -3915,6 +3933,7 @@ body.editing[data-editor-kind="territoire"] #draw-toolbar {display:flex!importan
   <div class="account-area">
 
     <span id="admin-email"></span>
+    <button id="mara-account-access" type="button" title="Gestion des comptes" style="display:none"><i data-lucide="settings-2"></i> Permissions</button>
 
 
     <button id="reset-map">
@@ -3984,9 +4003,7 @@ body.editing[data-editor-kind="territoire"] #draw-toolbar {display:flex!importan
         CALQUES
       </div>
 
-      <div class="panel-title">
-        Calques de la carte
-      </div>
+      <div class="panel-title">Calque territorial</div>
 
     </div>
 
@@ -4007,8 +4024,9 @@ body.editing[data-editor-kind="territoire"] #draw-toolbar {display:flex!importan
       <div class="mara-map-modes" role="group" aria-label="Mode de lecture de la carte">
         <button id="mara-view-territoires" type="button" class="active">◉ TERRITOIRES</button>
         <button id="mara-view-quartiers" type="button">▤ QUARTIERS</button>
+        <button id="mara-view-points" type="button">⌖ POINTS D'INTÉRÊT</button>
       </div>
-      <p class="mara-map-help">Calques polygonaux uniquement. Sommets aimantés aux frontières voisines.</p>
+      <p class="mara-map-help">Un seul calque modifiable : polygones de territoire + points d'intérêt. Les quartiers restent visibles comme fond de référence en mode Quartiers. Sommets aimantés aux frontières voisines.</p>
       <div class="overlay-toggle" data-layer-row="factions">
         <input
           id="toggle-factions"
@@ -4020,8 +4038,8 @@ body.editing[data-editor-kind="territoire"] #draw-toolbar {display:flex!importan
           <i data-lucide="shield"></i>
         </span>
         <span class="overlay-copy">
-          <strong>Territoires</strong>
-          <small>Zones des groupes RP</small>
+          <strong>Territoires &amp; points d'intérêt</strong>
+          <small>Polygones + marqueurs sur le même calque</small>
         </span>
         <button
           class="layer-edit-button"
@@ -4120,7 +4138,7 @@ body.editing[data-editor-kind="territoire"] #draw-toolbar {display:flex!importan
     </div>
 
     <div id="display-note" class="display-note">
-      Ordre : Factions → Repères → Quartiers → Bâtiments.
+      Un calque RP : territoires polygonaux et points d'intérêt. Vue Quartiers disponible.
     </div>
 
   </div>
@@ -4472,7 +4490,7 @@ body.editing[data-editor-kind="territoire"] #draw-toolbar {display:flex!importan
       </div>
 
 
-      <label for="mara-shape-picker">Polygone exact (sélection par identifiant)</label>
+      <label for="mara-shape-picker">Élément exact (sélection par identifiant)</label>
       <select id="mara-shape-picker"><option value="">Cliquer sur la carte ou choisir une zone</option></select>
       <div class="field-help">La suppression utilise UNIQUEMENT l'identifiant affiché dans cette sélection.</div>
       <label>Type d’élément</label>
@@ -4717,7 +4735,7 @@ body.editing[data-editor-kind="territoire"] #draw-toolbar {display:flex!importan
     class="draw-tool"
   >
     <i data-lucide="pentagon"></i>
-    <span class="draw-label">TERRITOIRE</span>
+    <span class="draw-label">POLYGONE</span>
   </button>
 
   <button
@@ -4727,6 +4745,8 @@ body.editing[data-editor-kind="territoire"] #draw-toolbar {display:flex!importan
     <i data-lucide="square"></i>
     <span class="draw-label">ZONE RECT.</span>
   </button>
+
+  <button id="draw-marker-poi" class="draw-tool" type="button"><i data-lucide="map-pin"></i><span class="draw-label">POINT D’INTÉRÊT</span></button>
 
   <button
     id="draw-marker-repere"
@@ -4761,15 +4781,17 @@ body.editing[data-editor-kind="territoire"] #draw-toolbar {display:flex!importan
 <main id="mara-management">
   <section class="mara-page" id="mara-page-groups">
     <div class="mara-page-heading">
-      <div><h1>Groupes &amp; membres</h1><p>Répertoire des membres rattachés aux factions de la carte.</p></div>
+      <div><span class="mara-kicker">// UNITÉ CONNECTÉE</span><h1>Organisation</h1><p id="mara-my-group-label">Aucun groupe affecté à ce compte.</p></div>
       <div class="mara-actions">
+        <button type="button" id="mara-org-vehicles" style="display:none">Véhicules</button>
         <button type="button" id="mara-members-reload">Actualiser</button>
         <button type="button" class="primary" id="mara-member-new">+ Ajouter un membre</button>
       </div>
     </div>
     <div id="mara-members-status" class="mara-status" role="status"></div>
     <div class="mara-card">
-      <div class="mara-inline-filter"><label for="mara-members-filter">Groupe / faction</label><select id="mara-members-filter"><option value="">Tous les groupes</option></select></div>
+      <div class="mara-inline-filter" style="display:none"><label for="mara-members-filter">Groupe / faction</label><select id="mara-members-filter"><option value="">Mon groupe</option></select></div>
+      <p class="mara-note">Effectif du groupe lié à ton compte Supabase. Les membres des autres groupes ne sont pas accessibles ici.</p>
       <div class="mara-table-wrap">
         <table class="mara-table"><thead><tr><th>Prénom</th><th>Nom</th><th>Téléphone</th><th>Grade</th><th>Groupe</th><th>Actions</th></tr></thead><tbody id="mara-members-rows"><tr><td colspan="6" class="mara-empty">Chargement...</td></tr></tbody></table>
       </div>
@@ -4791,11 +4813,26 @@ body.editing[data-editor-kind="territoire"] #draw-toolbar {display:flex!importan
 
   <section class="mara-page" id="mara-page-intelligence">
     <div class="mara-page-heading">
-      <div><span class="mara-kicker">// CELLULE DE RENSEIGNEMENT · MARABUNTA</span><h1>Dossiers / Renseignements</h1>
-        <p>Informations RP, traçabilité des sources et profils de groupes. Accès restreint.</p></div>
+      <div><span class="mara-kicker">// CELLULE DE RENSEIGNEMENT · MARABUNTA</span><h1>Renseignements</h1>
+        <p>Annuaire des groupes RP, identités visuelles et dossiers selon tes permissions.</p></div>
       <div class="mara-actions"><button id="mara-intel-reload" type="button">↻ Actualiser</button><button class="primary" id="mara-intel-new" type="button">+ Nouveau dossier</button></div>
     </div>
     <div id="mara-intelligence-status" class="mara-status" role="status"></div>
+    <div class="mara-card" id="mara-intel-profiles">
+      <div class="mara-page-heading"><div><span class="mara-kicker">// REGISTRE DES ENTITÉS</span><h2>Liste des groupes</h2><p>Factions illégales, entreprises et gouvernement. Les couleurs et logos sont gérés ici.</p></div><button id="mara-profiles-new" class="primary" type="button">+ Nouveau groupe</button></div>
+      <div id="mara-profiles-list" class="mara-profile-list"></div>
+      <form class="mara-form" id="mara-profile-form" hidden>
+        <h2 id="mara-profile-form-title">Identité du groupe</h2>
+        <div class="mara-form-grid">
+          <div><label for="mara-profile-name">Nom *</label><input id="mara-profile-name" maxlength="120" required></div>
+          <div><label for="mara-profile-kind">Catégorie</label><select id="mara-profile-kind"><option value="illegal">Groupe illégal : un logo automatique</option><option value="entreprise">Entreprise : logo sur chaque polygone</option><option value="gouvernement">Gouvernement : logo sur chaque polygone</option></select></div>
+          <div><label for="mara-profile-color">Couleur sur la carte</label><input id="mara-profile-color" type="color" value="#55ffb2"></div>
+          <div><label for="mara-profile-logo">URL du logo</label><input id="mara-profile-logo" type="text" maxlength="1000" placeholder="images/groupes/logo.png"></div>
+          <div class="mara-wide"><label for="mara-profile-description">Description</label><textarea id="mara-profile-description" maxlength="3000"></textarea></div>
+        </div><div class="mara-form-actions"><button type="submit" class="primary">Enregistrer l'identité</button><button type="button" id="mara-profile-cancel">Annuler</button></div>
+      </form>
+      <p class="mara-note">Le logo d'un groupe illégal est automatiquement centré sur son territoire le plus adapté. Pour une entreprise ou une administration, le même logo apparaît sur chacun de ses polygones. Aucun placement manuel nécessaire.</p>
+    </div>
     <div id="mara-intel-report-area"><div class="mara-stats"><div><small>DOSSIERS ACTIFS</small><strong id="mara-intel-count">00</strong></div><div><small>PRIORITÉ HAUTE</small><strong id="mara-intel-urgent">00</strong></div><div><small>GROUPES IDENTIFIÉS</small><strong id="mara-intel-groupcount">00</strong></div></div>
     <div class="mara-card"><div class="mara-intel-filter"><input id="mara-intel-search" type="search" placeholder="Rechercher cible, lieu, source, détail..." aria-label="Rechercher les dossiers"><select id="mara-intel-filter-group" aria-label="Filtrer par groupe"><option value="">Tous les groupes</option></select><select id="mara-intel-filter-priority" aria-label="Filtrer par priorité"><option value="">Toutes priorités</option><option value="haute">Haute</option><option value="normale">Normale</option><option value="basse">Basse</option></select></div>
       <div class="mara-table-wrap"><table class="mara-table"><thead><tr><th>Identité / Cible</th><th>Groupe</th><th>Lieu</th><th>Priorité</th><th>Fiabilité</th><th>Date</th><th>Actions</th></tr></thead><tbody id="mara-intel-rows"></tbody></table></div></div>
@@ -4815,21 +4852,6 @@ body.editing[data-editor-kind="territoire"] #draw-toolbar {display:flex!importan
       </div><div class="mara-form-actions"><button type="submit" class="primary">Enregistrer le dossier</button><button type="button" id="mara-intel-cancel">Annuler</button></div>
     </form>
     </div><!-- /#mara-intel-report-area -->
-    <div class="mara-card" id="mara-intel-profiles">
-      <div class="mara-page-heading"><div><span class="mara-kicker">// REGISTRE DES ENTITÉS</span><h2>Identité visuelle des groupes</h2><p>Couleurs et logos configurés ici, jamais dans l'éditeur de carte.</p></div><button id="mara-profiles-new" class="primary" type="button">+ Nouveau groupe</button></div>
-      <div id="mara-profiles-list" class="mara-profile-list"></div>
-      <form class="mara-form" id="mara-profile-form" hidden>
-        <h2 id="mara-profile-form-title">Identité du groupe</h2>
-        <div class="mara-form-grid">
-          <div><label for="mara-profile-name">Nom *</label><input id="mara-profile-name" maxlength="120" required></div>
-          <div><label for="mara-profile-kind">Catégorie</label><select id="mara-profile-kind"><option value="illegal">Groupe illégal : un logo automatique</option><option value="entreprise">Entreprise : logo sur chaque polygone</option><option value="gouvernement">Gouvernement : logo sur chaque polygone</option></select></div>
-          <div><label for="mara-profile-color">Couleur sur la carte</label><input id="mara-profile-color" type="color" value="#55ffb2"></div>
-          <div><label for="mara-profile-logo">URL du logo</label><input id="mara-profile-logo" type="text" maxlength="1000" placeholder="images/groupes/logo.png"></div>
-          <div class="mara-wide"><label for="mara-profile-description">Description</label><textarea id="mara-profile-description" maxlength="3000"></textarea></div>
-        </div><div class="mara-form-actions"><button type="submit" class="primary">Enregistrer l'identité</button><button type="button" id="mara-profile-cancel">Annuler</button></div>
-      </form>
-      <p class="mara-note">Le logo d'un groupe illégal est automatiquement centré sur son territoire le plus adapté. Pour une entreprise ou une administration, le même logo apparaît sur chacun de ses polygones. Aucun placement manuel nécessaire.</p>
-    </div>
   </section>
 
   <section class="mara-page" id="mara-page-vehicles">
@@ -4866,13 +4888,20 @@ body.editing[data-editor-kind="territoire"] #draw-toolbar {display:flex!importan
       <div class="mara-actions"><button type="button" id="mara-access-reload">Actualiser</button><button type="button" class="primary" id="mara-access-new">+ Autoriser un compte</button></div>
     </div>
     <div id="mara-access-status" class="mara-status" role="status"></div>
+    <div class="mara-card mara-form">
+      <span class="mara-kicker">// RATTACHEMENT AU GROUPE</span>
+      <p class="mara-note">Affecte ton propre compte à la faction MARABUNTA ou au groupe RP voulu. Les nouveaux comptes doivent exister dans Supabase Authentication.</p>
+      <div class="mara-form-grid"><div><label for="mara-own-group">Mon organisation</label><select id="mara-own-group"></select></div>
+      <div style="align-self:end"><button id="mara-save-own-group" class="primary" type="button">Associer mon compte</button></div></div>
+    </div>
     <div class="mara-card">
-      <div class="mara-table-wrap"><table class="mara-table"><thead><tr><th>Compte</th><th>Carte</th><th>Groupes</th><th>Véhicules</th><th>Renseignements</th><th>Permissions</th><th>Actions</th></tr></thead><tbody id="mara-access-rows"><tr><td colspan="7" class="mara-empty">Chargement...</td></tr></tbody></table></div>
+      <div class="mara-table-wrap"><table class="mara-table"><thead><tr><th>Compte</th><th>Organisation</th><th>Carte</th><th>Groupes</th><th>Véhicules</th><th>Renseignements</th><th>Permissions</th><th>Actions</th></tr></thead><tbody id="mara-access-rows"><tr><td colspan="8" class="mara-empty">Chargement...</td></tr></tbody></table></div>
     </div>
     <form id="mara-access-form" class="mara-card mara-form" hidden>
       <h2 id="mara-access-form-title">Autoriser un compte</h2>
       <label for="mara-access-email">Adresse e-mail du compte Supabase Auth existant *</label><input id="mara-access-email" type="email" required autocomplete="off">
       <p class="mara-note">Le compte doit déjà exister dans Supabase Authentication. Impossible de modifier le propriétaire ou ses propres permissions depuis ce panneau.</p>
+      <label for="mara-access-group">Organisation RP attribuée</label><select id="mara-access-group"></select>
       <div class="mara-check-grid">
         <label><input id="mara-access-map" type="checkbox"> Modifier la carte et les factions</label>
         <label><input id="mara-access-groups" type="checkbox"> Gérer les membres des groupes</label>
@@ -4899,12 +4928,10 @@ body.editing[data-editor-kind="territoire"] #draw-toolbar {display:flex!importan
         ACCÈS RESTREINT
       </div>
 
-      <h2 class="login-title">
-        Administration
-      </h2>
+      <h2 class="login-title">MARA MAP // IDENTIFICATION</h2>
 
       <p class="login-sub">
-        Connexion aux outils de gestion territoriale.
+        Accès au réseau RP réservé aux comptes autorisés. Identifie-toi pour consulter l'organisation, les groupes et la carte.
       </p>
 
     </div>
@@ -5276,6 +5303,7 @@ let admin =
   false;
 
 /* Permissions récupérées depuis Supabase, jamais calculées dans le navigateur. */
+let maraMyGroup = null;
 let maraPermissions = {
   map: false, groups: false, vehicles: false, intelligence: false, access: false, owner: false
 };
@@ -6715,9 +6743,17 @@ async function refreshAuth() {
     await db.auth.getUser();
 
 
-  currentUser =
-    user || null;
-
+  currentUser = user || null;
+  if(currentUser){
+    const {data:siteMember,error:memberError}=await db.rpc('mara_is_site_member');
+    if(memberError||siteMember!==true){
+      await db.auth.signOut();
+      currentUser=null;
+      loginError.textContent=memberError
+        ? 'Vérifie la migration SQL 04 : '+memberError.message
+        : 'Ce compte n’a pas encore été autorisé. Demande un accès à un administrateur.';
+    }
+  }
 
   admin = false;
   maraPermissions = {
@@ -6745,7 +6781,15 @@ async function refreshAuth() {
   }
 
   document.body.classList.toggle("is-admin", maraPermissions.map);
+  document.body.classList.toggle("mara-auth-locked", !currentUser);
+  if (currentUser) {
+    const {data:myGroup,error:groupError}=await db.rpc("mara_my_group");
+    maraMyGroup=groupError?null:(myGroup?.id?myGroup:null);
+    if(groupError)console.warn("Organisation :",groupError.message);
+  } else {maraMyGroup=null;}
   maraSyncAccessNav();
+  const accessButton=document.getElementById("mara-account-access");
+  if(accessButton)accessButton.style.display=currentUser&&maraPermissions.access?"":"none";
 
 
   /* L'édition se lance désormais depuis le crayon de chaque calque. */
@@ -6758,7 +6802,7 @@ async function refreshAuth() {
 
 
   if (
-    admin
+    currentUser
   ) {
 
     loginButton.style.display =
@@ -6841,9 +6885,7 @@ document
     "click",
     () => {
 
-      loginOverlay.classList.remove(
-        "visible"
-      );
+      if(!document.body.classList.contains("mara-auth-locked")) loginOverlay.classList.remove("visible");
 
     }
   );
@@ -6854,13 +6896,10 @@ loginOverlay.addEventListener(
   event => {
 
     if (
-      event.target ===
-      loginOverlay
+      event.target === loginOverlay && !document.body.classList.contains("mara-auth-locked")
     ) {
 
-      loginOverlay.classList.remove(
-        "visible"
-      );
+      if(!document.body.classList.contains("mara-auth-locked")) loginOverlay.classList.remove("visible");
 
     }
 
@@ -6921,32 +6960,11 @@ loginForm.addEventListener(
 
 
     await refreshAuth();
+    if(!currentUser)return;
 
-
-    if (
-      !admin
-    ) {
-
-      await db.auth.signOut();
-
-
-      loginError.textContent =
-        "Ce compte n'est pas administrateur.";
-
-
-      await refreshAuth();
-
-      return;
-
-    }
-
-
-    loginOverlay.classList.remove(
-      "visible"
-    );
-
-
+    loginOverlay.classList.remove("visible");
     await loadDatabase();
+    await maraGo("groups");
 
   }
 );
@@ -6965,10 +6983,13 @@ logoutButton.addEventListener(
 
 
     await refreshAuth();
-
-
-    await loadDatabase();
-
+    maraMembers=[];maraVehicles=[];maraIntelRecords=[];maraProfileRecords=[];
+    maraStaffGroups=[];maraAdmins=[];mapShapes=[];mapFactions=[];mapLayers=[];
+    ['mara-members-rows','mara-vehicles-rows','mara-intel-rows','mara-profiles-list','mara-access-rows'].forEach(id=>{
+      const node=document.getElementById(id);if(node)node.replaceChildren();
+    });
+    if(typeof rerenderMapDisplay==='function')rerenderMapDisplay();
+    document.body.dataset.maraPage="groups";
   }
 );
 
@@ -7446,6 +7467,10 @@ function startDrawing(
 }
 
 
+document.getElementById("draw-marker-poi").addEventListener("click",event=>{
+  startDrawing("Marker",event.currentTarget,"territoire");
+});
+
 document
   .getElementById("draw-polygon")
   .addEventListener(
@@ -7863,7 +7888,7 @@ function updateDisplayControls() {
   displayNote.textContent =
     factionLogoPlacementMode
       ? "Placement du logo actif. Clique sur la carte pour enregistrer sa position."
-      : "Territoires polygonaux uniquement · Sommets magnétisés · Groupes dans Renseignements.";
+      : "Calque mixte : territoires + points d'intérêt · Sommets magnétisés · Groupes dans Renseignements.";
 }
 
 
@@ -8034,6 +8059,7 @@ document
 ========================================================= */
 
 async function loadDatabase() {
+  if(!currentUser) return;
 
   let layersQuery =
     db
@@ -9548,10 +9574,11 @@ function renderShapes() {
     const parentLayer = mapLayers.find(layer => layer.id === shape.layer_id);
     const kind = parentLayer?.kind;
     if (!["territoire", "quartier"].includes(kind) ||
-        !isPolygonGeometry(shape.geometry)) continue;
+        !(isPolygonGeometry(shape.geometry) || (kind === "territoire" && shape.geometry?.type === "Point"))) continue;
     const group = layerGroups[parentLayer.id];
     if (!group) continue;
     const quartier = kind === "quartier";
+    const isPoint = shape.geometry?.type === "Point";
     const faction = findFaction(shape.faction_id);
     const isQuartierView = maraMapDisplayMode === "quartiers";
     const color = quartier ? "#9df9d3" : (faction?.color || "#55ffb2");
@@ -9559,25 +9586,38 @@ function renderShapes() {
     const style = {
       color,
       fillColor: color,
-      fillOpacity: quartier ? (isQuartierView ? .105 : 0) : (isQuartierView ? .075 : .27),
+      fillOpacity: quartier ? (isQuartierView ? .105 : 0) : (isQuartierView ? .075 : (maraMapDisplayMode === "points" ? .045 : .27)),
       weight: quartier ? (isQuartierView ? 3.4 : 2) : (active ? 4 : (isQuartierView ? 1.3 : 2.6)),
       opacity: quartier ? (isQuartierView ? 1 : .35) : (isQuartierView ? .4 : 1),
       lineCap: "round", lineJoin: "round"
     };
+    const poiSymbol=String(shape.style?.icon||"⌖").slice(0,4);
+    const poiImage=String(shape.style?.logo_url||"");
+    const safePoiImage=poiImage && /^(https:\/\/[^\s]+|[a-zA-Z0-9_./-]+)$/.test(poiImage);
+    const poiContent=safePoiImage
+      ? `<img src="${escapeHtml(poiImage)}" alt="" draggable="false">`
+      : escapeHtml(poiSymbol);
     const geo = L.geoJSON({type:"Feature", geometry: shape.geometry}, {
-      pane: quartier ? "quartierPane" : "territoryPane", style
+      pane: quartier ? "quartierPane" : "territoryPane", style,
+      pointToLayer:(_feature,latlng)=>L.marker(latlng,{
+        pane:"reperePane",keyboard:true,
+        icon:L.divIcon({className:"",iconSize:[36,40],iconAnchor:[18,38],
+          html:`<div class="mara-poi-marker">${poiContent}</div><span class="mara-poi-name">${escapeHtml(shape.name||"Point d'intérêt")}</span>`})
+      })
     });
     geo.eachLayer(layer => {
       layer.__maraShapeId = shape.id;
       maraShapeLayers.set(shape.id,layer);
       configureShapeLayer(layer, shape, parentLayer);
       layer.__gtaBaseStyle = style;
-      layer.on("mouseover", () => {
-        if (editMode && activeEditorKind === kind) layer.setStyle({weight:5, fillOpacity:.34});
-      });
-      layer.on("mouseout", () => {
-        if (editMode && activeEditorKind === kind) layer.setStyle(style);
-      });
+      if(!isPoint) {
+        layer.on("mouseover", () => {
+          if (editMode && activeEditorKind === kind) layer.setStyle({weight:5, fillOpacity:.34});
+        });
+        layer.on("mouseout", () => {
+          if (editMode && activeEditorKind === kind) layer.setStyle(style);
+        });
+      }
       layer.addTo(group);
     });
     if (quartier && isQuartierView) addQuartierLabel(shape, group);
@@ -9787,7 +9827,9 @@ map.on(
         ? "▣"
         : targetKind === "repere"
           ? "◆"
-          : "";
+          : targetKind === "territoire" && event.layer?.toGeoJSON?.().geometry?.type === "Point"
+            ? "⌖"
+            : "";
 
 
     populateBuildingFactionSelect();
@@ -10115,13 +10157,12 @@ function updateMarkerFieldsVisibility() {
     Repères : logo / symbole disponibles.
     Bâtiments : polygone + numéro, donc aucun champ logo/symbole.
   */
+  const selectedPoint = selectedLeafletLayer?.toGeoJSON?.().geometry?.type === "Point";
   shapeMarkerFields.style.display =
-    kind === "repere"
-      ? ""
-      : "none";
+    (kind === "repere" || (kind === "territoire" && selectedPoint)) ? "" : "none";
 
   if (
-    kind === "repere"
+    kind === "repere" || (kind === "territoire" && selectedPoint)
   ) {
     if (
       shapeNameLabel
@@ -10411,7 +10452,7 @@ saveShapeButton.addEventListener(
     }
 
 
-    if (editorKind === "territoire" && !shapeFactionInput.value) {
+    if (editorKind === "territoire" && area && !shapeFactionInput.value) {
       status.textContent = "Choisis un groupe pour attribuer ce territoire.";
       return;
     }
@@ -10460,13 +10501,13 @@ saveShapeButton.addEventListener(
             : 3,
 
         logo_url:
-          editorKind === "repere"
+          (editorKind === "repere" || (editorKind === "territoire" && !area))
             ? (shapeLogoInput.value.trim() || null)
             : null,
 
         icon:
-          editorKind === "repere"
-            ? (shapeIconInput.value.trim() || null)
+          (editorKind === "repere" || (editorKind === "territoire" && !area))
+            ? (shapeIconInput.value.trim() || "⌖")
             : null,
 
         quartier_id:
@@ -10795,13 +10836,13 @@ deleteShapeButton.addEventListener(
         currentRecord.layer_id !== selectedShapeRecord.layer_id ||
         currentRecord.faction_id !== targetGroup ||
         selectedLeafletLayer?.__maraShapeId !== targetId) {
-      status.textContent = "Sélection périmée : sélectionne de nouveau le polygone exact.";
+      status.textContent = "Sélection périmée : sélectionne de nouveau l'élément exact.";
       return;
     }
 
     if (
       !confirm(
-        `Supprimer uniquement le polygone « ${targetName} » ? (ID ${targetId})`
+        `Supprimer uniquement cet élément « ${targetName} » ? (ID ${targetId})`
       )
     ) {
       return;
@@ -12256,13 +12297,14 @@ document.addEventListener("keydown", event => {
    Données privées et contrôle RLS dans Supabase.
 ========================================================= */
 const maraById = id => document.getElementById(id);
-const maraPermitted = page => page === 'map' || (page === 'intelligence' && maraPermissions.map) || Boolean(maraPermissions[page]);
-const maraGroupName = id => (maraStaffGroups.find(group => group.id === id)?.name || 'Groupe inconnu');
+const maraPermitted = page => currentUser && (['map','groups','intelligence'].includes(page) || Boolean(maraPermissions[page]));
+const maraGroupName = id => id ? (maraStaffGroups.find(group => group.id === id)?.name || 'Groupe inconnu') : 'Non attribué';
 const maraInput = id => maraById(id).value.trim();
 let maraStaffGroups = [];
 let maraMembers = [];
 let maraVehicles = [];
 let maraAdmins = [];
+let maraAssignments = [];
 let maraEditMemberId = null;
 let maraEditVehicleId = null;
 
@@ -12272,12 +12314,11 @@ function maraSetStatus(page, message) {
 }
 
 function maraSyncAccessNav() {
-  const navPermissions = { 'nav-intelligence': 'intelligence', 'nav-groups': 'groups', 'nav-vehicles': 'vehicles', 'nav-access': 'access' };
-  Object.entries(navPermissions).forEach(([id, key]) => {
-    maraById(id).style.display = (maraPermissions[key] || (key === 'intelligence' && maraPermissions.map)) ? 'flex' : 'none';
+  ['nav-intelligence','nav-groups','nav-map'].forEach(id=>{
+    maraById(id).style.display=currentUser?'flex':'none';
   });
   if (!maraPermitted(document.body.dataset.maraPage)) {
-    maraGo('map');
+    if(currentUser)maraGo('groups');
   }
 }
 
@@ -12286,7 +12327,7 @@ async function maraGo(page) {
   if (page !== 'map' && editMode) disableEditMode();
   document.body.dataset.maraPage = page;
   ['map', 'intelligence', 'groups', 'vehicles', 'access'].forEach(key => {
-    maraById(`nav-${key}`).classList.toggle('active', key === page);
+    maraById(`nav-${key}`).classList.toggle('active', key === page || (key === 'groups' && page === 'vehicles'));
   });
   maraById('nav-layers').classList.remove('active');
   if (page === 'map') {
@@ -12315,7 +12356,7 @@ function maraSelectOptions(selectId, withAll = false) {
 }
 
 async function maraLoadStaffGroups() {
-  const { data, error } = await db.rpc('mara_staff_factions');
+  const { data, error } = await db.rpc('mara_group_directory');
   if (error) throw error;
   maraStaffGroups = data || [];
   ['mara-members-filter', 'mara-vehicles-filter'].forEach(id => maraSelectOptions(id, true));
@@ -12349,8 +12390,7 @@ function maraSetEmpty(tbody, cols, message) {
 
 function maraRenderMembers() {
   const tbody = maraById('mara-members-rows');
-  const filter = maraById('mara-members-filter').value;
-  const records = maraMembers.filter(row => !filter || row.group_id === filter);
+  const records = maraMembers.filter(row => maraMyGroup?.id && row.group_id === maraMyGroup.id);
   if (!records.length) return maraSetEmpty(tbody, 6, 'Aucun membre pour ce filtre.');
   tbody.replaceChildren();
   records.forEach(member => {
@@ -12363,18 +12403,27 @@ function maraRenderMembers() {
       maraTextCell(maraGroupName(member.group_id))
     );
     const actions = document.createElement('td');
-    actions.append(
+    if(maraPermissions.groups) actions.append(
       maraActionButton('Modifier', () => maraEditMember(member)),
       maraActionButton('Supprimer', () => maraDeleteMember(member), true)
-    );
+    ); else actions.textContent='Lecture seule';
     tr.appendChild(actions);
     tbody.appendChild(tr);
   });
 }
 
 async function maraLoadMembers() {
+  maraById('mara-my-group-label').textContent=maraMyGroup?.name ? 'Effectif de '+maraMyGroup.name : 'Aucun groupe affecté à ton compte. Un administrateur doit te rattacher à une faction.';
+  maraById('mara-member-new').hidden=!(maraMyGroup?.id&&maraPermissions.groups);
+  maraById('mara-org-vehicles').style.display=maraPermissions.vehicles?'':'none';
+  maraById('mara-member-form').hidden=true;
+  if(!maraMyGroup?.id){maraMembers=[];maraRenderMembers();maraSetStatus('members','Compte sans organisation. Contacte un administrateur pour être affecté à ton groupe.');return;}
+  const selector=maraById('mara-member-group');
+  const opt=document.createElement('option');opt.value=maraMyGroup.id;opt.textContent=maraMyGroup.name;
+  selector.replaceChildren(opt);selector.disabled=true;
   const { data, error } = await db.from('mara_group_members')
     .select('id,group_id,first_name,last_name,phone,grade,notes,created_at')
+    .eq('group_id',maraMyGroup.id)
     .order('last_name').order('first_name');
   if (error) throw error;
   maraMembers = data || [];
@@ -12397,14 +12446,14 @@ function maraEditMember(member = null) {
 
 async function maraSaveMember(event) {
   event.preventDefault();
-  if (!maraPermissions.groups) return;
+  if (!maraPermissions.groups || !maraMyGroup?.id) return;
   const payload = {
     first_name: maraInput('mara-member-first'),
     last_name: maraInput('mara-member-last'),
     phone: maraInput('mara-member-phone'),
     grade: maraInput('mara-member-grade'),
     notes: maraInput('mara-member-notes'),
-    group_id: maraInput('mara-member-group')
+    group_id: maraMyGroup.id
   };
   if (!payload.first_name || !payload.last_name || !payload.group_id) return maraSetStatus('members', 'Prénom, nom et groupe obligatoires.');
   const query = db.from('mara_group_members');
@@ -12419,6 +12468,7 @@ async function maraSaveMember(event) {
 }
 
 async function maraDeleteMember(member) {
+  if (!maraPermissions.groups || member.group_id !== maraMyGroup?.id) return;
   if (!confirm(`Supprimer ${member.first_name} ${member.last_name} ?`)) return;
   const { error } = await db.from('mara_group_members').delete().eq('id', member.id);
   if (error) return maraSetStatus('members', `Erreur : ${error.message}`);
@@ -12505,7 +12555,7 @@ async function maraDeleteVehicle(vehicle) {
 
 function maraRenderAdmins() {
   const tbody = maraById('mara-access-rows');
-  if (!maraAdmins.length) return maraSetEmpty(tbody, 7, 'Aucun administrateur configuré.');
+  if (!maraAdmins.length) return maraSetEmpty(tbody, 8, 'Aucun administrateur configuré.');
   tbody.replaceChildren();
   maraAdmins.forEach(account => {
     const tr = document.createElement('tr');
@@ -12517,6 +12567,7 @@ function maraRenderAdmins() {
       email.append(' ', badge);
     }
     tr.append(email,
+      maraTextCell(maraGroupName(account.group_id)),
       maraTextCell(account.is_owner || account.can_edit_map ? 'Oui' : 'Non'),
       maraTextCell(account.is_owner || account.can_manage_groups ? 'Oui' : 'Non'),
       maraTextCell(account.is_owner || account.can_manage_vehicles ? 'Oui' : 'Non'),
@@ -12538,9 +12589,18 @@ function maraRenderAdmins() {
 }
 
 async function maraLoadAdmins() {
-  const { data, error } = await db.rpc('mara_list_admins');
-  if (error) throw error;
-  maraAdmins = data || [];
+  await maraLoadStaffGroups();
+  const [{data,error},{data:assignments,error:groupError}]=await Promise.all([
+    db.rpc('mara_list_admins'),db.rpc('mara_list_group_assignments')
+  ]);
+  if(error)throw error;
+  if(groupError)throw groupError;
+  maraAssignments=assignments||[];
+  maraAdmins=(data||[]).map(account=>({...account,
+    group_id:maraAssignments.find(row=>row.user_id===account.user_id)?.group_id||null}));
+  maraSelectOptions('mara-own-group');
+  maraSelectOptions('mara-access-group');
+  maraById('mara-own-group').value=maraMyGroup?.id||'';
   maraRenderAdmins();
   maraSetStatus('access', `${maraAdmins.length} compte(s) autorisé(s).`);
 }
@@ -12550,6 +12610,7 @@ function maraEditAdmin(account = null) {
   maraById('mara-access-form-title').textContent = account ? 'Modifier des permissions' : 'Autoriser un compte';
   maraById('mara-access-email').value = account?.email || '';
   maraById('mara-access-email').readOnly = Boolean(account);
+  maraById('mara-access-group').value=account?.group_id||'';
   maraById('mara-access-map').checked = Boolean(account?.can_edit_map);
   maraById('mara-access-groups').checked = Boolean(account?.can_manage_groups);
   maraById('mara-access-vehicles').checked = Boolean(account?.can_manage_vehicles);
@@ -12570,6 +12631,10 @@ async function maraSaveAdmin(event) {
     p_intelligence: maraById('mara-access-intelligence').checked
   });
   if (error) return maraSetStatus('access', `Erreur : ${error.message}`);
+  const {error:groupError}=await db.rpc('mara_set_user_group',{
+    p_email:maraInput('mara-access-email'),p_group_id:maraInput('mara-access-group')||null
+  });
+  if(groupError)return maraSetStatus('access',`Permissions enregistrées, mais affectation échouée : ${groupError.message}`);
   maraById('mara-access-form').hidden = true;
   await maraLoadAdmins();
   maraSetStatus('access', 'Permissions enregistrées.');
@@ -12599,6 +12664,16 @@ async function maraLoadSection(page) {
 }
 
 maraById('nav-map').addEventListener('click', () => maraGo('map'));
+maraById('mara-account-access').addEventListener('click',()=>maraGo('access'));
+maraById('mara-org-vehicles').addEventListener('click',()=>maraGo('vehicles'));
+maraById('mara-save-own-group').addEventListener('click',async()=>{
+  if(!maraPermissions.access || !currentUser?.email)return;
+  const {error}=await db.rpc('mara_set_user_group',{p_email:currentUser.email,p_group_id:maraInput('mara-own-group')||null});
+  if(error){maraSetStatus('access',`Échec de l'affectation : ${error.message}`);return;}
+  const {data}=await db.rpc('mara_my_group');maraMyGroup=data?.id?data:null;
+  await maraLoadAdmins();
+  maraSetStatus('access',`Organisation mise à jour : ${maraMyGroup?.name||'aucune'}.`);
+});
 maraById('nav-intelligence').addEventListener('click', () => maraGo('intelligence'));
 maraById('nav-groups').addEventListener('click', () => maraGo('groups'));
 maraById('nav-vehicles').addEventListener('click', () => maraGo('vehicles'));
@@ -12636,15 +12711,17 @@ maraById('mara-access-form').addEventListener('submit', maraSaveAdmin);
    MARA MAP / TERRITOIRES : MODE QUARTIER ET SNAP
 ========================================================= */
 function maraSetMapView(mode) {
-  maraMapDisplayMode = mode === "quartiers" ? "quartiers" : "territoires";
+  maraMapDisplayMode = ["quartiers","points"].includes(mode) ? mode : "territoires";
   overlayVisibility.quartier = maraMapDisplayMode === "quartiers";
   overlayVisibility.faction = true;
   maraById("mara-view-territoires").classList.toggle("active", mode !== "quartiers");
   maraById("mara-view-quartiers").classList.toggle("active", mode === "quartiers");
+  maraById("mara-view-points").classList.toggle("active", mode === "points");
   rerenderMapDisplay();
 }
 maraById("mara-view-territoires").addEventListener("click", () => maraSetMapView("territoires"));
 maraById("mara-view-quartiers").addEventListener("click", () => maraSetMapView("quartiers"));
+maraById("mara-view-points").addEventListener("click", () => maraSetMapView("points"));
 
 // Snap sur vrais sommets et segments enregistrés. Geoman fait le snap pendant
 // le dessin ; cette passe enregistre les coordonnées exactes au moment du save.
@@ -12717,7 +12794,12 @@ function maraRenderProfiles() {
     const dot=document.createElement("span");dot.className="mara-profile-dot";dot.style.backgroundColor=g.color||"#55ffb2";
     const txt=document.createElement("div");const name=document.createElement("strong");name.textContent=g.name;
     const kind=document.createElement("small");kind.textContent=({illegal:"Illégal · 1 logo",entreprise:"Entreprise · logo par zone",gouvernement:"Gouvernement · logo par zone"})[g.faction_kind]||"Illégal";
-    txt.append(name,kind);info.append(dot,txt);item.appendChild(info);
+    txt.append(name,kind);
+    if(g.description){const desc=document.createElement('small');desc.className='mara-group-description';desc.textContent=g.description;txt.appendChild(desc);}
+    if(g.logo_url&&(/^(https:\/\/|[a-zA-Z0-9_./-]+$)/).test(g.logo_url)){
+      const logo=document.createElement('img');logo.className='mara-group-logo';logo.alt='';logo.loading='lazy';logo.src=g.logo_url;info.appendChild(logo);
+    }
+    info.append(dot,txt);item.appendChild(info);
     if(maraPermissions.map)item.appendChild(maraActionButton("Configurer",()=>maraEditProfile(g)));
     root.appendChild(item);
   }
@@ -12726,7 +12808,7 @@ function maraRenderProfiles() {
   });
 }
 async function maraLoadProfiles() {
-  const {data,error}=await db.rpc("mara_intelligence_factions");
+  const {data,error}=await db.rpc("mara_group_directory");
   if(error)throw error;
   maraProfileRecords=data||[];
   maraRenderProfiles();
@@ -12863,10 +12945,10 @@ function maraFillPolygonPicker(){
   select.replaceChildren();
   const empty=document.createElement("option");empty.value="";empty.textContent="Cliquer sur la carte ou choisir un polygone";select.appendChild(empty);
   const currentKind=activeEditorKind;
-  mapShapes.filter(shape=>isPolygonGeometry(shape.geometry)&&
+  mapShapes.filter(shape=>(isPolygonGeometry(shape.geometry)||shape.geometry?.type==="Point")&&
     mapLayers.find(l=>l.id===shape.layer_id)?.kind===currentKind).forEach(shape=>{
       const option=document.createElement("option");option.value=shape.id;
-      option.textContent=`${shape.name||"Sans nom"} · ${shape.id.slice(0,8)}`;
+      option.textContent=`${shape.geometry?.type==="Point"?"⌖ POI":"⬡ POLYGONE"} · ${shape.name||"Sans nom"} · ${shape.id.slice(0,8)}`;
       select.appendChild(option);
     });
   select.value=maraShapeLayers.has(previous)?previous:"";
@@ -12888,9 +12970,7 @@ updateDisplayControls();
 
 
 await refreshAuth();
-
-
-await loadDatabase();
+if(currentUser){await loadDatabase();await maraGo('groups');}
 
 
 updateButtons();
