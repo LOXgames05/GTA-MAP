@@ -10,7 +10,7 @@
   content="width=device-width, initial-scale=1.0"
 >
 
-<title>GTA MAP</title>
+<title>Mara MAP | Carte interactive et gestion</title>
 
 
 <!-- LEAFLET -->
@@ -3700,13 +3700,87 @@ body.editing #shape-layer {
   opacity: .72;
   cursor: not-allowed;
 }
+
+/* =========================================================
+   MARA MAP : groupes, véhicules et permissions
+========================================================= */
+.main-nav { gap: 17px; }
+#nav-groups, #nav-vehicles, #nav-access { display: none; }
+#topbar .brand-name { white-space: nowrap; }
+body:not([data-mara-page="map"]) #map,
+body:not([data-mara-page="map"]) #ui-panels,
+body:not([data-mara-page="map"]) #draw-toolbar,
+body:not([data-mara-page="map"]) #zoom-slider-control,
+body:not([data-mara-page="map"]) .leaflet-control-container,
+body:not([data-mara-page="map"]) #reset-map { visibility: hidden !important; pointer-events: none !important; }
+#mara-management {
+  position: fixed; z-index: 5000;
+  inset: var(--top-height) 0 0;
+  padding: 28px clamp(12px, 4vw, 55px) 80px;
+  overflow-y: auto;
+  background: #050807;
+}
+body[data-mara-page="map"] #mara-management { display: none; }
+.mara-page { display: none; max-width: 1420px; margin: 0 auto; }
+body[data-mara-page="groups"] #mara-page-groups,
+body[data-mara-page="vehicles"] #mara-page-vehicles,
+body[data-mara-page="access"] #mara-page-access { display: block; }
+.mara-page-heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px; margin: 0 0 18px; }
+.mara-page-heading h1 { font-size: clamp(20px, 2.6vw, 28px); margin: 0 0 4px; color: #edf2ef; }
+.mara-page-heading p { margin: 0; color: #94a59c; font-size: 12px; }
+.mara-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.mara-card { margin: 16px 0; padding: 18px; background: rgba(11,19,15,.97); border: 1px solid rgba(140,177,155,.18); border-radius: 12px; }
+.mara-inline-filter { max-width: 300px; margin: 4px 0 14px; }
+.mara-inline-filter label { margin: 0 0 6px; }
+.mara-table-wrap { overflow-x: auto; width: 100%; }
+.mara-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.mara-table th { background: #111b15; color: #aec6b6; text-transform: uppercase; font-size: 10px; letter-spacing: .6px; text-align: left; padding: 11px 10px; }
+.mara-table td { padding: 10px; border-bottom: 1px solid rgba(140,177,155,.12); vertical-align: middle; color: #dde9e1; }
+.mara-table tbody tr:hover { background: rgba(134,173,150,.035); }
+.mara-table td:last-child { white-space: nowrap; }
+.mara-table .muted, .mara-muted { color: #81948a; }
+.mara-form { max-width: 780px; }
+.mara-form[hidden], .mara-card[hidden] { display: none !important; }
+.mara-form h2 { margin: 0 0 15px; font-size: 16px; }
+.mara-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 9px 15px; }
+.mara-form-grid > div { min-width: 0; }
+.mara-form-grid label { font-size: 10px; margin: 0 0 6px; }
+.mara-form-grid .mara-wide { grid-column: 1 / -1; }
+.mara-form-grid textarea { min-height: 85px; }
+.mara-form-actions { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+.mara-status { min-height: 18px; margin: 10px 0; color: #bad8c4; font-size: 12px; }
+.mara-empty { padding: 28px 16px; text-align: center; color: #9baba2; }
+.mara-check-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px 16px; margin-top: 10px; }
+.mara-check-grid label { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #dce5e0; cursor: pointer; }
+.mara-check-grid input { width: 16px; min-height: 16px; accent-color: #86ad96; }
+.mara-tag { display: inline-block; padding: 4px 7px; border-radius: 5px; color: #d6e8db; background: rgba(134,173,150,.12); font-size: 10px; }
+.mara-note { margin: 10px 0; color: #9aaca1; font-size: 11px; line-height: 1.5; }
+@media (max-width: 1000px) {
+  #topbar { grid-template-columns: 1fr auto; }
+  .main-nav { display: flex !important; justify-content: flex-start; gap: 12px; overflow-x: auto; grid-row: 2; grid-column: 1 / -1; height: 31px; }
+  #topbar { height: calc(var(--top-height) + 31px); align-content: center; }
+  #mara-management { top: calc(var(--top-height) + 31px); }
+  body[data-mara-page="map"] #ui-panels { top: calc(var(--top-height) + 42px) !important; }
+  .account-area { grid-column: 2; grid-row: 1; }
+  #topbar .brand { grid-column: 1; grid-row: 1; }
+  .nav-item { height: 31px !important; flex: none; }
+}
+@media (max-width: 760px) {
+  .mara-form-grid, .mara-check-grid { grid-template-columns: 1fr; }
+  .mara-card { padding: 12px; }
+  .mara-page-heading { align-items: flex-start; }
+  .mara-form-grid .mara-wide { grid-column: 1; }
+  #mara-management { padding: 16px 10px 70px; }
+  body:not([data-mara-page="map"]) { overflow: hidden !important; }
+}
+
 </style>
 
 </head>
 
 
 
-<body class="layers-open">
+<body class="layers-open" data-mara-page="map">
 
 
 <!-- MAP -->
@@ -3731,11 +3805,11 @@ body.editing #shape-layer {
     <div>
 
       <div class="brand-name">
-        GTA MAP
+        Mara MAP
       </div>
 
       <div class="brand-sub">
-        TERRITORIAL INTELLIGENCE
+        CARTOGRAPHIE &amp; GESTION
       </div>
 
     </div>
@@ -3761,6 +3835,10 @@ body.editing #shape-layer {
       AFFICHAGE
     </div>
 
+
+    <div id="nav-groups" class="nav-item" role="button" tabindex="0">GROUPES</div>
+    <div id="nav-vehicles" class="nav-item" role="button" tabindex="0">VÉHICULES</div>
+    <div id="nav-access" class="nav-item" role="button" tabindex="0">ADMINISTRATEURS</div>
 
     <div
       id="nav-editor"
@@ -4614,6 +4692,90 @@ body.editing #shape-layer {
 </div>
 
 
+<!-- MARA MAP : données privées du personnel -->
+<main id="mara-management">
+  <section class="mara-page" id="mara-page-groups">
+    <div class="mara-page-heading">
+      <div><h1>Groupes &amp; membres</h1><p>Répertoire des membres rattachés aux factions de la carte.</p></div>
+      <div class="mara-actions">
+        <button type="button" id="mara-members-reload">Actualiser</button>
+        <button type="button" class="primary" id="mara-member-new">+ Ajouter un membre</button>
+      </div>
+    </div>
+    <div id="mara-members-status" class="mara-status" role="status"></div>
+    <div class="mara-card">
+      <div class="mara-inline-filter"><label for="mara-members-filter">Groupe / faction</label><select id="mara-members-filter"><option value="">Tous les groupes</option></select></div>
+      <div class="mara-table-wrap">
+        <table class="mara-table"><thead><tr><th>Prénom</th><th>Nom</th><th>Téléphone</th><th>Grade</th><th>Groupe</th><th>Actions</th></tr></thead><tbody id="mara-members-rows"><tr><td colspan="6" class="mara-empty">Chargement...</td></tr></tbody></table>
+      </div>
+    </div>
+    <form id="mara-member-form" class="mara-card mara-form" hidden>
+      <h2 id="mara-member-form-title">Ajouter un membre</h2>
+      <div class="mara-form-grid">
+        <div><label for="mara-member-first">Prénom *</label><input id="mara-member-first" maxlength="100" required></div>
+        <div><label for="mara-member-last">Nom *</label><input id="mara-member-last" maxlength="100" required></div>
+        <div><label for="mara-member-phone">Numéro de téléphone</label><input id="mara-member-phone" type="tel" maxlength="50" autocomplete="off"></div>
+        <div><label for="mara-member-grade">Grade</label><input id="mara-member-grade" maxlength="100"></div>
+        <div class="mara-wide"><label for="mara-member-group">Groupe / faction *</label><select id="mara-member-group" required></select></div>
+        <div class="mara-wide"><label for="mara-member-notes">Notes (facultatif)</label><textarea id="mara-member-notes" maxlength="3000"></textarea></div>
+      </div>
+      <div class="mara-form-actions"><button class="primary" type="submit">Enregistrer</button><button type="button" id="mara-member-cancel">Annuler</button></div>
+    </form>
+  </section>
+
+  <section class="mara-page" id="mara-page-vehicles">
+    <div class="mara-page-heading">
+      <div><h1>Véhicules</h1><p>Registre des véhicules et de leurs groupes.</p></div>
+      <div class="mara-actions">
+        <button type="button" id="mara-vehicles-reload">Actualiser</button>
+        <button type="button" class="primary" id="mara-vehicle-new">+ Ajouter un véhicule</button>
+      </div>
+    </div>
+    <div id="mara-vehicles-status" class="mara-status" role="status"></div>
+    <div class="mara-card">
+      <div class="mara-inline-filter"><label for="mara-vehicles-filter">Groupe / faction</label><select id="mara-vehicles-filter"><option value="">Tous les groupes</option></select></div>
+      <div class="mara-table-wrap">
+        <table class="mara-table"><thead><tr><th>Modèle</th><th>Couleur</th><th>Immatriculation</th><th>Groupe</th><th>Détails</th><th>Actions</th></tr></thead><tbody id="mara-vehicles-rows"><tr><td colspan="6" class="mara-empty">Chargement...</td></tr></tbody></table>
+      </div>
+    </div>
+    <form id="mara-vehicle-form" class="mara-card mara-form" hidden>
+      <h2 id="mara-vehicle-form-title">Ajouter un véhicule</h2>
+      <div class="mara-form-grid">
+        <div><label for="mara-vehicle-model">Modèle *</label><input id="mara-vehicle-model" maxlength="150" required></div>
+        <div><label for="mara-vehicle-color">Couleur</label><input id="mara-vehicle-color" maxlength="100"></div>
+        <div><label for="mara-vehicle-plate">Immatriculation (facultatif)</label><input id="mara-vehicle-plate" maxlength="40"></div>
+        <div><label for="mara-vehicle-group">Groupe / faction *</label><select id="mara-vehicle-group" required></select></div>
+        <div class="mara-wide"><label for="mara-vehicle-details">Détails</label><textarea id="mara-vehicle-details" maxlength="5000" placeholder="État, particularités, commentaires..."></textarea></div>
+      </div>
+      <div class="mara-form-actions"><button class="primary" type="submit">Enregistrer</button><button type="button" id="mara-vehicle-cancel">Annuler</button></div>
+    </form>
+  </section>
+
+  <section class="mara-page" id="mara-page-access">
+    <div class="mara-page-heading">
+      <div><h1>Permissions administrateurs</h1><p>Gestion des droits directement depuis Mara MAP.</p></div>
+      <div class="mara-actions"><button type="button" id="mara-access-reload">Actualiser</button><button type="button" class="primary" id="mara-access-new">+ Autoriser un compte</button></div>
+    </div>
+    <div id="mara-access-status" class="mara-status" role="status"></div>
+    <div class="mara-card">
+      <div class="mara-table-wrap"><table class="mara-table"><thead><tr><th>Compte</th><th>Carte</th><th>Groupes</th><th>Véhicules</th><th>Permissions</th><th>Actions</th></tr></thead><tbody id="mara-access-rows"><tr><td colspan="6" class="mara-empty">Chargement...</td></tr></tbody></table></div>
+    </div>
+    <form id="mara-access-form" class="mara-card mara-form" hidden>
+      <h2 id="mara-access-form-title">Autoriser un compte</h2>
+      <label for="mara-access-email">Adresse e-mail du compte Supabase Auth existant *</label><input id="mara-access-email" type="email" required autocomplete="off">
+      <p class="mara-note">Le compte doit déjà exister dans Supabase Authentication. Impossible de modifier le propriétaire ou ses propres permissions depuis ce panneau.</p>
+      <div class="mara-check-grid">
+        <label><input id="mara-access-map" type="checkbox"> Modifier la carte et les factions</label>
+        <label><input id="mara-access-groups" type="checkbox"> Gérer les membres des groupes</label>
+        <label><input id="mara-access-vehicles" type="checkbox"> Gérer les véhicules</label>
+        <label><input id="mara-access-admins" type="checkbox"> Gérer les permissions</label>
+      </div>
+      <div class="mara-form-actions"><button class="primary" type="submit">Enregistrer les droits</button><button type="button" id="mara-access-cancel">Annuler</button></div>
+    </form>
+  </section>
+</main>
+
+
 <!-- LOGIN -->
 
 <div id="login-overlay">
@@ -5002,6 +5164,11 @@ let currentUser =
 
 let admin =
   false;
+
+/* Permissions récupérées depuis Supabase, jamais calculées dans le navigateur. */
+let maraPermissions = {
+  map: false, groups: false, vehicles: false, access: false, owner: false
+};
 
 
 let editMode =
@@ -6393,6 +6560,7 @@ document
     "click",
     () => {
 
+      maraGo('map');
       setLayersOpen(
         !document.body.classList.contains(
           "layers-open"
@@ -6439,32 +6607,32 @@ async function refreshAuth() {
     user || null;
 
 
-  admin =
-    false;
+  admin = false;
+  maraPermissions = {
+    map: false, groups: false, vehicles: false, access: false, owner: false
+  };
 
-
-  if (
-    currentUser
-  ) {
-
-    const {
-      data: isAdmin
-    } =
-      await db.rpc(
-        "is_admin"
-      );
-
-
-    admin =
-      isAdmin === true;
-
+  if (currentUser) {
+    const { data: serverPermissions, error: permissionsError } =
+      await db.rpc("mara_my_permissions");
+    if (permissionsError) {
+      console.error("Permissions Mara MAP :", permissionsError);
+      loginError.textContent = "Mara MAP : installer d'abord le SQL Supabase (voir README).";
+    } else if (serverPermissions) {
+      maraPermissions = {
+        map: serverPermissions.map === true,
+        groups: serverPermissions.groups === true,
+        vehicles: serverPermissions.vehicles === true,
+        access: serverPermissions.access === true,
+        owner: serverPermissions.owner === true
+      };
+      admin = Boolean(maraPermissions.map || maraPermissions.groups ||
+        maraPermissions.vehicles || maraPermissions.access);
+    }
   }
 
-
-  document.body.classList.toggle(
-    "is-admin",
-    admin
-  );
+  document.body.classList.toggle("is-admin", maraPermissions.map);
+  maraSyncAccessNav();
 
 
   /* L'édition se lance désormais depuis le crayon de chaque calque. */
@@ -6778,9 +6946,7 @@ function enableEditMode(
   targetKind = "batiment"
 ) {
 
-  if (
-    !admin
-  ) {
+  if (!maraPermissions.map) {
     return;
   }
 
@@ -6913,7 +7079,7 @@ function openLayerEditor(
   kind
 ) {
 
-  if (!admin) {
+  if (!maraPermissions.map) {
     return;
   }
 
@@ -7566,7 +7732,7 @@ function updateDisplayControls() {
     .forEach(
       button => {
         button.disabled =
-          !admin || locked;
+          !maraPermissions.map || locked;
 
         button.classList.toggle(
           "active",
@@ -12266,6 +12432,381 @@ document.addEventListener("keydown", event => {
   if (editMode) {
     status.textContent = "Outil annulé.";
   }
+});
+
+
+/* =========================================================
+   MARA MAP : groupes, véhicules, permissions
+   Données privées et contrôle RLS dans Supabase.
+========================================================= */
+const maraById = id => document.getElementById(id);
+const maraPermitted = page => page === 'map' || Boolean(maraPermissions[page]);
+const maraGroupName = id => (maraStaffGroups.find(group => group.id === id)?.name || 'Groupe inconnu');
+const maraInput = id => maraById(id).value.trim();
+let maraStaffGroups = [];
+let maraMembers = [];
+let maraVehicles = [];
+let maraAdmins = [];
+let maraEditMemberId = null;
+let maraEditVehicleId = null;
+
+function maraSetStatus(page, message) {
+  const el = maraById(`mara-${page}-status`);
+  if (el) el.textContent = message || '';
+}
+
+function maraSyncAccessNav() {
+  const navPermissions = { 'nav-groups': 'groups', 'nav-vehicles': 'vehicles', 'nav-access': 'access' };
+  Object.entries(navPermissions).forEach(([id, key]) => {
+    maraById(id).style.display = maraPermissions[key] ? 'flex' : 'none';
+  });
+  if (!maraPermitted(document.body.dataset.maraPage)) {
+    maraGo('map');
+  }
+}
+
+async function maraGo(page) {
+  if (!maraPermitted(page)) return;
+  if (page !== 'map' && editMode) disableEditMode();
+  document.body.dataset.maraPage = page;
+  ['map', 'groups', 'vehicles', 'access'].forEach(key => {
+    maraById(`nav-${key}`).classList.toggle('active', key === page);
+  });
+  maraById('nav-layers').classList.remove('active');
+  if (page === 'map') {
+    requestAnimationFrame(() => { map.invalidateSize(); syncAllInnerOutlines(); });
+    return;
+  }
+  await maraLoadSection(page);
+}
+
+function maraSelectOptions(selectId, withAll = false) {
+  const el = maraById(selectId);
+  const oldValue = el.value;
+  const options = [];
+  const first = document.createElement('option');
+  first.value = '';
+  first.textContent = withAll ? 'Tous les groupes' : 'Sélectionner un groupe';
+  options.push(first);
+  maraStaffGroups.forEach(group => {
+    const option = document.createElement('option');
+    option.value = group.id;
+    option.textContent = group.name;
+    options.push(option);
+  });
+  el.replaceChildren(...options);
+  if (oldValue && maraStaffGroups.some(group => group.id === oldValue)) el.value = oldValue;
+}
+
+async function maraLoadStaffGroups() {
+  const { data, error } = await db.rpc('mara_staff_factions');
+  if (error) throw error;
+  maraStaffGroups = data || [];
+  ['mara-members-filter', 'mara-vehicles-filter'].forEach(id => maraSelectOptions(id, true));
+  ['mara-member-group', 'mara-vehicle-group'].forEach(id => maraSelectOptions(id));
+}
+
+function maraTextCell(value) {
+  const cell = document.createElement('td');
+  cell.textContent = value == null || value === '' ? '—' : String(value);
+  return cell;
+}
+
+function maraActionButton(label, onClick, danger = false) {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.textContent = label;
+  if (danger) btn.classList.add('danger');
+  btn.addEventListener('click', onClick);
+  return btn;
+}
+
+function maraSetEmpty(tbody, cols, message) {
+  const tr = document.createElement('tr');
+  const td = document.createElement('td');
+  td.colSpan = cols;
+  td.className = 'mara-empty';
+  td.textContent = message;
+  tr.appendChild(td);
+  tbody.replaceChildren(tr);
+}
+
+function maraRenderMembers() {
+  const tbody = maraById('mara-members-rows');
+  const filter = maraById('mara-members-filter').value;
+  const records = maraMembers.filter(row => !filter || row.group_id === filter);
+  if (!records.length) return maraSetEmpty(tbody, 6, 'Aucun membre pour ce filtre.');
+  tbody.replaceChildren();
+  records.forEach(member => {
+    const tr = document.createElement('tr');
+    tr.append(
+      maraTextCell(member.first_name),
+      maraTextCell(member.last_name),
+      maraTextCell(member.phone),
+      maraTextCell(member.grade),
+      maraTextCell(maraGroupName(member.group_id))
+    );
+    const actions = document.createElement('td');
+    actions.append(
+      maraActionButton('Modifier', () => maraEditMember(member)),
+      maraActionButton('Supprimer', () => maraDeleteMember(member), true)
+    );
+    tr.appendChild(actions);
+    tbody.appendChild(tr);
+  });
+}
+
+async function maraLoadMembers() {
+  const { data, error } = await db.from('mara_group_members')
+    .select('id,group_id,first_name,last_name,phone,grade,notes,created_at')
+    .order('last_name').order('first_name');
+  if (error) throw error;
+  maraMembers = data || [];
+  maraRenderMembers();
+  maraSetStatus('members', `${maraMembers.length} membre(s) enregistré(s).`);
+}
+
+function maraEditMember(member = null) {
+  maraEditMemberId = member?.id || null;
+  maraById('mara-member-form').hidden = false;
+  maraById('mara-member-form-title').textContent = member ? 'Modifier un membre' : 'Ajouter un membre';
+  maraById('mara-member-first').value = member?.first_name || '';
+  maraById('mara-member-last').value = member?.last_name || '';
+  maraById('mara-member-phone').value = member?.phone || '';
+  maraById('mara-member-grade').value = member?.grade || '';
+  maraById('mara-member-notes').value = member?.notes || '';
+  maraById('mara-member-group').value = member?.group_id || maraById('mara-members-filter').value || '';
+  maraById('mara-member-form').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+async function maraSaveMember(event) {
+  event.preventDefault();
+  if (!maraPermissions.groups) return;
+  const payload = {
+    first_name: maraInput('mara-member-first'),
+    last_name: maraInput('mara-member-last'),
+    phone: maraInput('mara-member-phone'),
+    grade: maraInput('mara-member-grade'),
+    notes: maraInput('mara-member-notes'),
+    group_id: maraInput('mara-member-group')
+  };
+  if (!payload.first_name || !payload.last_name || !payload.group_id) return maraSetStatus('members', 'Prénom, nom et groupe obligatoires.');
+  const query = db.from('mara_group_members');
+  const { error } = maraEditMemberId
+    ? await query.update(payload).eq('id', maraEditMemberId)
+    : await query.insert(payload);
+  if (error) return maraSetStatus('members', `Erreur : ${error.message}`);
+  maraById('mara-member-form').hidden = true;
+  maraEditMemberId = null;
+  await maraLoadMembers();
+  maraSetStatus('members', 'Membre enregistré.');
+}
+
+async function maraDeleteMember(member) {
+  if (!confirm(`Supprimer ${member.first_name} ${member.last_name} ?`)) return;
+  const { error } = await db.from('mara_group_members').delete().eq('id', member.id);
+  if (error) return maraSetStatus('members', `Erreur : ${error.message}`);
+  await maraLoadMembers();
+  maraSetStatus('members', 'Membre supprimé.');
+}
+
+function maraRenderVehicles() {
+  const tbody = maraById('mara-vehicles-rows');
+  const filter = maraById('mara-vehicles-filter').value;
+  const records = maraVehicles.filter(row => !filter || row.group_id === filter);
+  if (!records.length) return maraSetEmpty(tbody, 6, 'Aucun véhicule pour ce filtre.');
+  tbody.replaceChildren();
+  records.forEach(vehicle => {
+    const tr = document.createElement('tr');
+    tr.append(
+      maraTextCell(vehicle.model),
+      maraTextCell(vehicle.color),
+      maraTextCell(vehicle.license_plate),
+      maraTextCell(maraGroupName(vehicle.group_id)),
+      maraTextCell(vehicle.details)
+    );
+    const actions = document.createElement('td');
+    actions.append(
+      maraActionButton('Modifier', () => maraEditVehicle(vehicle)),
+      maraActionButton('Supprimer', () => maraDeleteVehicle(vehicle), true)
+    );
+    tr.appendChild(actions);
+    tbody.appendChild(tr);
+  });
+}
+
+async function maraLoadVehicles() {
+  const { data, error } = await db.from('mara_vehicles')
+    .select('id,group_id,model,color,license_plate,details,created_at')
+    .order('model');
+  if (error) throw error;
+  maraVehicles = data || [];
+  maraRenderVehicles();
+  maraSetStatus('vehicles', `${maraVehicles.length} véhicule(s) enregistré(s).`);
+}
+
+function maraEditVehicle(vehicle = null) {
+  maraEditVehicleId = vehicle?.id || null;
+  maraById('mara-vehicle-form').hidden = false;
+  maraById('mara-vehicle-form-title').textContent = vehicle ? 'Modifier un véhicule' : 'Ajouter un véhicule';
+  maraById('mara-vehicle-model').value = vehicle?.model || '';
+  maraById('mara-vehicle-color').value = vehicle?.color || '';
+  maraById('mara-vehicle-plate').value = vehicle?.license_plate || '';
+  maraById('mara-vehicle-details').value = vehicle?.details || '';
+  maraById('mara-vehicle-group').value = vehicle?.group_id || maraById('mara-vehicles-filter').value || '';
+  maraById('mara-vehicle-form').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+async function maraSaveVehicle(event) {
+  event.preventDefault();
+  if (!maraPermissions.vehicles) return;
+  const payload = {
+    model: maraInput('mara-vehicle-model'),
+    color: maraInput('mara-vehicle-color'),
+    license_plate: maraInput('mara-vehicle-plate'),
+    details: maraInput('mara-vehicle-details'),
+    group_id: maraInput('mara-vehicle-group')
+  };
+  if (!payload.model || !payload.group_id) return maraSetStatus('vehicles', 'Modèle et groupe obligatoires.');
+  const query = db.from('mara_vehicles');
+  const { error } = maraEditVehicleId
+    ? await query.update(payload).eq('id', maraEditVehicleId)
+    : await query.insert(payload);
+  if (error) return maraSetStatus('vehicles', `Erreur : ${error.message}`);
+  maraById('mara-vehicle-form').hidden = true;
+  maraEditVehicleId = null;
+  await maraLoadVehicles();
+  maraSetStatus('vehicles', 'Véhicule enregistré.');
+}
+
+async function maraDeleteVehicle(vehicle) {
+  if (!confirm(`Supprimer le véhicule ${vehicle.model} ?`)) return;
+  const { error } = await db.from('mara_vehicles').delete().eq('id', vehicle.id);
+  if (error) return maraSetStatus('vehicles', `Erreur : ${error.message}`);
+  await maraLoadVehicles();
+  maraSetStatus('vehicles', 'Véhicule supprimé.');
+}
+
+function maraRenderAdmins() {
+  const tbody = maraById('mara-access-rows');
+  if (!maraAdmins.length) return maraSetEmpty(tbody, 6, 'Aucun administrateur configuré.');
+  tbody.replaceChildren();
+  maraAdmins.forEach(account => {
+    const tr = document.createElement('tr');
+    const email = maraTextCell(account.email);
+    if (account.is_owner) {
+      const badge = document.createElement('span');
+      badge.className = 'mara-tag';
+      badge.textContent = 'Propriétaire';
+      email.append(' ', badge);
+    }
+    tr.append(email,
+      maraTextCell(account.is_owner || account.can_edit_map ? 'Oui' : 'Non'),
+      maraTextCell(account.is_owner || account.can_manage_groups ? 'Oui' : 'Non'),
+      maraTextCell(account.is_owner || account.can_manage_vehicles ? 'Oui' : 'Non'),
+      maraTextCell(account.is_owner || account.can_manage_permissions ? 'Oui' : 'Non')
+    );
+    const actions = document.createElement('td');
+    if (!account.is_owner && account.user_id !== currentUser?.id) {
+      actions.append(
+        maraActionButton('Modifier', () => maraEditAdmin(account)),
+        maraActionButton('Retirer', () => maraDeleteAdmin(account), true)
+      );
+    } else {
+      actions.textContent = 'Protégé';
+    }
+    tr.appendChild(actions);
+    tbody.appendChild(tr);
+  });
+}
+
+async function maraLoadAdmins() {
+  const { data, error } = await db.rpc('mara_list_admins');
+  if (error) throw error;
+  maraAdmins = data || [];
+  maraRenderAdmins();
+  maraSetStatus('access', `${maraAdmins.length} compte(s) autorisé(s).`);
+}
+
+function maraEditAdmin(account = null) {
+  maraById('mara-access-form').hidden = false;
+  maraById('mara-access-form-title').textContent = account ? 'Modifier des permissions' : 'Autoriser un compte';
+  maraById('mara-access-email').value = account?.email || '';
+  maraById('mara-access-email').readOnly = Boolean(account);
+  maraById('mara-access-map').checked = Boolean(account?.can_edit_map);
+  maraById('mara-access-groups').checked = Boolean(account?.can_manage_groups);
+  maraById('mara-access-vehicles').checked = Boolean(account?.can_manage_vehicles);
+  maraById('mara-access-admins').checked = Boolean(account?.can_manage_permissions);
+  maraById('mara-access-form').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+async function maraSaveAdmin(event) {
+  event.preventDefault();
+  if (!maraPermissions.access) return;
+  const { error } = await db.rpc('mara_set_admin_by_email', {
+    p_email: maraInput('mara-access-email'),
+    p_map: maraById('mara-access-map').checked,
+    p_groups: maraById('mara-access-groups').checked,
+    p_vehicles: maraById('mara-access-vehicles').checked,
+    p_access: maraById('mara-access-admins').checked
+  });
+  if (error) return maraSetStatus('access', `Erreur : ${error.message}`);
+  maraById('mara-access-form').hidden = true;
+  await maraLoadAdmins();
+  maraSetStatus('access', 'Permissions enregistrées.');
+}
+
+async function maraDeleteAdmin(account) {
+  if (!confirm(`Retirer tous les accès de ${account.email} ?`)) return;
+  const { error } = await db.rpc('mara_remove_admin', { p_user_id: account.user_id });
+  if (error) return maraSetStatus('access', `Erreur : ${error.message}`);
+  await maraLoadAdmins();
+  maraSetStatus('access', 'Accès retiré.');
+}
+
+async function maraLoadSection(page) {
+  const section = page === 'groups' ? 'members' : page;
+  maraSetStatus(section, 'Chargement des données...');
+  try {
+    if (page === 'groups' || page === 'vehicles') await maraLoadStaffGroups();
+    if (page === 'groups') await maraLoadMembers();
+    if (page === 'vehicles') await maraLoadVehicles();
+    if (page === 'access') await maraLoadAdmins();
+  } catch (error) {
+    console.error(error);
+    maraSetStatus(section, `Impossible de charger : ${error.message || String(error)}`);
+  }
+}
+
+maraById('nav-map').addEventListener('click', () => maraGo('map'));
+maraById('nav-groups').addEventListener('click', () => maraGo('groups'));
+maraById('nav-vehicles').addEventListener('click', () => maraGo('vehicles'));
+maraById('nav-access').addEventListener('click', () => maraGo('access'));
+['nav-groups', 'nav-vehicles', 'nav-access'].forEach(id => {
+  maraById(id).addEventListener('keydown', event => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      event.currentTarget.click();
+    }
+  });
+});
+maraById('mara-members-filter').addEventListener('change', maraRenderMembers);
+maraById('mara-vehicles-filter').addEventListener('change', maraRenderVehicles);
+maraById('mara-member-new').addEventListener('click', () => maraEditMember());
+maraById('mara-vehicle-new').addEventListener('click', () => maraEditVehicle());
+maraById('mara-access-new').addEventListener('click', () => maraEditAdmin());
+maraById('mara-member-form').addEventListener('submit', maraSaveMember);
+maraById('mara-vehicle-form').addEventListener('submit', maraSaveVehicle);
+maraById('mara-access-form').addEventListener('submit', maraSaveAdmin);
+[['mara-member-cancel', 'mara-member-form'],
+ ['mara-vehicle-cancel', 'mara-vehicle-form'],
+ ['mara-access-cancel', 'mara-access-form']].forEach(([button, form]) => {
+  maraById(button).addEventListener('click', () => { maraById(form).hidden = true; });
+});
+[['mara-members-reload', 'groups'],
+ ['mara-vehicles-reload', 'vehicles'],
+ ['mara-access-reload', 'access']].forEach(([button, page]) => {
+  maraById(button).addEventListener('click', () => maraLoadSection(page));
 });
 
 
