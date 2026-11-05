@@ -3880,6 +3880,20 @@ body.editing #draw-marker-repere,body.editing #draw-marker-batiment{display:none
 #mara-pending-requests{margin-bottom:15px}
 #mara-pending-requests .mara-pending-group{min-width:140px;max-width:225px;width:100%;color:#dbffed;background:#021209}
 #mara-pending-requests .mara-table td{vertical-align:middle}
+
+/* V6 : une seule carte RP, sans calques, sans sélection de vues. */
+#right-ui-stack,#layers-panel,#mara-map-modes,.mara-map-modes {display:none!important}
+#draw-rectangle,#draw-marker-repere,#draw-marker-batiment {display:none!important}
+#ui-panels {grid-template-columns:var(--left-panel) minmax(0,1fr) 0px!important}
+body.layers-open {--right-safe:0px!important}
+#mara-map-edit{display:none!important;border-color:#359668!important;color:#a7ffd3!important}
+body[data-mara-page="map"].mara-can-edit-map #mara-map-edit{display:inline-flex!important}
+#mara-map-edit.active{background:#68ffb5!important;color:#032012!important}
+.mara-auth-admin-toggle{display:block;min-height:0!important;margin:5px 0 8px;padding:4px 0!important;border:0!important;background:transparent!important;text-align:left;font-size:9px!important;color:#85dcb3;text-transform:none;text-decoration:underline;text-underline-offset:3px}
+.mara-auth-admin-toggle:hover{color:#e1ffef}
+#mara-auth-admin-toggle[hidden]{display:none!important}
+#login-id{font-family:ui-monospace,Consolas,monospace!important}
+@media(min-width:761px){#ui-panels{grid-template-columns:var(--left-panel) minmax(0,1fr) 0px!important}}
 </style>
 
 </head>
@@ -3947,6 +3961,7 @@ body.editing #draw-marker-repere,body.editing #draw-marker-batiment{display:none
   <div class="account-area">
 
     <span id="admin-email"></span>
+    <button id="mara-map-edit" type="button" aria-pressed="false"><i data-lucide="pen-tool"></i><span id="mara-map-edit-text">MODIFIER LA CARTE</span></button>
     <button id="mara-account-access" type="button" title="Gestion des comptes" style="display:none"><i data-lucide="settings-2"></i> Permissions</button>
 
 
@@ -4000,165 +4015,21 @@ body.editing #draw-marker-repere,body.editing #draw-marker-batiment{display:none
 <!-- UI PANELS : disposition anti-chevauchement -->
 <div id="ui-panels">
 
-  <div id="right-ui-stack">
-
-<!-- AFFICHAGE -->
-
-<aside
-  id="layers-panel"
-  class="panel"
->
-
-  <div class="panel-header">
-
-    <div>
-
-      <div class="panel-kicker">
-        CALQUES
-      </div>
-
-      <div class="panel-title">Calque territorial</div>
-
-    </div>
-
-    <button id="close-layers">
-      <i data-lucide="x"></i>
-    </button>
-
-  </div>
-
-  <div class="panel-scroll display-panel-scroll">
-
-    <section class="display-section layers-only-section">
-
-      <div class="display-section-title">
-        CALQUES
-      </div>
-
-      <div class="mara-map-modes" role="group" aria-label="Mode de lecture de la carte">
-        <button id="mara-view-territoires" type="button" class="active">◉ TERRITOIRES</button>
-        <button id="mara-view-quartiers" type="button">▤ QUARTIERS</button>
-        <button id="mara-view-points" type="button">⌖ POINTS D'INTÉRÊT</button>
-      </div>
-      <p class="mara-map-help">Un seul calque modifiable : polygones de territoire + points d'intérêt. Les quartiers restent visibles comme fond de référence en mode Quartiers. Sommets aimantés aux frontières voisines.</p>
-      <div class="overlay-toggle" data-layer-row="factions">
-        <input
-          id="toggle-factions"
-          type="checkbox"
-          checked
-          aria-label="Afficher les territoires"
-        >
-        <span class="overlay-icon">
-          <i data-lucide="shield"></i>
-        </span>
-        <span class="overlay-copy">
-          <strong>Territoires &amp; points d'intérêt</strong>
-          <small>Polygones + marqueurs sur le même calque</small>
-        </span>
-        <button
-          class="layer-edit-button"
-          type="button"
-          data-edit-layer="territoire"
-          title="Dessiner des territoires"
-          aria-label="Dessiner des territoires"
-        >
-          <i data-lucide="pencil"></i>
-        </button>
-      </div>
-
-      <div class="overlay-toggle" data-layer-row="repere">
-        <input
-          id="toggle-reperes"
-          type="checkbox"
-          checked
-          aria-label="Afficher les repères"
-        >
-        <span class="overlay-icon">
-          <i data-lucide="map-pin"></i>
-        </span>
-        <span class="overlay-copy">
-          <strong>Repères</strong>
-          <small>Au-dessus des bâtiments</small>
-        </span>
-        <button
-          class="layer-edit-button"
-          type="button"
-          data-edit-layer="repere"
-          title="Modifier les repères"
-          aria-label="Modifier les repères"
-        >
-          <i data-lucide="pencil"></i>
-        </button>
-      </div>
-
-      <div class="overlay-toggle" data-layer-row="quartier">
-        <input
-          id="toggle-quartiers"
-          type="checkbox"
-          checked
-          aria-label="Afficher les quartiers"
-        >
-        <span class="overlay-icon">
-          <i data-lucide="map"></i>
-        </span>
-        <span class="overlay-copy">
-          <strong>Quartiers</strong>
-          <small>Vue cadastrale contrastée</small>
-        </span>
-        <button
-          class="layer-edit-button"
-          type="button"
-          data-edit-layer="quartier"
-          title="Modifier les quartiers"
-          aria-label="Modifier les quartiers"
-        >
-          <i data-lucide="pencil"></i>
-        </button>
-      </div>
-
-      <div class="overlay-toggle" data-layer-row="batiment">
-        <input
-          id="toggle-numeros"
-          type="checkbox"
-          checked
-          aria-label="Afficher les bâtiments"
-        >
-        <span class="overlay-icon">
-          <i data-lucide="building-2"></i>
-        </span>
-        <span class="overlay-copy">
-          <strong>Bâtiments</strong>
-          <small>Calque le plus éloigné</small>
-        </span>
-        <button
-          class="layer-edit-button"
-          type="button"
-          data-edit-layer="batiment"
-          title="Modifier les bâtiments"
-          aria-label="Modifier les bâtiments"
-        >
-          <i data-lucide="pencil"></i>
-        </button>
-      </div>
-
-    </section>
-
-    <!-- Références historiques gardées invisibles pour préserver les anciens handlers JS. -->
-    <div class="legacy-display-controls" aria-hidden="true">
-      <button id="view-quartiers" type="button" tabindex="-1"></button>
-      <button id="view-factions" type="button" tabindex="-1"></button>
-      <button id="view-batiments" type="button" tabindex="-1"></button>
-      <input id="toggle-batiments" type="checkbox" checked tabindex="-1">
-    </div>
-
-    <div id="display-note" class="display-note">
-      Un calque RP : territoires polygonaux et points d'intérêt. Vue Quartiers disponible.
-    </div>
-
-  </div>
-
-</aside>
-
+  <!-- V6: pas de menu de calques, uniquement une carte avec polygones et POI.
+       Les contrôles ci-dessous sont invisibles et maintiennent les événements historiques. -->
+  <div id="right-ui-stack" hidden aria-hidden="true">
+    <aside id="layers-panel" class="panel closed" hidden>
+      <button id="close-layers" type="button"></button>
+      <input id="toggle-factions" type="checkbox" checked>
+      <input id="toggle-reperes" type="checkbox">
+      <input id="toggle-quartiers" type="checkbox">
+      <input id="toggle-numeros" type="checkbox">
+      <input id="toggle-batiments" type="checkbox">
+      <button id="view-quartiers" type="button"></button>
+      <button id="view-factions" type="button"></button>
+      <button id="view-batiments" type="button"></button>
+      <div id="display-note"></div>
+    </aside>
   </div><!-- /#right-ui-stack -->
 
 
@@ -4755,6 +4626,7 @@ body.editing #draw-marker-repere,body.editing #draw-marker-batiment{display:none
   <button
     id="draw-rectangle"
     class="draw-tool"
+    hidden aria-hidden="true"
   >
     <i data-lucide="square"></i>
     <span class="draw-label">ZONE RECT.</span>
@@ -4965,7 +4837,8 @@ body.editing #draw-marker-repere,body.editing #draw-marker-batiment{display:none
         <label for="login-id">Identifiant (ID)</label>
         <input id="login-id" name="username" type="text" required minlength="3" maxlength="80"
                autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="Ex. marabunta07">
-        <p class="mara-auth-help" id="mara-auth-login-help">Compte administrateur autorisé ? Connecte-toi avec ton e-mail et ton mot de passe.</p>
+        <p class="mara-auth-help" id="mara-auth-login-help">Identifiant RP uniquement, sans @ ni e-mail.</p>
+        <button type="button" id="mara-auth-admin-toggle" class="mara-auth-admin-toggle">Connexion administrateur (e-mail)</button>
 
         <label for="login-password">Mot de passe</label>
         <input id="login-password" name="password" type="password" required autocomplete="current-password" minlength="6">
@@ -4974,7 +4847,7 @@ body.editing #draw-marker-repere,body.editing #draw-marker-batiment{display:none
           <label for="mara-auth-confirm-password">Confirmer le mot de passe</label>
           <input id="mara-auth-confirm-password" type="password" minlength="10" autocomplete="new-password">
         </div>
-        <p class="mara-auth-help" id="mara-auth-register-help" hidden>Aucun e-mail demandé. Choisis un ID (3 à 24 caractères : lettres, chiffres, _ ou -) et un mot de passe de 10 caractères minimum. Seul un administrateur préautorisé pourra valider ta demande.</p>
+        <p class="mara-auth-help" id="mara-auth-register-help" hidden>Choisis un ID RP de 3 à 24 caractères et un mot de passe d'au moins 10 caractères. Aucun e-mail demandé, aucune vérification d'e-mail. Un administrateur devra approuver ton compte.</p>
 
         <div class="action-grid" style="margin-top:17px;">
           <button id="mara-auth-submit" type="submit" class="primary wide"><i data-lucide="log-in"></i><span id="mara-auth-submit-text">Se connecter</span></button>
@@ -5358,9 +5231,9 @@ let maraMapDisplayMode = "territoires";
 const overlayVisibility = {
   faction: true,
   quartier: false,
-  batiment: true,
-  numero: true,
-  repere: true
+  batiment: false,
+  numero: false,
+  repere: false
 };
 
 
@@ -6738,6 +6611,23 @@ function maraPrettyLogin(value) {
   return email.endsWith(suffix) ? email.slice(0, -suffix.length) : (value || '');
 }
 let maraAuthMode = 'login';
+let maraAdminLogin = false;
+function maraSetAdminLogin(enabled) {
+  maraAdminLogin = Boolean(enabled);
+  const field = document.getElementById('login-id');
+  const label = document.querySelector('label[for="login-id"]');
+  const switcher = document.getElementById('mara-auth-admin-toggle');
+  const adminActive = maraAuthMode === 'login' && maraAdminLogin;
+  field.type = adminActive ? 'email' : 'text';
+  field.placeholder = adminActive ? 'admin@exemple.fr' : 'Ex. marabunta07';
+  field.maxLength = adminActive ? 120 : 24;
+  field.value = '';
+  label.textContent = adminActive ? 'Adresse e-mail administrateur' : 'Identifiant RP (ID)';
+  switcher.textContent = adminActive ? 'Revenir à la connexion par ID' : 'Connexion administrateur (e-mail)';
+  const hint = document.getElementById('mara-auth-login-help');
+  hint.textContent = adminActive ? 'Réservé aux comptes administrateurs autorisés dans Supabase.' : 'Identifiant RP uniquement, sans @ ni e-mail.';
+}
+document.getElementById('mara-auth-admin-toggle').addEventListener('click', () => maraSetAdminLogin(!maraAdminLogin));
 function maraSetAuthMode(mode, message = '') {
   maraAuthMode = mode === 'register' ? 'register' : 'login';
   const registering = maraAuthMode === 'register';
@@ -6748,14 +6638,16 @@ function maraSetAuthMode(mode, message = '') {
   document.getElementById('mara-auth-confirm-wrap').hidden = !registering;
   document.getElementById('mara-auth-register-help').hidden = !registering;
   document.getElementById('mara-auth-login-help').hidden = registering;
+  document.getElementById('mara-auth-admin-toggle').hidden = registering;
   document.getElementById('mara-auth-confirm-password').required = registering;
-  document.getElementById('login-id').maxLength = registering ? 24 : 80;
+  maraAdminLogin = false;
+  maraSetAdminLogin(false);
   document.getElementById('login-password').minLength = registering ? 10 : 6;
   document.getElementById('login-password').autocomplete = registering ? 'new-password' : 'current-password';
   document.getElementById('mara-auth-submit-text').textContent = registering ? 'Demander un compte' : 'Se connecter';
   document.getElementById('mara-auth-subtitle').textContent = registering
-    ? 'Créer un compte RP · ID et mot de passe uniquement, sans e-mail.'
-    : 'Accès RP · ID et mot de passe. Aucun e-mail pour les membres.';
+    ? 'Créer un compte RP · ID + mot de passe · Aucune adresse e-mail.'
+    : 'Accès RP · ID + mot de passe · Sans adresse e-mail.';
   loginError.textContent = message;
   lucide.createIcons();
 }
@@ -6943,44 +6835,59 @@ loginForm.addEventListener('submit', async event => {
   const login = maraNormalizeLogin(document.getElementById('login-id').value);
   const password = document.getElementById('login-password').value;
   try {
-    const email = maraAuthEmail(login);
     if (maraAuthMode === 'register') {
-      if (login.includes('@')) throw new Error('Pour créer un compte, choisis un ID, pas une adresse e-mail.');
-      if (password.length < 10) throw new Error('Mot de passe trop court : minimum 10 caractères.');
-      if (password !== document.getElementById('mara-auth-confirm-password').value) {
-        throw new Error('Les deux mots de passe ne correspondent pas.');
-      }
-      loginError.textContent = 'Création de la demande...';
-      const {data,error} = await db.auth.signUp({
-        email, password, options: {data: {mara_login_id: login}}
-      });
-      if (error) throw error;
-      if (!data?.user) throw new Error('Création non confirmée. Contacte un administrateur.');
-      // Ne jamais autoriser une inscription simplement parce que Supabase a créé une session.
-      if (data.session) await db.auth.signOut();
+      if (!MARA_ID_PATTERN.test(login)) throw new Error('ID invalide : 3 à 24 caractères, lettres, chiffres, _ ou -. Aucun e-mail.');
+      if (password.length < 10) throw new Error('Mot de passe : minimum 10 caractères.');
+      if (password !== document.getElementById('mara-auth-confirm-password').value)
+        throw new Error('Les mots de passe ne correspondent pas.');
+      loginError.textContent = 'Enregistrement de la demande...';
+      const data = await maraInvokeMemberAuth({action:'register', id:login, password});
       document.getElementById('login-password').value = '';
       document.getElementById('mara-auth-confirm-password').value = '';
-      maraSetAuthMode('login', data.session
-        ? `Demande enregistrée pour l'ID « ${login} ». Un administrateur doit maintenant l'approuver dans Permissions. Ensuite, connecte-toi avec ton ID et ton mot de passe.`
-        : `Compte créé, mais Supabase demande une vérification e-mail. Pour les IDs RP sans e-mail, le propriétaire doit désactiver « Confirm email » dans Authentication → Providers → Email, ou confirmer manuellement le compte. L'accès reste soumis à validation.`);
+      maraSetAuthMode('login', data.message || `Demande enregistrée pour « ${login} ». Un administrateur doit valider ton accès.`);
       return;
     }
-    loginError.textContent = 'Vérification de ton identifiant...';
-    const {error} = await db.auth.signInWithPassword({email,password});
-    if (error) throw error;
+    loginError.textContent = 'Vérification...';
+    if (maraAdminLogin) {
+      if (!login.includes('@')) throw new Error('Utilise ton e-mail administrateur autorisé.');
+      const {error}=await db.auth.signInWithPassword({email:login, password});
+      if (error) throw error;
+    } else {
+      if (!MARA_ID_PATTERN.test(login)) throw new Error('Entre ton ID RP, pas une adresse e-mail.');
+      const result = await maraInvokeMemberAuth({action:'login', id:login, password});
+      const {error}=await db.auth.setSession({
+        access_token:result.access_token,refresh_token:result.refresh_token
+      });
+      if (error) throw error;
+    }
     await refreshAuth();
     if (!currentUser) return;
     loginOverlay.classList.remove('visible');
     await loadDatabase();
     await maraGo('groups');
   } catch (error) {
-    console.error('Authentification Mara MAP :', error);
-    loginError.textContent = error.message || 'Impossible de traiter cette demande.';
-  } finally {
-    btn.disabled = false;
-  }
+    console.error('Authentification MARA MAP :', error);
+    loginError.textContent = error.message || 'Connexion impossible.';
+  } finally { btn.disabled = false; }
 });
 
+// Les comptes ID sont créés et vérifiés par une Edge Function Supabase.
+// La clé d'administration ne doit JAMAIS apparaître dans ce HTML.
+async function maraInvokeMemberAuth(payload) {
+  const {data,error} = await db.functions.invoke('mara-auth', {body:payload});
+  if (error) {
+    let message = '';
+    try { const response=error.context;
+      const detail=response && typeof response.json==='function' ? await response.json() : null;
+      message=String(detail?.error || detail?.message || '');
+    } catch (_ignored) {}
+    if (!message && /not found|404/i.test(String(error.message)))
+      message='La fonction mara-auth n’est pas déployée dans Supabase. Consulte le README V6.';
+    throw new Error(message || error.message || 'Service de connexion indisponible.');
+  }
+  if (!data || data.ok !== true) throw new Error(data?.error || 'Réponse de connexion invalide.');
+  return data;
+}
 
 
 /* =========================================================
@@ -7897,10 +7804,8 @@ function updateDisplayControls() {
       }
     );
 
-  displayNote.textContent =
-    factionLogoPlacementMode
-      ? "Placement du logo actif. Clique sur la carte pour enregistrer sa position."
-      : "Calque mixte : territoires + points d'intérêt · Sommets magnétisés · Groupes dans Renseignements.";
+  displayNote.textContent = '';
+  maraUpdateMapEditButton();
 }
 
 
@@ -12778,18 +12683,15 @@ maraById('mara-access-form').addEventListener('submit', maraSaveAdmin);
 /* =========================================================
    MARA MAP / TERRITOIRES : MODE QUARTIER ET SNAP
 ========================================================= */
-function maraSetMapView(mode) {
-  maraMapDisplayMode = ["quartiers","points"].includes(mode) ? mode : "territoires";
-  overlayVisibility.quartier = maraMapDisplayMode === "quartiers";
+// V6 : la carte affiche toujours les polygones de territoire et les POI.
+// Pas de bascule de calques ni de vues. Les anciennes entrées sont conservées
+// en base pour ne perdre aucune donnée historique.
+function maraSetMapView() {
+  maraMapDisplayMode = 'territoires';
   overlayVisibility.faction = true;
-  maraById("mara-view-territoires").classList.toggle("active", mode !== "quartiers");
-  maraById("mara-view-quartiers").classList.toggle("active", mode === "quartiers");
-  maraById("mara-view-points").classList.toggle("active", mode === "points");
+  overlayVisibility.quartier = false;
   rerenderMapDisplay();
 }
-maraById("mara-view-territoires").addEventListener("click", () => maraSetMapView("territoires"));
-maraById("mara-view-quartiers").addEventListener("click", () => maraSetMapView("quartiers"));
-maraById("mara-view-points").addEventListener("click", () => maraSetMapView("points"));
 
 // Snap sur vrais sommets et segments enregistrés. Geoman fait le snap pendant
 // le dessin ; cette passe enregistre les coordonnées exactes au moment du save.
@@ -13028,6 +12930,21 @@ maraById("mara-shape-picker").addEventListener("change",event=>{
   if(!record||!layer){maraById("mara-shape-picker").value="";return;}
   selectExistingShape(layer,record);
 });
+
+/* V6: modification directe, sans panneau de calques. */
+document.getElementById('mara-map-edit').addEventListener('click', () => {
+  if (!currentUser || !maraPermissions.map) return;
+  openLayerEditor('territoire');
+  maraUpdateMapEditButton();
+});
+function maraUpdateMapEditButton() {
+  const button = document.getElementById('mara-map-edit');
+  const on = Boolean(editMode && activeEditorKind === 'territoire');
+  document.body.classList.toggle('mara-can-edit-map', Boolean(currentUser && maraPermissions.map));
+  button.classList.toggle('active', on);
+  button.setAttribute('aria-pressed', String(on));
+  document.getElementById('mara-map-edit-text').textContent = on ? 'TERMINER L’ÉDITION' : 'MODIFIER LA CARTE';
+}
 
 /* =========================================================
    START
